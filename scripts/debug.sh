@@ -1,3 +1,3 @@
 #!/bin/bash
 ./build.sh
-./That -a -d -c test.that
+./That -a -d test.that

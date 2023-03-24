@@ -31,25 +31,6 @@ MachineCode Assembler::GetAssembly(){
 }
 
 void Assembler::AssembleCode(Nodes::Node* node, std::vector<Instruction> *to, std::vector<int> *declared){
-
-    // Mirem primer quines funcions hi ha al entorn i les identifiquem
-    /*
-    for(int i = 0; i < node->children.size(); i++){
-        Nodes::NodeType t = node->children[i]->type;
-        if(t == Nodes::FUNCTION){
-            AppendReference(node->children[i]->children[0]);
-        }
-    }
-
-    // Després les definim
-    for(int i = 0; i < node->children.size(); i++){
-        Nodes::NodeType t = node->children[i]->type;
-        if(t == Nodes::FUNCTION){
-            AssembleFunction(node->children[i], to);
-        }
-    }
-    */
-
     // Ara executem    
     for(int i = 0; i < node->children.size(); i++){
         Nodes::Node* n = node->children[i];
@@ -60,6 +41,7 @@ void Assembler::AssembleCode(Nodes::Node* node, std::vector<Instruction> *to, st
             else if(t == Nodes::DEF_FUNCTION) AssembleDef(n, to);
             else if(t == Nodes::DECLARATION) declared->push_back(AssembleDeclaration(n, to));
             else if(t == Nodes::ASSIGNATION) AssembleAssignation(n, to);
+            else if(t == Nodes::FUNCTION) AssembleFunction(n, to);
             // else if(t == Nodes::RETURN) AssembleReturn(n, to);
             else if(t == Nodes::IF) AssembleConditional(n, to);
             else if(t == Nodes::WHILE) AssembleWhile(n, to);
@@ -74,7 +56,6 @@ void Assembler::AssembleCode(Nodes::Node* node, std::vector<Instruction> *to, st
     
 }
 
-/*
 void Assembler::AssembleFunction(Nodes::Node* func, std::vector<Instruction> *to){
     // Tenim aqui que els fills son en ordre:
     // <nom>, <param> x nd x <param>, <codi>
@@ -108,7 +89,6 @@ void Assembler::AssembleFunction(Nodes::Node* func, std::vector<Instruction> *to
     Instruction end(InstructionID::END, ParamType::E);
     PushInstruction(end, to);
 }
-*/
 
 
 // TODO: Acabar de fer els ifs

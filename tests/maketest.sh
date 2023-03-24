@@ -88,6 +88,7 @@ if [ $# -eq 0 ]; then
             dotest $d
         fi
     done < $TestFile
+    wait
 else
     dotest $1/
 fi
