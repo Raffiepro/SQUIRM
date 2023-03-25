@@ -63,6 +63,12 @@ void Assembler::AssembleFunction(Nodes::Node* func, std::vector<Instruction> *to
     // Hem de saber ara doncs quins paràmetres tenim penjats al stack.
     // Com que aixo ho fem al cridar la funció, doncs estaràn enrere suposo. Anem a
     // afegir-los ara virtualment segons els paràmetres que tenim ara a la funció.
+
+    // Bueno la idea es crear una variable que després faci referència a allà la funció i ja està
+    // també necessita uns quants valors ja identificats a sobre del objecte de funció en cas que
+    // ho sigui, així tindrem un llenguatge 100% funcional no orientat a objectes vamoooooos!!!
+
+    /*
     
     StartContext(to);
     // ref - name
@@ -83,11 +89,10 @@ void Assembler::AssembleFunction(Nodes::Node* func, std::vector<Instruction> *to
 
     // Vale ara que ja tenim la funció anem a treure tot el que haviem suposadament
     // ficat al stack
-    
-    EndContext(to);
 
     Instruction end(InstructionID::END, ParamType::E);
     PushInstruction(end, to);
+    */
 }
 
 
@@ -383,32 +388,35 @@ int Assembler::AssembleExpression(Nodes::Node *exp, std::vector<Instruction> *to
             f = t;
         }*/
 
-        Instruction op(TranslateBinOpId(exp->nd), ParamType::ABC);
+        Instruction op(InstructionID::BINARY, ParamType::ABCD);
         // Val si cap dels dos es valor podem cridar recursivament AssembleExpression amb un dels dos
         int storedA = AssembleExpression(f, to);
-        op.SetA(storedA);
+        op.SetB(storedA);
         // Ara tenim al nostre punter f assembleat. L'augmentem i assemblem t
         int storedB = AssembleExpression(s, to);
-        op.SetB(storedB);
+        op.SetC(storedB);
 
         // Val ara fem free i guardem
         int n = GetNextFree();
-        op.SetC(n);
+        op.SetD(n);
         Free(storedA);
         Free(storedB);
+
+        op.SetA(exp->nd);
 
         PushInstruction(op, to);
         return n;
     }
     else if(exp->type == Nodes::NodeType::EXP_UNARY){
         Nodes::Node* f = exp->children[0];
-        Instruction op(TranslateUnOpId(exp->nd), ParamType::AB);
+        Instruction op(InstructionID::UNARY, ParamType::ABC);
         // Val doncs volem al nostre punter l'expressió
         int stored = AssembleExpression(f, to);
         // I ara li apliquem la operació
-        op.SetA(stored);
+        op.SetB(stored);
         int n = GetNextFree();
-        op.SetB(n);
+        op.SetC(n);
+        op.SetA(exp->nd);
         PushInstruction(op, to);
         return n;
     } else if(exp->IsValue()){
@@ -492,45 +500,6 @@ void Assembler::AssembleCall(Nodes::Node *call, std::vector<Instruction> *to){
     PushInstruction(cins, to);
 }
 */
-
-// De moment serà un switch chungo
-InstructionID Assembler::TranslateBinOpId(int data){
-    OpType t = (OpType) data;
-    switch(t){
-        case OpType::OP_ADD:
-            return InstructionID::ADD;
-        case OpType::OP_SUBTRACT:
-            return InstructionID::SUB;
-        case OpType::OP_MUL:
-            return InstructionID::MUL;
-        case OpType::OP_DIV:
-            return InstructionID::DIV;
-        case OpType::OP_MOD:
-            return InstructionID::MOD;
-        case OpType::OP_NOT:
-            return InstructionID::NOT;
-        case OpType::OP_OR:
-            return InstructionID::OR;
-        case OpType::OP_AND:
-            return InstructionID::AND;
-        case OpType::OP_EQ:
-            return InstructionID::EQ;
-        case OpType::OP_NEQ:
-            return InstructionID::NEQ;
-        case OpType::OP_GT:
-            return InstructionID::GT;
-        case OpType::OP_LT:
-            return InstructionID::LT;
-        case OpType::OP_GEQ:
-            return InstructionID::GEQ;
-        case OpType::OP_LEQ:
-            return InstructionID::LEQ;
-    }
-}
-
-InstructionID Assembler::TranslateUnOpId(int data){
-    return InstructionID::ADD;
-}
 
 void Assembler::PushInstruction(Instruction ins, std::vector<Instruction> *where){
     where->push_back(ins);

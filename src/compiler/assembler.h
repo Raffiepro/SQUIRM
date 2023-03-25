@@ -36,9 +36,6 @@ namespace That {
             void PushInstruction(Instruction ins, std::vector<Instruction> *where);
             void PushInstructions(std::vector<Instruction> *from, std::vector<Instruction> *to);
 
-            InstructionID TranslateBinOpId(int data);
-            InstructionID TranslateUnOpId(int data);
-
             // void IncreasePointer();
             // void DecreasePointer();
             void Free(int t);

@@ -50,6 +50,7 @@ namespace That {
         A,
         AB,
         ABC,
+        ABCD,
     };
 
     enum InstructionID {
@@ -63,7 +64,11 @@ namespace That {
 
         // Operacions
         // Important no canviar d'ordre
-        ADD, // A = B + C
+        UNARY,
+        BINARY,
+        ASSIGNARY,
+        
+        /* ADD, // A = B + C
         SUB, // A = B - C
         MUL, // A = B * C
         DIV, // A = B / C
@@ -78,7 +83,7 @@ namespace That {
         GT,
         LT,
         GEQ,
-        LEQ,
+        LEQ, */
         // ---------------------
 
         TO,
@@ -96,16 +101,18 @@ namespace That {
             void SetA(int a);
             void SetB(int b);
             void SetC(int c);
+            void SetD(int d);
 
             int GetA();
             int GetB();
             int GetC();
+            int GetD();
 
             InstructionID type;
             int temp;
             ParamType paramType;
         private:
-            int a, b, c;
+            int a, b, c, d;
     };
 
     struct reg_t {

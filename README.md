@@ -59,9 +59,20 @@ En un futur m'agradaria que That tingui les següents "features" (molt guais):
 - That també serà molt modificable i programable, de manera que es pugui modificar cada operació de forma senzilla (com C++) disposant del màxim nombre de símbols i personalització possible
 - A part, també el compilador de That pot triar una opció Debug i una final, on el nom ja indica tot, la idea es que la final no tingui la informació per debugar i sigui molt més lleujera i fàcil d'executar
 - També hauria de permetre implementar de la forma més senzilla possible (si existeix) la possibilitat de fer execucions paral·leles. (I si es pot amb la GPU també)
-## Exemple de programa amb That
+
+## Dependències
+
+Les marcades amb un (*) necessiten ser instalades manualment per l'usuari final. (Podria fer un instalador potser).
+
+- [CMake](https://cmake.org/)* (En cas que es vulgui compilar)
+- [SWIG](https://www.swig.org/)
+- [GMP - The GNU Multiple Precision Arithmetic Library](https://gmplib.org/)
+- [MPFR](https://www.mpfr.org/)
+
+## Sintaxis
 
 ```
+### COMENTARIS ###
 # That programming language test.
 
 # Això és un comentari
@@ -74,66 +85,66 @@ s'executen instruccions, i després (si existeix) es crida a una funció main. E
 el punt d'entrada de Python, bastant similar. Aquesta linea per exemple mostra un 2
 ##
 
-2;
+### HELLO WORLD ###
+"Hello World!";
 
-# Importar alguna cosa
-import 'math';
+# Per a mostrar simplement un ';'. Això executa la "funció predeterminada" del tipus, que en
+# tots els tipus predeterminats built-in, són fer un print per la sortida estàndard (excepte el buit). Per exemple,
+# per mostrar 2+2, fariem
+2+2;
 
-# Importar alguna cosa a un objecte (moduls suposo?)
-module Math = import 'math';
-# Math.sin(3); # Mostra ~0.14112
+# De fet, posar ';' és opcional. És a dir, un salt de linea s'interpreta com a un ';'. Jo el poso perque m'agrada
 
-# Per declarar variables cal indicar el tipus
-int a;
-int b = 3;
-string c = "Això és una C!!!";
-bool q = True;
+# Per declarar variables no cal indicar tipus
+a = 0;
+c = "Això és una C!!!";
+q = True;
 
-# Per modificar el valor d'una funció és bastant senzill:
+# En cas que declarem amb el tipus després no el podrem mutar. Es preferible per millor rendiment al compilar.
+# Almenys en Wyrm, qualsevol cosa que puguis especificar més ràpida serà
+int r = 3;
+string s = "Això només és un string!";
+
+# Per modificar el valor d'una variable és bastant senzill:
 a = b + b * 50 - 3;
 
-# Ara farem una funció. Si no té paràmetres i no retorna res, nomes cal posar la keyword func:
-
-func hola {
+# Com que Wyrm es un llenguatge molt guai, tenim funcions! Per fer-ne una obrim {}
+hola {
   "Hola!";
 }
+hola(); # Hola!
 
-# Si una funció no retorna res no crida a la funció predeterminada (print)
-func prova: int a, int b {
-  int c = a + b;
+# Per declarar paràmetres s'ha d'escriure dos punts
+
+ajunta: s, t {
+  s + t;
 }
 
-prova(2, 3); # Executa prova, pero no mostra res per pantalla
+ajunta("Hola", "que tal?"); # >> Hola que tal?
+ajunta(2, 3); # 5
 
-# Les funcions són de primer ordre
-func que: int a, int b, int c {
-  func sumaC: int t => int {
-    return t + c;
-  }
+# Es possible fixar un tipus determinat a les funcions, simplement posant-ho. De fet,
+# qualsevol moment que es posi un prefix de tipus, s'espera que la variable sigui d'aquest tipus,
+# sino, doncs salta un error, exemple:
 
-  return sumaC(a) + sumaC(b);
+dividir: int a, int b {
+  "La divisió dona: " + (a / b);
 }
-que(2,3,4); # 13
+dividir(10, 2); # La divisió dona: 5
 
-# Si una funció obte paràmetres s'introdueixen després del nom seguit de ':', indicant el tipus i el nom del paràmetre al costat:
+# Si una funció ha de retornar algo s'escriu "=>" després dels paràmetres '{' i després el tipus de retorn:
 
-func salutacio: string a, string b {
-  a, "saluda a", b;
-}
-
-# Si una funció ha de retornar algo s'escriu "=>" abans del '{' i després el tipus de retorn:
-
-func suma: int a, int b => int {
-  "Anem a sumar", a, "i", b;
-  return a + b;
+cub: int d => int {
+  return d * d * d;
 }
 
-func tres => int {
+cub(3); # 27
+
+tres => int {
   return 3;
 }
 
-# Per executar funcions també és com altres llenguatges:
-"Tres més dos és", suma(tres(), 2);
+cub(tres()); # 27
 
 # També existeixen condicionals. Es poden compactificar
 if q {
@@ -148,7 +159,7 @@ if q {
 
 # Els bucles whiles també son com altres llenguatges
 print("Comptem fins a 10!");
-int i = 1;
+i = 1;
 while i <= 10 {
   i;
   i += 1;
@@ -168,13 +179,116 @@ while i < 100 {
 
 # També existeix el bucle for, que és un while compacte, igual que els altres llenguatges:
 for int j = 0; j < i; j += 1: print(j * i);
+
+# També hi ha arrays! Hi ha de variables i de fixats.
+j = []; # Variable. Podem posar coses de qualsevol tipus
+r = int []; # Fixat. Només ints. És més ràpid!
+int[] q = int []; # Arrays de ints a q que només guarda arrays de int
+
+# Per posar coses als arrays podem fer servir el operador += !!!
+q += 2;
+q += 3;
+q; # [2, 3];
+
+# Per mostrar la mida podem fer servir el operador unari $:
+$q; # 2
+
+# Les funcions són de primer tipus. Podem fer coses rares com aquesta:
+fact: int i => int {
+  a = [];
+  for int i = 1; i <= 10; i++ {
+    f : int p => int {
+      if p == 1: return 1;
+      return a[i-1](p * i);
+    }
+    a += f;
+  }
+
+  return a[$a-1](i);
+}
+fact(10); # 3628800
+
+
+# En cas que la volguem fer immutable afegim la keyword "fixed":
+fixed suma: int a, int b => int {
+  return a + b;
+}
+
+fixed mult: int a, int b => int; # Funció buida
+mult: int a, int b => int {
+  return a + b;
+} # Ara mult és una funció que retorna a + b
+
+# Hem de tenir en compte que els ':' s'utilitzen com a un igual en certa manera
+
+### ESTRUCTURES ###
+# Podem crear una estructura amb {}, encara que per assignar-la utilitzem '='. Recordem que si
+# utilitzem ':' estariem definint una funció!
+cotxe = {
+  propietari;
+  int rodes = 4;
+  string nom = "Citroen";
+};
+
+# Ara cotxe és una variable amb tres coses dins. Té un propietari, un int rodes, i un nom:
+cotxe.rodes; # 4
+cotxe.nom; # Citroen
+cotxe.propietari = "Josep";
+cotxe.propietari; # Josep
+
+# Per defecte, podem afegir propietats a les estructures que no existeixen, és a dir, per defecte les
+# estructures són diccionaris
+cotxe.color = "Vermell"; # Això és legal
+cotxe.color; # Vermell
+
+# Si volem una estructura fixa (i més ràpida) utilitzaem la paraula fixed, igual que abans
+fixed moto = {
+  int rodes = 2;
+  int nom = "Yamaha";
+};
+
+moto.nom = "Honda";
+moto.color = "Blau"; # Error
+
+# Podem definir plantilles per estructures, és molt semblant a una classe o un struct de C++, pero en Wyrm
+# s'anomenen models. Per fer-ne un, utilitzem la paraula model:
+
+model complex = {
+  real a, b;
+};
+
+complex a; # Una variable complexa
+a.a = 3.24;
+a.b = 1;
+
+# Tots els models són immutables
+complex r;
+r.a = 5.3;
+r.b = -3;
+r.c = -800; # Error
+
+# Igual que els llenguatges OOP, tenim constructors, destructors, coses privades i públiques
+model complex = {
+  @ real a, b; # Elements privats! Començen per @
+  complex {
+    a = 0;
+    b = 0;
+  }
+
+  complex: real a, real b {
+    .a = a; # Començar amb "." és igual a referir-se a la mateixa classe
+    .b = b;
+  }
+
+  GetA => real {
+    return a;
+  }
+
+  GetB => real {
+    return b;
+  }
+};
+
+
+
 ```
-
-## Dependències
-
-Les marcades amb un (*) necessiten ser instalades manualment per l'usuari final. (Podria fer un instalador potser).
-
-- [CMake](https://cmake.org/)* (En cas que es vulgui compilar)
-- [SWIG](https://www.swig.org/)
-- [GMP - The GNU Multiple Precision Arithmetic Library](https://gmplib.org/)
-- [MPFR](https://www.mpfr.org/)

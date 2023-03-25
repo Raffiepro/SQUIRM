@@ -13,6 +13,7 @@ Instruction::Instruction(InstructionID type, ParamType paramType){
     this->a = INT32_MIN;
     this->b = INT32_MIN;
     this->c = INT32_MIN;
+    this->d = INT32_MIN;
     this->temp = 0;
 }
 
@@ -25,6 +26,9 @@ void Instruction::SetB(int b){
 void Instruction::SetC(int c){
     this->c = c;
 }
+void Instruction::SetD(int d){
+    this->d = d;
+}
 
 int Instruction::GetA(){
     return this->a;
@@ -34,4 +38,7 @@ int Instruction::GetB(){
 }
 int Instruction::GetC(){
     return this->c;
+}
+int Instruction::GetD(){
+    return this->d;
 }

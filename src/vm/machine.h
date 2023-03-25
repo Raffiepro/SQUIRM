@@ -38,7 +38,7 @@ namespace That {
             std::string GetOperationName(OpType t);
 
             bool debug;
-
+            unsigned int offset;
             
             void RegDump(reg_t* regs, int n);
     };

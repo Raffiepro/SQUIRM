@@ -34,6 +34,7 @@ void VM::Run(MachineCode code){
     // return;
     reg_t* registers;
     registers = new reg_t[code.regCount];
+    offset = 0;
 
     for(int i = 0; i < code.instructions.size(); i++){
         try {
@@ -87,6 +88,7 @@ void VM::Process(Instruction ins, int* current, std::vector<Constant> *constants
     if(ins.GetC() != INT_MIN) Debug::Log(ins.GetC()); std::cout << " " << std::endl;
     }
     */
+    bool offseted = false;
     
     try {
         switch (tipus)
@@ -112,51 +114,14 @@ void VM::Process(Instruction ins, int* current, std::vector<Constant> *constants
         case InstructionID::CALL: // A: func, B --- C: params
             // A veure aqui caldria eh aconseguir la funció i constants de A i doncs eecutar recursivament i tal
             break;
-
-        case InstructionID::ADD:
-            Operate(OpType::OP_ADD, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;
-        case InstructionID::MUL:
-            Operate(OpType::OP_MUL, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;  
-        case InstructionID::SUB:
-            Operate(OpType::OP_SUBTRACT, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break; 
-        case InstructionID::DIV:
-            Operate(OpType::OP_DIV, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break; 
-        case InstructionID::MOD:
-            Operate(OpType::OP_MOD, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;
-        // Bool
-        case InstructionID::EQ:
-            Operate(OpType::OP_EQ, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;
-        case InstructionID::NEQ:
-            Operate(OpType::OP_NEQ, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;
-        case InstructionID::NOT:
-            Operate(OpType::OP_NOT, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;
-        case InstructionID::LT:
-            Operate(OpType::OP_LT, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;
-        case InstructionID::GT:
-            Operate(OpType::OP_GT, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;
-        case InstructionID::LEQ:
-            Operate(OpType::OP_LEQ, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;
-        case InstructionID::GEQ:
-            Operate(OpType::OP_GEQ, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
-            break;
-        case InstructionID::AND:
-            Operate(OpType::OP_AND, registers + ins.GetA(), registers + ins.GetB(), registers + ins.GetC());
+        case InstructionID::BINARY:
+            Operate((OpType) ins.GetA(), registers + ins.GetB(), registers + ins.GetC(), registers + ins.GetD());
             break;
         default: // Nose excepcion supongo??? XD
             throw(std::string("Undefined instruction error " + std::to_string(tipus)));
             break;
         }
+        if(!offseted && offset != 0) offset = 0;
     } catch(std::string r){
         throw(r);
     }
