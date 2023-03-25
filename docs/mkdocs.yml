@@ -1,0 +1,14 @@
+site_name: Wyrm Documentation
+
+theme: readthedocs
+
+nav:
+  - "Home page": 'index.md'
+  - "Wyrm":
+    - "Comments": "wyrm/comments.md"
+    - "Types": "wyrm/types.md"
+    - "Variables": "wyrm/variables.md"
+markdown_extensions:
+  - markdown.extensions.admonition
+extra_css:
+  - overrides/css/extra.css
