@@ -4,3 +4,4 @@ _build/
 .that/
 *.th
 *.exe
+site/

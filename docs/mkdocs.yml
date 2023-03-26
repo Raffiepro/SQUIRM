@@ -1,4 +1,4 @@
-site_name: Wyrm Documentation
+site_name: Wyrm Suite Documentation
 
 theme: readthedocs
 
@@ -8,6 +8,13 @@ nav:
     - "Comments": "wyrm/comments.md"
     - "Types": "wyrm/types.md"
     - "Variables": "wyrm/variables.md"
+    - "Functions": "wyrm/functions.md"
+  - "Phi":
+    - ""
+  - "Drac":
+    - ""
+  - "Zmey":
+    - ""
 markdown_extensions:
   - markdown.extensions.admonition
 extra_css:
