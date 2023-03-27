@@ -8,6 +8,8 @@ nav:
     - "Comments": "wyrm/comments.md"
     - "Types": "wyrm/types.md"
     - "Variables": "wyrm/variables.md"
+    - "Conditionals": "wyrm/conditionals.md"
+    - "Loops": "wyrm/loops.md"
     - "Functions": "wyrm/functions.md"
   - "Phi":
     - ""
