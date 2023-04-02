@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(That VERSION 0.1)
 
+SET(CMAKE_COLOR_MAKEFILE ON)
+
 set(CMAKE_CXX_LIBS "-O3") # Perque corri això
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
@@ -9,7 +11,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 
 find_package(Git)
 
-add_subdirectory(src)
+add_subdirectory(src/that)
+add_subdirectory(src/base)
 
 # DEBUG QUITAR SI NO SE QUIERE DEBUG
 # add_compile_definitions(DEBUG)
@@ -26,10 +29,13 @@ FILE(WRITE ${CMAKE_BINARY_DIR}/version.cmake
  )
  CONFIGURE_FILE(\${SRC} \${DST} @ONLY)
 ")
+
 ADD_CUSTOM_TARGET(
     version
     ${CMAKE_COMMAND} -D SRC=${CMAKE_BINARY_DIR}/version.h.in
                      -D DST=${CMAKE_BINARY_DIR}/version-g.h
                      -P ${CMAKE_BINARY_DIR}/version.cmake
 )
+
+
 ADD_DEPENDENCIES(That version)

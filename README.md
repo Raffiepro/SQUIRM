@@ -22,7 +22,6 @@
 Això encara està en obres. Acabaré el README quan tingui temps. Com m'agrada fer amb tots els projectes que mai acabo, aqui poso una llista amb coses per fer:
 
 ## Roadmap
-
 Aquesta llista pot canviar en un futur. La idea es com més o menys seràn les versions (m'estic flipant molt amb això)
 
 ### Fase de desenvolupament (pre v1.0)
@@ -71,3 +70,10 @@ Les marcades amb un (*) necessiten ser instalades manualment per l'usuari final.
 - [SWIG](https://www.swig.org/)
 - [GMP - The GNU Multiple Precision Arithmetic Library](https://gmplib.org/)
 - [MPFR](https://www.mpfr.org/)
+
+## Build
+- CMake
+- build-essential
+- mkdocs
+  - pip
+    - python

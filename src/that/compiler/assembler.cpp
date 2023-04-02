@@ -40,7 +40,10 @@ void Assembler::AssembleCode(Nodes::Node* node, std::vector<Instruction> *to, st
             if(n->IsExpression()) AssembleExpression(n, to);
             else if(t == Nodes::DEF_FUNCTION) AssembleDef(n, to);
             else if(t == Nodes::DECLARATION) declared->push_back(AssembleDeclaration(n, to));
-            else if(t == Nodes::ASSIGNATION) AssembleAssignation(n, to);
+            else if(t == Nodes::ASSIGNATION) {
+                int r = AssembleAssignation(n, to);
+                if(r != -1) declared->push_back(r);
+            }
             else if(t == Nodes::FUNCTION) AssembleFunction(n, to);
             // else if(t == Nodes::RETURN) AssembleReturn(n, to);
             else if(t == Nodes::IF) AssembleConditional(n, to);
@@ -351,7 +354,7 @@ int Assembler::AssembleDeclaration(Nodes::Node *dec, std::vector<Instruction> *t
     return d;
 }
 
-void Assembler::AssembleAssignation(Nodes::Node* assign, std::vector<Instruction> *to){
+int Assembler::AssembleAssignation(Nodes::Node* assign, std::vector<Instruction> *to){
     // Ok primer l'expressió
     int where;
     try {
@@ -359,16 +362,27 @@ void Assembler::AssembleAssignation(Nodes::Node* assign, std::vector<Instruction
     } catch(std::string ex){
         throw(ex);
     }
+
     
     int d = AssembleExpression(assign->children[0], to);
 
-    Instruction move(InstructionID::MOVE, ParamType::AB);
+    if(where == -1){
+        // Això és una declaració sense variable fixa
 
-    move.SetA(d);
-    move.SetB(where);
-    Free(d);
+        reserves[d].identifier = assign->GetDataString();
+        reserves[d].isIdentifier = true;
+        reserves[d].isFree = false;
+        return d;
+    } else {
+        Instruction move(InstructionID::MOVE, ParamType::AB);
 
-    PushInstruction(move, to);
+        move.SetA(d);
+        move.SetB(where);
+        Free(d);
+
+        PushInstruction(move, to);
+        return -1;
+    }
 
 }
 
@@ -607,7 +621,6 @@ int Assembler::GetRefId(std::string ref){
     for(int i = 0; i < reserves.size(); i++){
         if(reserves[i].isIdentifier && !reserves[i].isFree &&reserves[i].identifier == ref) return i;
     }
-    std::cout << ref << " no hauria"<<  std::endl;
     return -1;
 }
 

@@ -23,7 +23,7 @@ namespace That {
             int AssembleExpression(Nodes::Node* exp, std::vector<Instruction> *to);
             // int AssembleCall(Nodes::Node* call, std::vector<Instruction> *to);
             void AssembleDef(Nodes::Node* call, std::vector<Instruction> *to);
-            void AssembleAssignation(Nodes::Node* assign, std::vector<Instruction> *to);
+            int AssembleAssignation(Nodes::Node* assign, std::vector<Instruction> *to);
             void AssembleReturn(Nodes::Node* ret, std::vector<Instruction> *to);
             void AssembleConditional(Nodes::Node* cond, std::vector<Instruction> *to);
             void AssembleWhile(Nodes::Node* whil, std::vector<Instruction> *to);

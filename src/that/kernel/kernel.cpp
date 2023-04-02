@@ -18,6 +18,7 @@
 #include "../headers/debug.hpp"
 #include "../builder/reinterpreter.h"
 #include "../builder/builder.h"
+#include "../libraries/library.h"
 
 using namespace That;
 
@@ -116,6 +117,10 @@ void Kernel::DebugTokens(std::vector<Token> tokens){
 
 void Kernel::RunScript(std::string name, Flag::Flags flags){
     std::fstream file(name);
+    // Carreguem llibreries
+
+    std::cout << "Hola?" << std::endl;
+    Book book;
 
     std::string code = "", line;
     while(std::getline(file, line)){

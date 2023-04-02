@@ -112,7 +112,7 @@ void VM::Process(Instruction ins, int* current, std::vector<Constant> *constants
             registers[ins.GetB()] = registers[ins.GetA()];
             break;
         case InstructionID::CALL: // A: func, B --- C: params
-            // A veure aqui caldria eh aconseguir la funció i constants de A i doncs eecutar recursivament i tal
+            // A veure aqui caldria eh aconseguir la funció i constants de A i doncs executar recursivament i tal
             break;
         case InstructionID::BINARY:
             Operate((OpType) ins.GetA(), registers + ins.GetB(), registers + ins.GetC(), registers + ins.GetD());
