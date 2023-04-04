@@ -4,6 +4,7 @@
 #include <string>
 
 #include "lexer.h"
+#include "../../api/that.h"
 
 namespace That {
     namespace Nodes {
@@ -27,12 +28,7 @@ namespace That {
             EXP_BINARY,
             EXP_UNARY,
             EXP_CALL,
-            VAL_INT,
-            VAL_BIGINT,
-            VAL_REAL,
-            VAL_STRING,
-            VAL_BOOLEAN,
-            VAL_NULL
+            VALUE,
         };
 
         class Node {
@@ -59,6 +55,8 @@ namespace That {
 
                 bool IsValue();
                 bool IsExpression();
+
+                ThatAPI::Data GetData();
 
                 void SetDataString(std::string s);
                 std::string GetDataString();

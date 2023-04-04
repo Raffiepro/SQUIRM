@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../that.h"
+#include "../../api/that.h"
 #include <dlfcn.h>
 
 #include <filesystem>
@@ -8,9 +8,14 @@
 
 namespace That {
     class Book {
-        std::vector<ThatAPI::Library> libs;
-
+        // std::vector<ThatAPI::Library> libs;
         public:
+            std::vector<ThatAPI::Type> types;
+            std::vector<ThatAPI::Operation> operations;
+            
             Book();
+
+            void RegisterLibraries();
+            int GetTypeFromName(std::string name);
     };
 }

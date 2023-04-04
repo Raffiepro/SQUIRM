@@ -4,8 +4,11 @@
 #include <string>
 #include <vector>
 
+#include "../../api/that.h"
+
 namespace That {
 
+    /*
     enum Type {
         INT,
         NUMBER,
@@ -15,24 +18,7 @@ namespace That {
         FUNCTION,
         _NULL,
     };
-
-    enum OpType {
-        OP_ADD,
-        OP_SUBTRACT,
-        OP_MUL,
-        OP_DIV,
-        OP_MOD,
-        OP_LT,
-        OP_GT,
-        OP_LEQ,
-        OP_GEQ,
-        OP_NEQ,
-        OP_EQ,
-        OP_AND,
-        OP_OR,
-        OP_NOT
-    };
-    
+    */
 
     struct Reservation {
         std::string identifier;
@@ -115,21 +101,13 @@ namespace That {
             int a, b, c, d;
     };
 
-    struct reg_t {
-        int num;
-        union {
-            uint8_t *data;
-            Instruction *instructions;
-        };
-        Type type;
-    };
-
-    struct Constant {
-        reg_t data;  
+    struct Atom {
+        ThatAPI::Data *data;
+        int typeId;
     };
 
     struct MachineCode {
-        std::vector<Constant> constants;
+        std::vector<Atom> constants;
         std::vector<Instruction> instructions;
         int regCount;
     };

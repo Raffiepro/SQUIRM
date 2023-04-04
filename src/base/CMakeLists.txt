@@ -6,10 +6,10 @@ file(GLOB SOURCES
     *.cpp
 )
 
-#set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_LIBS "-O3 -fpic -shared") # Perque corri això
 
-add_library(base SHARED ${SOURCES})
+add_library(base SHARED ${SOURCES} ${PROJECT_SOURCE_DIR}/src/api/that.h)
 
 install( TARGETS base DESTINATION lib )

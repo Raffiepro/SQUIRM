@@ -50,7 +50,7 @@ namespace That {
             // std::vector<std::string> identifierStack;
             
             std::vector<Instruction> instructions;
-            std::vector<Constant> constants;
+            std::vector<Atom> constants;
 
             std::vector<Reservation> reserves;
 

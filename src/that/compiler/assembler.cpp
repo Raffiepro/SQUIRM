@@ -525,48 +525,16 @@ void Assembler::PushInstructions(std::vector<Instruction> *from, std::vector<Ins
     }
 }
 
-// TODO: Aixo es de prova
+// TODO: Aixo s'ha de fer
 int Assembler::GetConstId(Nodes::Node *val){
     // Vale aqui tenim tot el tema de constants i tal.
     // Hem de fer un reg_t per dir doncs quines constants són i tal
+    
+    /*
     Constant c;
     reg_t data;
     // Ara fem switch segons el que sigui val. Es un VAL_ALGO
-    switch(val->type){
-        case Nodes::VAL_INT:
-            // Aqui data és int
-            data.num = val->data.integer;
-            data.type = Type::INT;
-            break;
-        case Nodes::VAL_BIGINT:
-            data.num = val->nd;
-            data.data = (uint8_t *) val->data.bytes;
-
-            data.type = Type::NUMBER;
-            break;
-        case Nodes::VAL_BOOLEAN:
-            data.num = val->nd,
-            data.type = Type::BOOL;
-            break;
-        case Nodes::VAL_STRING:
-            data.num = val->nd;
-            data.data = (uint8_t *) val->data.bytes;
-
-            data.type = Type::STRING;
-            break;
-        case Nodes::VAL_REAL:
-            data.num = val->nd;
-            data.data = (uint8_t *) val->data.bytes;
-
-            data.type = Type::REAL;
-            break;
-        case Nodes::VAL_NULL:
-            data.num = val->nd;
-            data.type = Type::_NULL;
-            break;
-        default:
-            break;
-    }
+    data = val->GetData();
     c.data = data;
 
     // Val ja tenim la constant ara la busquem!!!
@@ -587,7 +555,6 @@ int Assembler::GetConstId(Nodes::Node *val){
                     }
                 }
                 
-
                 if(eq){
                     // Son iguals
                     // std::cout << "I (iguals): " << i << std::endl;
@@ -601,6 +568,8 @@ int Assembler::GetConstId(Nodes::Node *val){
     constants.push_back(c);
     // std::cout << "I: " << i << std::endl;
     return i;
+    */
+   return -1;
 }
 
 /*

@@ -1,5 +1,6 @@
 #include "nodes.h"
 #include "../headers/termcolor.hpp"
+#include "../../api/that.h"
 
 #include <iostream>
 #include <map>
@@ -49,12 +50,7 @@ void Nodes::Node::Debug(){
         {EXP_BINARY, "EXP_BINARY"},
         {EXP_UNARY, "EXP_UNARY"},
         {EXP_CALL, "EXP_CALL"},
-        {VAL_INT, "VAL_INT"},
-        {VAL_BIGINT, "VAL_NUMBER"},
-        {VAL_REAL, "VAL_REAL"},
-        {VAL_STRING, "VAL_STRING"},
-        {VAL_BOOLEAN, "VAL_BOOLEAN"},
-        {VAL_NULL, "VAL_NULL"}
+        {VALUE, "VALUE"}
     };
 
     std::cout << "[ ";
@@ -83,16 +79,15 @@ bool Nodes::Node::IsExpression(){
 }
 
 bool Nodes::Node::IsValue(){
-    return (this->type == Nodes::NodeType::VAL_BOOLEAN ||
-    this->type == Nodes::NodeType::VAL_INT ||
-    this->type == Nodes::NodeType::VAL_BIGINT ||
-    this->type == Nodes::NodeType::VAL_NULL ||
-    this->type == Nodes::NodeType::VAL_REAL ||
-    this->type == Nodes::NodeType::VAL_STRING);
+    return (this->type == Nodes::NodeType::VALUE);
 }
 
 std::string Nodes::Node::GetDataString(){
     std::string s = "";
     for(int i = 0; i < this->nd; i++) s += this->data.bytes[i];
     return s;
+}
+
+ThatAPI::Data Nodes::Node::GetData(){
+    return ThatAPI::Data(); // TODO
 }

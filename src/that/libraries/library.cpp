@@ -5,6 +5,10 @@
 #include <dlfcn.h>
 
 That::Book::Book(){
+
+}
+
+void That::Book::RegisterLibraries(){
     // Carreguem les llibreries
     std::filesystem::path p = std::filesystem::canonical("/proc/self/exe").parent_path() / std::filesystem::path("libs/");
 
@@ -20,7 +24,15 @@ That::Book::Book(){
 
         std::cout << "Carregada llibreria amb nom: " << l.GetLibraryName() << std::endl;
 
-        libs.push_back(l);
+        std::vector<ThatAPI::Type> types = l.GetTypeList();
+        for(int i = 0; i < types.size(); i++){
+            this->types.push_back(types[i]);
+        }
+
+        std::vector<ThatAPI::Operation> operations = l.GetOperationList();
+        for(int i = 0; i < operations.size(); i++){
+            this->operations.push_back(operations[i]);
+        }
     }
 
     /*
@@ -32,4 +44,11 @@ That::Book::Book(){
     auto func = ( void*(*)(void) ) dlsym(handle, "test_funcion");
     func();
     */
+}
+
+int That::Book::GetTypeFromName(std::string name){
+    for(int i = 0; i < types.size(); i++){
+        if(types[i].name == name) return i;
+    }
+    return -1; // Error
 }

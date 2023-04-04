@@ -10,11 +10,12 @@ namespace That {
 
     class Parser {
         public:
-            Parser(std::vector<That::Token> tokens);
+            Parser(Book *book, std::vector<That::Token> tokens);
 
             Nodes::Node* GetAST();
         private:
             std::vector<That::Token> tokens;
+            Book *book;
 
             std::vector<std::vector<That::Token::TokenType>> opOrder = {
                 {Token::S_MODULO},
@@ -23,10 +24,6 @@ namespace That {
                 {Token::C_GREATER_THAN, Token::C_LESSER_THAN, Token::S_NOT},
                 {Token::C_NOT_EQUAL, Token::C_EQUAL, Token::C_GREATER_EQUAL_THAN, Token::C_LESSER_EQUAL_THAN,
                 Token::S_AND, Token::S_OR}
-            };
-
-            std::vector<That::Token::TokenType> types = {
-                Token::T_INT, Token::T_BOOLEAN, Token::T_REAL, Token::T_STRING
             };
 
             std::vector<That::Token::TokenType> assignations = {
@@ -83,7 +80,6 @@ namespace That {
 
             bool IsOf( std::vector<Token::TokenType> list, Token::TokenType type);
             
-            Type GetTypeFromToken(int t);
-            OpType GetOpFromToken(Token::TokenType t);
+            ThatAPI::OpSymbol GetOpFromToken(Token::TokenType t);
     };
 }

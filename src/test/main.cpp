@@ -5,9 +5,12 @@ Aquesta llibreria serveix com a exemple per integrar en That
 */
 
 #include <iostream>
+#include "../api/that.h"
 
 extern "C" {
-    void test_funcion(){
-        std::cout << "Hola si això funciona" << std::endl;
+    ThatAPI::Library Load(){
+        ThatAPI::Library l("my_library", "My small library for Wyrm");
+
+        return l;
     }
 }

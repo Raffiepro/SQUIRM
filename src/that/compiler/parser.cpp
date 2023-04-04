@@ -8,8 +8,9 @@
 
 using namespace That;
 
-Parser::Parser(std::vector<Token> tokens){
+Parser::Parser(Book *book, std::vector<Token> tokens){
     this->tokens = tokens;
+    this->book = book;
 
     // Nodes::Node root(Nodes::NodeType::NODE);
     root = new Nodes::Node();
@@ -315,10 +316,10 @@ void Parser::GetCodeFunction(Nodes::Node **root, int from, int *end){
 
     if(Eat(from, Token::TokenType::ARROW, &from)){
         // Ara tenim return type! Anem a llegir-lo!
-        if(!IsOf(types, this->tokens[from].type)) {
+        if(this->tokens[from].type != Token::TYPE) {
             throw std::string("Syntax error: Expected return type");
         };
-        int typeId = GetTypeFromToken((int) this->tokens[from].type);
+        int typeId = book->GetTypeFromName(this->tokens[from].value);
         
         type->nd = typeId;
         from++;
@@ -365,7 +366,7 @@ void Parser::GetFunctionParameter(int from, int to, Nodes::Node **writeNode){
     // En principi to - from = 1
     Nodes::Node *param = new Nodes::Node(Nodes::NodeType::PARAMETER), *typeNode = new Nodes::Node(Nodes::NodeType::TYPE);
     param->SetDataString(this->tokens[to].value);
-    typeNode->nd = GetTypeFromToken((int) this->tokens[from].type);
+    typeNode->nd = book->GetTypeFromName(this->tokens[from].value);
     param->children.push_back(typeNode);
 
     *writeNode = param;
@@ -377,10 +378,10 @@ void Parser::GetFunctionParameter(int from, int to, Nodes::Node **writeNode){
 // i tipus és opcional en cas que l'expressió sigui <var> = exp
 void Parser::GetCodeLine(Nodes::Node *root, int from, int to){
 
-    if(IsOf(types, this->tokens[from].type)){
+    if(this->tokens[from].type == Token::TYPE){
         // Aqui podriem optimitzar memòria
         Nodes::Node *typeNode = new Nodes::Node(Nodes::NodeType::TYPE);
-        typeNode->nd = GetTypeFromToken((int) this->tokens[from].type); // Hauriem de tenir una taula amb tipus més endavant?
+        typeNode->nd = book->GetTypeFromName(this->tokens[from].value); // Hauriem de tenir una taula amb tipus més endavant?
 
         // Vale ok podem ara llegir el nom de la variable i tal
         from++;
@@ -618,9 +619,11 @@ void Parser::GetArguments(int from, int to, std::vector<Nodes::Node *>* parent){
     } while(from < to || tA < to);
 }
 
+// TODO: Que aixo funcioni amb les politiques dels tipus i tal
 void Parser::GetLiteral(int index, Nodes::Node** writeNode){
     Token token = this->tokens[index];
     Nodes::Node* lit = new Nodes::Node;
+    /*
     switch(token.type){
         case Token::L_INT:
             lit->type = Nodes::NodeType::VAL_INT;
@@ -676,6 +679,7 @@ void Parser::GetLiteral(int index, Nodes::Node** writeNode){
         default:
             break;
     }
+    */
 }
 
 void Parser::GetExpression(int from, int to, Nodes::Node** writeNode){
@@ -878,55 +882,36 @@ T_STRING,               // string       X
 T_BOOLEAN,              // bool         X
 */
 
-Type Parser::GetTypeFromToken(int t){
-    switch(t){
-        case 1:
-            return Type::INT;
-            break;
-        case 2:
-            return Type::REAL;
-            break;
-        case 3:
-            return Type::STRING;
-            break;
-        case 4:
-            return Type::BOOL;
-            break;
-        default:
-            return Type::_NULL;
-    }
-}
-
-OpType Parser::GetOpFromToken(Token::TokenType t){
+ThatAPI::OpSymbol Parser::GetOpFromToken(Token::TokenType t){
     switch(t){
         case Token::S_PLUS:
-            return OpType::OP_ADD;
+            return ThatAPI::OpSymbol::OP_ADD;
         case Token::S_SUBTRACT:
-            return OpType::OP_SUBTRACT;
+            return ThatAPI::OpSymbol::OP_SUBTRACT;
         case Token::S_MULTIPLY:
-            return OpType::OP_MUL;
+            return ThatAPI::OpSymbol::OP_MUL;
         case Token::S_DIVIDE:
-            return OpType::OP_DIV;
+            return ThatAPI::OpSymbol::OP_DIV;
         case Token::S_MODULO:
-            return OpType::OP_MOD;
+            return ThatAPI::OpSymbol::OP_MOD;
         case Token::S_NOT:
-            return OpType::OP_NOT;
+            return ThatAPI::OpSymbol::OP_NOT;
         case Token::S_OR:
-            return OpType::OP_OR;
+            return ThatAPI::OpSymbol::OP_OR;
         case Token::S_AND:
-            return OpType::OP_AND;
+            return ThatAPI::OpSymbol::OP_AND;
         case Token::C_EQUAL:
-            return OP_EQ;
+            return ThatAPI::OpSymbol::OP_EQ;
         case Token::C_NOT_EQUAL:
-            return OP_NEQ;
+            return ThatAPI::OpSymbol::OP_NEQ;
         case Token::C_GREATER_THAN:
-            return OP_GT;
+            return ThatAPI::OpSymbol::OP_GT;
         case Token::C_LESSER_THAN:
-            return OP_LT;
+            return ThatAPI::OpSymbol::OP_LT;
         case Token::C_LESSER_EQUAL_THAN:
-            return OP_LEQ;
+            return ThatAPI::OpSymbol::OP_LEQ;
         case Token::C_GREATER_EQUAL_THAN:
-            return OP_GEQ;
+            return ThatAPI::OpSymbol::OP_GEQ;
     }
 
     /* {Token::S_MODULO},

@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 
+#include "../libraries/library.h"
+
 namespace That {
 
     class Token {
@@ -11,10 +13,7 @@ namespace That {
             enum TokenType {
                 ERROR,
 
-                T_INT,                  // int          X
-                T_REAL,                 // real         X
-                T_STRING,               // string       X
-                T_BOOLEAN,              // bool         X
+                TYPE,
 
                 // OP BINARIES
                 S_PLUS,                 // +            X
@@ -225,7 +224,7 @@ namespace That {
         };
        
         public:
-            Lexer(std::string code);
+            Lexer(std::string code, Book *book);
             ~Lexer();
             std::vector<Token>* GetTokens();
             int GenerateTokens();
@@ -268,6 +267,7 @@ namespace That {
 
             std::string code;
             std::vector<Token> tokenList;
+            Book *book;
     };
 
 }

@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include "lexer.h"
+#include "../libraries/library.h"
 
 using namespace That;
 
@@ -34,8 +35,9 @@ bool Token::IsIdentifier(){
 
 // ---------------------------------------------------------------------------
 
-Lexer::Lexer(std::string code){
+Lexer::Lexer(std::string code, Book *book){
     this->code = code;
+    this->book = book;
 }
 
 Lexer::~Lexer(){
@@ -305,6 +307,8 @@ int Lexer::checkKeywords(int *next){
 
     int nextPos = pos;
     word = nextWord(pos, &nextPos);
+
+    int typeId;
     if(typeKeyword.count(word)){
         // Aixo es podria agilitzar amb un bonic map
         switch (typeKeyword[word]){
@@ -339,18 +343,6 @@ int Lexer::checkKeywords(int *next){
             case CONTINUE:
                 tokenList.push_back(Token(Token::K_CONTINUE, pos));
                 break;
-            case REAL:
-                tokenList.push_back(Token(Token::T_REAL, pos));
-                break;
-            case INT:
-                tokenList.push_back(Token(Token::T_INT, pos));
-                break;
-            case STRING:
-                tokenList.push_back(Token(Token::T_STRING, pos));
-                break;
-            case BOOLEAN:
-                tokenList.push_back(Token(Token::T_BOOLEAN, pos));
-                break;
             case TRUE:
                 tokenList.push_back(Token(Token::L_TRUE, pos));
                 break;
@@ -362,6 +354,13 @@ int Lexer::checkKeywords(int *next){
                 break;
             default:
                 /* Ha de ser una reference */
+                typeId = book->GetTypeFromName(word);
+                
+                if(typeId != -1){
+                    Token t = Token(Token::TYPE, pos);
+                    t.value = typeId;
+                    tokenList.push_back(t);
+                }
 
                 break;
         }

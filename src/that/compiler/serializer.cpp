@@ -4,8 +4,13 @@
 
 using namespace That;
 
-void Serializer::Serialize(MachineCode assembly){
 
+Serializer::Serializer(Book *book){
+    this->book = book;
+}
+
+void Serializer::Serialize(MachineCode assembly){
+    
 }
 
 void Serializer::SerializeToFile(std::string fileName, MachineCode assembly){
@@ -23,7 +28,7 @@ void Serializer::SerializeToFile(std::string fileName, MachineCode assembly){
     fwrite(&s, sizeof(unsigned int), 1, f);
 
     for(unsigned int i = 0; i < s; i++){
-        WriteConst(f, assembly.constants[i].data);
+        WriteConst(f, assembly.constants[i]);
     }
 
     // Val i ara doncs venen les instruccions
@@ -78,12 +83,14 @@ void Serializer::WriteInstruction(FILE *f, Instruction ins){
     fwrite(&c, sizeof(int16_t), 1, f);
 }
 
-void Serializer::WriteConst(FILE* f, reg_t reg){
+// TODO: Arreglar això
+void Serializer::WriteConst(FILE* f, Atom reg){
     unsigned int size;
 
-    unsigned int type = (unsigned int) reg.type;
+    unsigned int type = (unsigned int) reg.typeId;
     fwrite(&type, sizeof(unsigned int), 1, f);
 
+    /*
     switch(reg.type){
     case Type::INT:
         size = 1;
@@ -112,18 +119,19 @@ void Serializer::WriteConst(FILE* f, reg_t reg){
         size = 0;
         break;
     }
+    */
 }
 
-void Serializer::ReadConst(FILE *f, std::vector<Constant> *constants){
+// TODO: Acabar esto
+void Serializer::ReadConst(FILE *f, std::vector<Atom> *constants){
     // Llegim el tipus!
     unsigned int typeNum;
     fread(&typeNum, sizeof(unsigned int), 1, f);
 
-    Type type = (Type) typeNum;
-
-    Constant c;
+    Atom c;
+    c.typeId = typeNum;
     unsigned int size;
-
+    /*
     switch (type)
     {
     case Type::INT:
@@ -150,6 +158,7 @@ void Serializer::ReadConst(FILE *f, std::vector<Constant> *constants){
 
     c.data.type = type;
     constants->push_back(c);
+    */
 }
 
 bool Serializer::ReadInstruction(FILE *f, std::vector<Instruction> *instructions){

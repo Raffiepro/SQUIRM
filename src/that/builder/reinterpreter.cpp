@@ -5,6 +5,7 @@
 
 #include "../vm/data.h"
 #include "../compiler/nodes.h"
+#include "../../api/that.h"
 
 using namespace That;
 
@@ -130,46 +131,46 @@ std::string Reinterpreter::AssembleTempSkip(Nodes::Node *n){
 }
 
 std::string Reinterpreter::GetOperationGraphic(int op){
-    OpType oper = (OpType) op;
+    ThatAPI::OpSymbol oper = (ThatAPI::OpSymbol) op;
     switch (oper)
     {
-    case OpType::OP_ADD:
+    case ThatAPI::OpSymbol::OP_ADD:
         return "+";
         break;
-    case OpType::OP_SUBTRACT:
+    case ThatAPI::OpSymbol::OP_SUBTRACT:
         return "-";
         break;
-    case OpType::OP_MUL:
+    case ThatAPI::OpSymbol::OP_MUL:
         return "*";
         break;
-    case OpType::OP_DIV:
+    case ThatAPI::OpSymbol::OP_DIV:
         return "/";
         break;
-    case OpType::OP_MOD:
+    case ThatAPI::OpSymbol::OP_MOD:
         return "%";
         break;
-    case OpType::OP_AND:
+    case ThatAPI::OpSymbol::OP_AND:
         return "&&";
         break;
-    case OpType::OP_OR:
+    case ThatAPI::OpSymbol::OP_OR:
         return "||";
         break;
-    case OpType::OP_NOT:
+    case ThatAPI::OpSymbol::OP_NOT:
         return "!";
         break;
-    case OpType::OP_LT:
+    case ThatAPI::OpSymbol::OP_LT:
         return "<";
         break;
-    case OpType::OP_GT:
+    case ThatAPI::OpSymbol::OP_GT:
         return ">";
         break;
-    case OpType::OP_LEQ:
+    case ThatAPI::OpSymbol::OP_LEQ:
         return "<=";
         break;
-    case OpType::OP_GEQ:
+    case ThatAPI::OpSymbol::OP_GEQ:
         return ">=";
         break;
-    case OpType::OP_EQ:
+    case ThatAPI::OpSymbol::OP_EQ:
         return "==";
         break;
     default:
@@ -177,8 +178,10 @@ std::string Reinterpreter::GetOperationGraphic(int op){
     }
 }
 
+
 std::string Reinterpreter::GetType(Nodes::Node *type){
     std::string s;
+    /*
     switch((Type) type->nd){
         case Type::INT:
             return "int";
@@ -191,10 +194,15 @@ std::string Reinterpreter::GetType(Nodes::Node *type){
         default:
             return "auto";
     }
+    */
+    return "auto";
 }
+
+
 
 std::string Reinterpreter::GetLiteralValue(Nodes::Node *val){
     std::string s;
+    /*
     int i = 0;
     switch (val->type)
     {
@@ -220,4 +228,6 @@ std::string Reinterpreter::GetLiteralValue(Nodes::Node *val){
         break;
     }
     return std::to_string(val->data.integer); // TODO: Esto
+    */
+   return "";
 }

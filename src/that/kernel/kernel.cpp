@@ -34,10 +34,7 @@ void Kernel::DebugTokens(std::vector<Token> tokens){
     std::cout << termcolor::red << termcolor::bold << "Tokens:" << termcolor::reset << std::endl;
     std::map<That::Token::TokenType, std::string> mapo = {
         {Token::TokenType::ERROR, "ERROR"},
-        {Token::TokenType::T_INT, "T_INT"},                  // int          X
-        {Token::TokenType::T_REAL, "T_REAL"},                 // real         X
-        {Token::TokenType::T_STRING, "T_STRING"},               // string       X
-        {Token::TokenType::T_BOOLEAN, "T_BOOLEAN"},              // bool         X
+        {Token::TokenType::TYPE, "TYPE"},
 
         {Token::TokenType::S_PLUS, "S_PLUS"},                 // +            X
         {Token::TokenType::S_SUBTRACT, "S_SUBTRACT"},             // -            X
@@ -117,17 +114,16 @@ void Kernel::DebugTokens(std::vector<Token> tokens){
 
 void Kernel::RunScript(std::string name, Flag::Flags flags){
     std::fstream file(name);
-    // Carreguem llibreries
 
-    std::cout << "Hola?" << std::endl;
     Book book;
+    book.RegisterLibraries();
 
     std::string code = "", line;
     while(std::getline(file, line)){
         code += line + "\n";
     }
 
-    That::Lexer lexer(code);
+    That::Lexer lexer(code, &book);
 
     lexer.GenerateTokens();
     std::vector<Token> tokens = *(lexer.GetTokens());
@@ -136,7 +132,7 @@ void Kernel::RunScript(std::string name, Flag::Flags flags){
         DebugTokens(tokens);
     }
 
-    Parser parser(tokens);
+    Parser parser(&book, tokens);
 
     Nodes::Node *ast = parser.GetAST();
 
@@ -190,7 +186,7 @@ void Kernel::RunScript(std::string name, Flag::Flags flags){
             std::cout << std::endl;
         }
         //exit(1);
-        VM machine(flags);
+        VM machine(&book, flags);
         // TODO: Hacer esto
         if(CHECK_BIT(flags, 1)){
             std::cout << termcolor::red << termcolor::bold << "EXEC:" << termcolor::reset << std::endl;

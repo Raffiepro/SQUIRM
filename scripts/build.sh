@@ -8,8 +8,9 @@ cmake --build .
 cd ..
 cd build
 
-mkdir That
+mkdir That 2> /dev/null
 cp src/that/That That/
 
-mkdir That/libs
+mkdir That/libs 2> /dev/null
 cp src/base/libbase.so That/libs
+cp src/test/libtest.so That/libs
