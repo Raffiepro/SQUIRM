@@ -5,3 +5,4 @@ _build/
 *.th
 *.exe
 site/
+.cache/
