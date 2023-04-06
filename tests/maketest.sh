@@ -31,52 +31,52 @@ dotest() {
     printf "$Green%-12s$Reset" $name
 
     rm code 2> /dev/null
-    rm -R .that 2> /dev/null
+    rm -R .wyrm 2> /dev/null
 
     g++ code.cpp -lm -o code
     # echo "C++:"
     local T1=`(time ./code > cpp.out) 2>&1 | grep real | awk '{print $2}'`
-    ../That -c code.that
+    ../That -c code.wyrm
 
     # echo "That (C):"
-    local T2=`(time ./code > thatc.out) 2>&1 | grep real | awk '{print $2}'`
+    local T2=`(time ./code > wyrmc.out) 2>&1 | grep real | awk '{print $2}'`
     rm code
 
     # echo "Python:"
     local T3=`(time python3 code.py > py.out) 2>&1 | grep real | awk '{print $2}'`
 
-    local T4=`(time ../That code.that > thati.out) 2>&1 | grep real | awk '{print $2}'`
+    local T4=`(time ../That code.wyrm > wyrmi.out) 2>&1 | grep real | awk '{print $2}'`
     
     printf " | $Yellow%-8s$Reset | $Yellow%-8s$Reset | $Yellow%-8s$Reset | $Yellow%-8s$Reset\n" $T1 $T2 $T3 $T4
 
-    if ! cmp --silent -- "cpp.out" "thatc.out"; then
+    if ! cmp --silent -- "cpp.out" "wyrmc.out"; then
         echo -e -n "$Red"
         echo -e -n "Compiled differ$Reset\n"
         wrong=$(($wrong + 1))
         echo "Expected:"
         cat cpp.out
         echo "Got:"
-        cat thatc.out
+        cat wyrmc.out
     fi
 
-    if ! cmp --silent -- "cpp.out" "thati.out"; then
+    if ! cmp --silent -- "cpp.out" "wyrmi.out"; then
         echo -e -n "$Red"
         echo -e -n "Interpreted differ$Reset\n"
         wrong=$(($wrong + 1))
         echo "Expected:"
         cat cpp.out
         echo "Got:"
-        cat thati.out
+        cat wyrmi.out
     fi
 
     # Clean
     rm cpp.out 2> /dev/null
-    rm thatc.out 2> /dev/null
-    rm thati.out 2> /dev/null
+    rm wyrmc.out 2> /dev/null
+    rm wyrmi.out 2> /dev/null
     rm py.out 2> /dev/null
 
     rm code 2> /dev/null
-    rm -R .that 2> /dev/null
+    rm -R .wyrm 2> /dev/null
 
     cd ..
 }

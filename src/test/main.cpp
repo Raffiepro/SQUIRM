@@ -5,7 +5,7 @@ Aquesta llibreria serveix com a exemple per integrar en That
 */
 
 #include <iostream>
-#include "../api/that.h"
+#include "../api/wyrm.h"
 
 extern "C" {
     ThatAPI::Library Load(){

@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/build.dir/script.cpp.o -o build 

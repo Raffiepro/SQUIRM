@@ -1,3 +1,3 @@
 #!/bin/bash
 ./build.sh
-valgrind --leak-check=full ./That -a test.that
+valgrind --leak-check=full ./That -a test.wyrm

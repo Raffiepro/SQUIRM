@@ -11,7 +11,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 
 find_package(Git)
 
-add_subdirectory(src/that)
+add_subdirectory(src/wyrm)
 add_subdirectory(src/base)
 add_subdirectory(src/test)
 

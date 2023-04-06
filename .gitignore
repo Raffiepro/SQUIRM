@@ -1,7 +1,7 @@
 build/
 _build/
 .vscode/
-.that/
+.wyrm/
 *.th
 *.exe
 site/

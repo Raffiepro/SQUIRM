@@ -1,34 +1,26 @@
 #include <iostream>
 
-#include "../api/that.h"
+#include "../api/wyrm.h"
+
+#include "literals.h"
+#include "operations.h"
+#include "types.h"
 
 // Aqui posem algunes funcions
-void IntegerAdd(ThatAPI::Data *a, ThatAPI::Data *b, ThatAPI::Data *res){
-    std::cout << "Testeando" << std::endl;
+void IntegerAdd(ThatAPI::Data *a, ThatAPI::Data *b, ThatAPI::Data *res) {
+  std::cout << "Testeando" << std::endl;
 }
 
-extern "C" {
-    ThatAPI::Library Load(){
-        ThatAPI::Library l("base", "Base library of That");
+extern "C++" {
+ThatAPI::Library Load() {
+  ThatAPI::Library l("base", "Base library of Wyrm");
 
-        ThatAPI::Type integer;
-        integer.cname = "int";
-        integer.name = "int";
-        integer.displayName = "Integer";
-        integer.extended = false;
-        integer.neutral = ThatAPI::Data(0);
+  l.RegisterType(Base::GInt());
 
-        l.RegisterType(integer);
+  l.RegisterOperation(Base::GIntAdd());
 
-        ThatAPI::Operation integerAdd;
-        
-        integerAdd.operationType = ThatAPI::OpType::OP_BINARY;
-        integerAdd.simbol = ThatAPI::OpSymbol::OP_ADD;
-        integerAdd.elementType = l.GetType("Integer");
-        integerAdd.binaryOperation = IntegerAdd;
+  l.RegisterLiteral(Base::GIntLit());
 
-        l.RegisterOperation(integerAdd);
-
-        return l;
-    }
+  return l;
+}
 }

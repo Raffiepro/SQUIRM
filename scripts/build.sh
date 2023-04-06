@@ -9,7 +9,7 @@ cd ..
 cd build
 
 mkdir That 2> /dev/null
-cp src/that/That That/
+cp src/wyrm/That That/
 
 mkdir That/libs 2> /dev/null
 cp src/base/libbase.so That/libs
