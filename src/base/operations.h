@@ -4,8 +4,8 @@
 
 namespace Base {
 
-ThatAPI::Operation GIntAdd();
+WyrmAPI::Operation GIntAdd();
 
-void OIntAdd(ThatAPI::Data *a, ThatAPI::Data *b, ThatAPI::Data *res);
+void OIntAdd(WyrmAPI::Data *a, WyrmAPI::Data *b, WyrmAPI::Data *res);
 
 } // namespace Base

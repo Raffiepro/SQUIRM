@@ -4,6 +4,6 @@
 
 namespace Base {
 
-ThatAPI::Literal GIntLit();
+WyrmAPI::Literal GIntLit();
 
 }

@@ -8,11 +8,11 @@
 
 namespace That {
     class Book {
-        // std::vector<ThatAPI::Library> libs;
+        // std::vector<WyrmAPI::Library> libs;
         public:
-            std::vector<ThatAPI::Type> types;
-            std::vector<ThatAPI::Operation> operations;
-            std::vector<ThatAPI::Literal> literals;       
+            std::vector<WyrmAPI::Type> types;
+            std::vector<WyrmAPI::Operation> operations;
+            std::vector<WyrmAPI::Literal> literals;       
 
             Book();
 

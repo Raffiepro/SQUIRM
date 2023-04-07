@@ -1,52 +1,131 @@
 #include "lexer.h"
+#include "../../api/wyrm.h"
 #include "../libraries/library.h"
 #include <iostream>
 #include <string>
 
+#define COMMENT '#'
+#define SPACE ' '
+#define NEW_LINE '\n'
+#define TAB '\t'
+
 using namespace That;
 
-Token::Token(TokenType type, std::string value, int data) {
+Token::Token(WyrmAPI::TokenType type, std::string value, int data) {
   this->type = type;
   this->value = value;
   this->data = data;
 }
 
-Token::Token(TokenType type) { this->type = type; }
+Token::Token(WyrmAPI::TokenType type, std::string value) {
+  this->value = value;
+  this->type = type;
+}
 
-Token::Token() { this->type = TokenType::ERROR; }
+Token::Token(WyrmAPI::TokenType type) { this->type = type; }
+
+Token::Token(WyrmAPI::TokenType type, int data) {
+  this->type = type;
+  this->data = data;
+}
+
+Token::Token() { this->type = WyrmAPI::TokenType::ERROR; }
 
 Token::~Token() {}
 
-bool Token::IsLiteral() { return this->type >= LITERAL; }
+bool Token::IsLiteral() { return this->type == WyrmAPI::LITERAL; }
 
-bool Token::IsIdentifier() { return this->type == IDENTIFIER; }
-
-// ---------------------------------------------------------------------------
+bool Token::IsIdentifier() { return this->type == WyrmAPI::IDENTIFIER; }
 
 Lexer::Lexer(char *code, int codeSize, Book *book) {
   this->code = code;
   this->codeSize = codeSize;
   this->book = book;
+
+  maxSearchLength = 0;
+  std::vector<std::tuple<WyrmAPI::TokenType, std::string>> ort =
+      GetOrtography();
+  for (auto t : ort) {
+    int c = std::get<1>(t).size();
+    if (c > maxSearchLength)
+      maxSearchLength = c;
+  }
 }
 
 Lexer::~Lexer() {}
+
+std::vector<std::tuple<WyrmAPI::TokenType, std::string>>
+Lexer::GetOrtography() {
+  return std::vector<std::tuple<WyrmAPI::TokenType, std::string>>(
+      {{WyrmAPI::ADD, "+"},
+       {WyrmAPI::SUBTRACT, "-"},  // -
+       {WyrmAPI::MULTIPLY, "*"},  // *
+       {WyrmAPI::DIVIDE, "/"},    // /
+       {WyrmAPI::MODULO, "%"},    // %
+       {WyrmAPI::AMPERSAND, "&"}, // &
+       {WyrmAPI::PIPE, "|"},      // |
+       {WyrmAPI::QUESTION_MARK, "?"},
+       {WyrmAPI::INV_QUESTION_MARK, "¿"},
+       {WyrmAPI::UP_ARROW, "^"},
+       {WyrmAPI::AT_SYMBOL, "@"},
+       {WyrmAPI::LEFT_SHIFT, "<<"},
+       {WyrmAPI::RIGHT_SHIFT, ">>"},
+       {WyrmAPI::AND, "&&"},
+       {WyrmAPI::OR, "||"},
+       {WyrmAPI::NOT, "!"},
+       {WyrmAPI::EQUAL, "=="},
+       {WyrmAPI::MORE_EQUAL, "==="},
+       {WyrmAPI::NOT_EQUAL, "!="},
+       {WyrmAPI::NOT_MORE_EQUAL, "!=="},
+       {WyrmAPI::GREATER_THAN, ">"},
+       {WyrmAPI::LESSER_THAN, "<"},
+       {WyrmAPI::GREATER_EQUAL_THAN, ">="},
+       {WyrmAPI::LESSER_EQUAL_THAN, "<="},
+       {WyrmAPI::INCREMENT, "++"},
+       {WyrmAPI::DECREMENT, "--"},
+       {WyrmAPI::ASSIGMENT, "="},
+       {WyrmAPI::SEMICOLON, ";"},
+       {WyrmAPI::ASSIGMENT_ADD, "+="},
+       {WyrmAPI::ASSIGMENT_SUBTRACT, "-="},
+       {WyrmAPI::ASSIGMENT_MULTIPLY, "*="},
+       {WyrmAPI::ASSIGMENT_DIVIDE, "/="},
+       {WyrmAPI::ASSIGMENT_MODULO, "%="},
+       {WyrmAPI::COMMA, ","},                // ,
+       {WyrmAPI::POINT, "."},                // .
+       {WyrmAPI::PARENTHESIS_OPEN, "("},     // (
+       {WyrmAPI::PARENTHESIS_CLOSE, ")"},    // )
+       {WyrmAPI::SQUARE_BRACKET_OPEN, "["},  // [
+       {WyrmAPI::SQUARE_BRACKET_CLOSE, "]"}, // ]
+       {WyrmAPI::CURLY_BRACKET_OPEN, "{"},   // {
+       {WyrmAPI::CURLY_BRACKET_CLOSE, "}"},  // }
+       {WyrmAPI::DOLLAR, "$"},               // $
+       {WyrmAPI::TWO_POINTS, ":"},           // :
+       {WyrmAPI::ARROW_RIGHT, "->"},         // ->
+       {WyrmAPI::WIDE_ARROW_RIGHT, "=>"},
+       {WyrmAPI::ARROW_LEFT, "<-"},
+       {WyrmAPI::WIDE_ARROW_LEFT, "<="},
+       {WyrmAPI::LONG_ARROW_RIGHT, "-->"},
+       {WyrmAPI::LONG_ARROW_LEFT, "<--"},
+       {WyrmAPI::LONG_WIDE_ARROW_RIGHT, "==>"},
+       {WyrmAPI::LONG_WIDE_ARROW_LEFT, "<=="},
+       {WyrmAPI::QUOT, "'"},            // '
+       {WyrmAPI::DOUBLE_QUOT, "\""},    // "
+       {WyrmAPI::IF, "if"},             // if
+       {WyrmAPI::ELSE, "else"},         // else
+       {WyrmAPI::WHILE, "while"},       // while
+       {WyrmAPI::FOR, "for"},           // for
+       {WyrmAPI::RETURN, "return"},     // return
+       {WyrmAPI::BREAK, "break"},       // stop
+       {WyrmAPI::CONTINUE, "continue"}, // skip
+       {WyrmAPI::FUNCTION_DECLARATION, "func"},
+       {WyrmAPI::MODULE_DECLARATION, "use"},
+       {WyrmAPI::IMPORT_DECLARATION, "import"}});
+}
 
 /*
 De un codi doncs torna tokens!
 */
 std::vector<Token> *Lexer::GetTokens() { return &tokenList; }
-
-std::string Lexer::nextWord(int pos, int *nextPos) {
-  std::string nWord = "";
-  while (!isEnd(pos) && !isSymbol(code[pos])) {
-    nWord += code[pos];
-    pos++;
-    if (isEmpty(code[pos]) || isSymbol(code[pos]))
-      break;
-  }
-  *nextPos = pos;
-  return nWord;
-}
 
 int Lexer::isNumber(char c) {
   if (c >= 48 && c <= 57)
@@ -54,10 +133,7 @@ int Lexer::isNumber(char c) {
   return false;
 }
 
-int Lexer::isEmpty(char c) {
-  return c == typeSymbol[Symbols::SPACE] || c == typeSymbol[Symbols::NEWLINE] ||
-         c == typeSymbol[Symbols::TAB];
-}
+int Lexer::isEmpty(char c) { return c == SPACE || c == NEW_LINE || c == TAB; }
 
 void Lexer::flush(int *next) {
   int pos = *next;
@@ -66,61 +142,16 @@ void Lexer::flush(int *next) {
   *next = pos;
 }
 
-int Lexer::isSemicolon(char c) { return c == typeSymbol[Symbols::SEMICOLON]; }
+bool Lexer::NotSymbol(char c) {
+  return (c <= '9' && c >= '0') || (c >= 'A' && c <= 'Z') ||
+         (c >= 'a' && c <= 'z');
+}
 
-int Lexer::isSeparator(char c) { return 0; }
+int Lexer::isSentenceEnd(char c) { return c == ';' || c == NEW_LINE; }
 
-int Lexer::isComment(char c) { return c == typeSymbol[Symbols::COMMENT]; }
+int Lexer::isSeparator(char c) { return isSentenceEnd(c) || isEmpty(c); }
 
 int Lexer::isEnd(int pos) { return pos >= codeSize; }
-
-int Lexer::isPoint(char c) { return c == typeSymbol[Symbols::POINT]; }
-
-int Lexer::isQuot(char c) { return c == typeSymbol[Symbols::QUOT]; }
-
-int Lexer::isDoubleQuot(char c) {
-  return c == typeSymbol[Symbols::DOUBLE_QUOT];
-}
-
-int Lexer::isComma(char c) { return c == typeSymbol[Symbols::COMMA]; }
-
-int Lexer::isOParentesis(char c) {
-  return c == typeSymbol[Symbols::PARENTESIS_O];
-}
-
-int Lexer::isCParentesis(char c) {
-  return c == typeSymbol[Symbols::PARENTESIS_C];
-}
-
-int Lexer::isParentesis(char c) { return isOParentesis(c) || isCParentesis(c); }
-
-int Lexer::isOClaudator(char c) {
-  return c == typeSymbol[Symbols::CLAUDATOR_O];
-}
-
-int Lexer::isCClaudator(char c) {
-  return c == typeSymbol[Symbols::CLAUDATOR_C];
-}
-
-int Lexer::isClaudator(char c) { return isCClaudator(c) || isOClaudator(c); }
-
-int Lexer::isOKey(char c) { return c == typeSymbol[Symbols::KEY_O]; }
-
-int Lexer::isCKey(char c) { return c == typeSymbol[Symbols::KEY_C]; }
-
-int Lexer::isKey(char c) { return isOKey(c) || isCKey(c); }
-
-int Lexer::isTwoPoints(char c) { return c == typeSymbol[Symbols::TWO_POINTS]; }
-
-int Lexer::isSymbol(char c) {
-  for (auto &it : typeSymbol) {
-    if (it.second == c) {
-      return 1;
-    }
-  }
-
-  return 0;
-}
 
 void Lexer::addError() { tokenList.push_back(Token()); }
 
@@ -157,17 +188,16 @@ void Lexer::getString(int *next) {
 }
 */
 void Lexer::skipComment(int *next) {
-  if (isComment(code[*next])) {
+  if (code[*next] == COMMENT) {
     int pos = *next;
     if (!isEnd(pos + 1)) {
-      if (isComment(code[pos + 1])) {
+      if (code[pos + 1] == COMMENT) {
         pos += 2;
-        while (!(code[pos] == typeSymbol[Symbols::COMMENT] &&
-                 code[pos + 1] == typeSymbol[Symbols::COMMENT]) &&
-               !isEnd(pos + 1))
+        while (!(code[pos] == COMMENT && code[pos + 1] == COMMENT &&
+                 !isEnd(pos + 1)))
           pos++;
       } else
-        while (code[pos] != typeSymbol[Symbols::NEWLINE] && !isEnd(pos))
+        while (code[pos] != NEW_LINE && !isEnd(pos))
           pos++;
     }
 
@@ -175,211 +205,131 @@ void Lexer::skipComment(int *next) {
   }
 }
 
-int Lexer::checkLiterals(int *next) {
+int Lexer::CheckLiterals(int *next) {
   if (isEnd(*next))
     return 1;
-  // Aqui hauriem de ciclar per totes les declaracions de literals per les
-  // llibreries
 
   for (int i = 0; i < book->literals.size(); i++) {
-    ThatAPI::LexerInfo r = book->literals[i].policy(code + *next);
+    WyrmAPI::LexerInfo r = book->literals[i].policy(code + *next);
     std::string s;
     if (r.valid) {
       std::string value = r.value;
       *next += r.end;
-      tokenList.push_back(Token(Token::LITERAL, value, i));
-      break;
+      tokenList.push_back(Token(WyrmAPI::TokenType::LITERAL, value, i));
+      return 1;
     }
   }
 
-  char c = code[*next];
-  if (isNumber(c) || isPoint(c)) {
-    if (getNumber(next))
-      return 0;
-  } else if (isQuot(c) || isDoubleQuot(c)) {
-    getString(next);
-    return 0;
-  }
-
-  flush(next);
-  return 1;
+  return 0;
 }
 
-int Lexer::checkOperations(int *next) {
+int Lexer::CheckTypes(int *next) {
   if (isEnd(*next))
     return 1;
-  if (isEmpty(code[*next]))
-    flush(next);
 
-  int pos = *next;
-  int start = pos;
-  // Bueno pues a comprovar
-  std::string test(1, code[*next]);
-  int i;
-  for (i = 1; i < 2; i++) {
-    if (isEnd(pos + i)) {
+  int size = 0;
+  while (!isEnd(*next + size)) {
+    // Comprovem que la posició *next + size es lletra i tal
+    if (NotSymbol(code[*next + size]))
+      size++;
+    else
       break;
-    }
-    test += code[pos + i];
   }
 
-  bool done = false;
-  for (i--; i >= 0; i--) {
-    if (typeOperation.count(test)) {
-      tokenList.push_back(Token(typeOperation[test]));
-      pos += i + 1;
-      *next = pos;
-      done = true;
-      break;
-    }
-    test = test.substr(0, i);
-  }
+  for (int i = 0; i < book->types.size(); i++) {
+    std::string name = book->types[i].name;
+    bool valid = true;
 
-  flush(next);
-  if (done)
-    return 0;
-  return 1;
-}
-
-int Lexer::checkKeywords(int *next) {
-
-  if (isEnd(*next))
-    return 1;
-  if (isEmpty(code[*next]))
-    return 1;
-  if (isSymbol(code[*next]))
-    return 1;
-  if (isNumber(code[*next]))
-    return 1;
-
-  int pos = *next;
-  std::string word;
-
-  int nextPos = pos;
-  word = nextWord(pos, &nextPos);
-
-  int typeId;
-  if (typeKeyword.count(word)) {
-    // Aixo es podria agilitzar amb un bonic map
-    switch (typeKeyword[word]) {
-    case FUNC:
-      /* code */
-      tokenList.push_back(Token(Token::FUNCTION_DECLARATION, pos));
-      break;
-    case MODULE:
-      tokenList.push_back(Token(Token::MODULE_DECLARATION, pos));
-      break;
-    case IMPORT:
-      tokenList.push_back(Token(Token::IMPORT_DECLARATION, pos));
-      break;
-    case IF:
-      tokenList.push_back(Token(Token::K_IF, pos));
-      break;
-    case ELSE:
-      tokenList.push_back(Token(Token::K_ELSE, pos));
-      break;
-    case WHILE:
-      tokenList.push_back(Token(Token::K_WHILE, pos));
-      break;
-    case FOR:
-      tokenList.push_back(Token(Token::K_FOR, pos));
-      break;
-    case RETURN:
-      tokenList.push_back(Token(Token::K_RETURN, pos));
-      break;
-    case BREAK:
-      tokenList.push_back(Token(Token::K_BREAK, pos));
-      break;
-    case CONTINUE:
-      tokenList.push_back(Token(Token::K_CONTINUE, pos));
-      break;
-    case TRUE:
-      tokenList.push_back(Token(Token::L_TRUE, pos));
-      break;
-    case FALSE:
-      tokenList.push_back(Token(Token::L_FALSE, pos));
-      break;
-    case _NULL:
-      tokenList.push_back(Token(Token::L_NULL, pos));
-      break;
-    default:
-      /* Ha de ser una reference */
-      typeId = book->GetTypeFromName(word);
-
-      if (typeId != -1) {
-        Token t = Token(Token::TYPE, pos);
-        t.value = typeId;
-        tokenList.push_back(t);
+    for (int j = 0; j < name.size(); j++) {
+      if (isEnd(*next + j)) {
+        valid = false;
+        break;
       }
-
-      break;
+      if (name[j] != code[*next + j]) {
+        valid = false;
+        break;
+      }
     }
-  } else {
-    tokenList.push_back(Token(Token::IDENTIFIER, word, pos));
+
+    if (valid) {
+      tokenList.push_back(Token(WyrmAPI::TokenType::TYPE, i));
+      return 1;
+    }
   }
 
-  *next = nextPos;
-
-  flush(next);
   return 0;
 }
 
-int Lexer::checkSymbols(int *next) {
+int Lexer::CheckKeywords(int *next) {
+
   if (isEnd(*next))
-    return 0;
-  switch (code[*next]) {
-  case '.':
-    tokenList.push_back(Token(Token::POINT, *next));
-    break;
-  case ',':
-    tokenList.push_back(Token(Token::COMMA, *next));
-    break;
-  case ';':
-    tokenList.push_back(Token(Token::SEMICOLON, *next));
-    break;
-  case ':':
-    tokenList.push_back(Token(Token::TWO_POINTS, *next));
-    break;
-  case '(':
-    tokenList.push_back(Token(Token::PARENTHESIS_OPEN, *next));
-    break;
-  case ')':
-    tokenList.push_back(Token(Token::PARENTHESIS_CLOSE, *next));
-    break;
-  case '[':
-    tokenList.push_back(Token(Token::SQUARE_BRACKET_OPEN, *next));
-    break;
-  case ']':
-    tokenList.push_back(Token(Token::SQUARE_BRACKET_CLOSE, *next));
-    break;
-  case '{':
-    tokenList.push_back(Token(Token::CURLY_BRACKET_OPEN, *next));
-    break;
-  case '}':
-    tokenList.push_back(Token(Token::CURLY_BRACKET_CLOSE, *next));
-    break;
-  case '$':
-    tokenList.push_back(Token(Token::DOLLAR, *next));
-    break;
-  /* case '!':
-      tokenList.push_back(Token(Token::S_NOT));
-      break; */
-  default:
     return 1;
+  if (isEmpty(code[*next]))
+    return 1;
+
+  // Aqui cal comprovar que comença per una lletra i tal
+  int pos = *next;
+  std::string word = "";
+
+  auto ort = GetOrtography();
+
+  WyrmAPI::TokenType bestType = WyrmAPI::TokenType::ERROR;
+  int bestTypeLength = 0;
+
+  for (int i = 0; i < maxSearchLength; i++) {
+    word += code[pos + i];
+    for (auto pair : ort) {
+      if (std::get<1>(pair) == word) {
+        bestType = std::get<0>(pair);
+        bestTypeLength = i;
+      }
+    }
   }
-  *next += 1;
-  flush(next);
-  return 0;
+
+  if (bestType == WyrmAPI::TokenType::ERROR)
+    return 0;
+
+  // Si se puede pues añadimos el token
+  *next += bestTypeLength;
+  tokenList.push_back(Token(bestType));
+  return 1;
+}
+
+int Lexer::CheckIdentifiers(int *next) {
+  // Anem ciclant fins que ens trobem alguna cosa que no es lletra o numero
+  std::string identifier = "";
+  int pos = *next;
+  while (NotSymbol(code[pos])) {
+    identifier += code[pos];
+    pos++;
+  }
+
+  tokenList.push_back(Token(WyrmAPI::TokenType::IDENTIFIER, identifier));
+  *next += pos;
+
+  return 1;
 }
 
 int Lexer::GenerateTokens() {
-  for (int i = 0; i < code.size();) {
+  std::cout << codeSize << std::endl;
+  for (int i = 0; i < codeSize;) {
+    std::cout << i << std::endl;
     skipComment(&i);
 
-    if (checkLiterals(&i))
-      if (checkSymbols(&i))
-        if (checkOperations(&i))
-          checkKeywords(&i);
+    if (CheckKeywords(&i)) {
+      flush(&i);
+      continue;
+    }
+    if (CheckTypes(&i)) {
+      flush(&i);
+      continue;
+    }
+    if (CheckLiterals(&i)) {
+      flush(&i);
+      continue;
+    }
+    CheckIdentifiers(&i);
+    flush(&i);
 
     // std::cout << code[i] << std::endl;
   }

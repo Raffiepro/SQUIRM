@@ -4,11 +4,12 @@
 // Aquest header comunica entre el llenguatge i la api d'aquest
 
 #include <string>
+#include <tuple>
 #include <vector>
 
 #define N_SYMBOLS 14
 
-namespace ThatAPI {
+namespace WyrmAPI {
 
 struct Data {
   int num;
@@ -39,20 +40,115 @@ enum OpSymbol {
   OP_EQ,
   OP_AND,
   OP_OR,
-  OP_NOT
+  OP_NOT,
+  OP_AMP,
+  OP_PIPE,
+  OP_QM,
+  OP_IQM,
+  OP_UP,
+  OP_AT,
+  OP_LEFTSHIFT,
+  OP_RIGHTSHIFT,
+  OP_MEQ,
+  OP_MNEQ,
+  OP_DOLLAR,
+  OP_ARROW_RIGHT,
+  OP_ARROW_LEFT
+};
+
+enum TokenType {
+  ADD,               // +
+  SUBTRACT,          // -
+  MULTIPLY,          // *
+  DIVIDE,            // /
+  MODULO,            // %
+  AMPERSAND,         // &
+  PIPE,              // |
+  QUESTION_MARK,     // ?
+  INV_QUESTION_MARK, // ¿
+  UP_ARROW,          // ^
+  AT_SYMBOL,         // @
+  LEFT_SHIFT,        // <<
+  RIGHT_SHIFT,       // >>
+
+  AND, // &&
+  OR,  // ||
+  NOT, // !
+
+  EQUAL, // ==
+  MORE_EQUAL,
+  NOT_EQUAL,
+  NOT_MORE_EQUAL,     // !=
+  GREATER_THAN,       // >
+  LESSER_THAN,        // <
+  GREATER_EQUAL_THAN, // >=
+  LESSER_EQUAL_THAN,  // <=
+
+  INCREMENT, // ++
+  DECREMENT, // --
+
+  ASSIGMENT,          // =
+  ASSIGMENT_ADD,      // +=
+  ASSIGMENT_SUBTRACT, // -=
+  ASSIGMENT_MULTIPLY, // *=
+  ASSIGMENT_DIVIDE,   // /=
+  ASSIGMENT_MODULO,   // %=
+
+  COMMA,                // ,
+  POINT,                // .
+  PARENTHESIS_OPEN,     // (
+  PARENTHESIS_CLOSE,    // )
+  SQUARE_BRACKET_OPEN,  // [
+  SQUARE_BRACKET_CLOSE, // ]
+  CURLY_BRACKET_OPEN,   // {
+  CURLY_BRACKET_CLOSE,  // }
+  DOLLAR,               // $
+  SEMICOLON,            // ;
+
+  TWO_POINTS, // :
+  ARROW_RIGHT,
+  ARROW_LEFT,
+  LONG_ARROW_RIGHT,
+  LONG_ARROW_LEFT,
+  WIDE_ARROW_RIGHT,
+  WIDE_ARROW_LEFT,
+  LONG_WIDE_ARROW_RIGHT,
+  LONG_WIDE_ARROW_LEFT, // ->
+  QUOT,                 // '
+  DOUBLE_QUOT,          // "
+
+  IF,       // if
+  ELSE,     // else
+  WHILE,    // while
+  FOR,      // for
+  RETURN,   // return
+  BREAK,    // stop
+  CONTINUE, // skip
+
+  LITERAL, // 3
+  TYPE,    // int
+
+  FUNCTION_DECLARATION, // func
+  MODULE_DECLARATION,   // use
+  IMPORT_DECLARATION,   // import
+
+  IDENTIFIER, // algo
+  SEPARATOR,
+
+  ERROR
 };
 
 struct LexerInfo {
   std::string value;
-  int end;
   bool valid;
+  int end;
 
   LexerInfo() {}
 
-  LexerInfo(std::string value, int end, bool valid) {
+  LexerInfo(std::string value, bool valid, int end) {
     this->value = value;
-    this->end = end;
     this->valid = valid;
+    this->end = end;
   }
 
   LexerInfo(bool valid) { this->valid = valid; }
@@ -60,11 +156,11 @@ struct LexerInfo {
 
 struct Literal { // Qualsevol cosa que no comenci amb un punt
   std::string name;
-  LexerInfo (*policy)(char *, int); // El que retorna es el offset del literal,
-                                    // el punter es a on detectar
+  LexerInfo (*policy)(char *); // El que retorna es el offset del literal,
+                               // el punter es a on detectar
   // Ha de retornar -1 en cas que no s'hagi detectat res
 
-  Literal(std::string name, LexerInfo (*policy)(char *, int)) {
+  Literal(std::string name, LexerInfo (*policy)(char *)) {
     this->name = name;
     this->policy = policy;
   }
@@ -78,16 +174,24 @@ struct Type {
   Data neutral;
 };
 
-struct Operation {
+class Operation {
+public:
   OpSymbol simbol;
   OpType operationType;
   std::string elementType;
+
+  int GetOperationId() { return elementTypeId; }
+
+  void SetOperationId(int id) { elementTypeId = id; }
 
   union {
     void (*binaryOperation)(Data *a, Data *b, Data *res);
     void (*unaryOperation)(Data *a, Data *res);
     void (*conversion)(Data *res);
   };
+
+private:
+  int elementTypeId;
 };
 
 class Library {
@@ -128,4 +232,4 @@ public:
     return -1; // O throw
   }
 };
-} // namespace ThatAPI
+} // namespace WyrmAPI

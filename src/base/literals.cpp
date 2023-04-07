@@ -2,18 +2,17 @@
 
 #include "string.h"
 
-ThatAPI::Literal Base::GIntLit() {
+WyrmAPI::Literal Base::GIntLit() {
 
-  return ThatAPI::Literal("Integer",
-                          [](char *c, int size) -> ThatAPI::LexerInfo {
-                            std::string num = "";
+  return WyrmAPI::Literal("Integer", [](char *c) -> WyrmAPI::LexerInfo {
+    std::string num = "";
 
-                            int i = 0;
-                            while (c[i] >= '0' && c[i] <= '9') {
-                              num += c[i];
-                              i++;
-                            }
+    int i = 0;
+    while (c[i] >= '0' && c[i] <= '9') {
+      num += c[i];
+      i++;
+    }
 
-                            return ThatAPI::LexerInfo(num, i, true);
-                          });
+    return WyrmAPI::LexerInfo(num, i, true);
+  });
 }

@@ -2,84 +2,113 @@
 
 #include <vector>
 
+#include "../vm/data.h"
 #include "lexer.h"
 #include "nodes.h"
-#include "../vm/data.h"
 
 namespace That {
 
-    class Parser {
-        public:
-            Parser(Book *book, std::vector<That::Token> tokens);
+class Parser {
+public:
+  Parser(Book *book, std::vector<That::Token> tokens);
 
-            Nodes::Node* GetAST();
-        private:
-            std::vector<That::Token> tokens;
-            Book *book;
+  Nodes::Node *GetAST();
 
-            std::vector<std::vector<That::Token::TokenType>> opOrder = {
-                {Token::S_MODULO},
-                {Token::S_MULTIPLY, Token::S_DIVIDE},
-                {Token::S_PLUS, Token::S_SUBTRACT},
-                {Token::C_GREATER_THAN, Token::C_LESSER_THAN, Token::S_NOT},
-                {Token::C_NOT_EQUAL, Token::C_EQUAL, Token::C_GREATER_EQUAL_THAN, Token::C_LESSER_EQUAL_THAN,
-                Token::S_AND, Token::S_OR}
-            };
+private:
+  std::vector<That::Token> tokens;
+  Book *book;
 
-            std::vector<That::Token::TokenType> assignations = {
-                Token::A_ASSIGMENT,
-                Token::A_ADD,
-                Token::A_SUBTRACT,
-                Token::A_MULTIPLY,
-                Token::A_DIVIDE,
-                Token::A_MODULO
-            };
-            
-            std::map<That::Token::TokenType, That::Token::TokenType> opMap = {
-                {Token::A_ADD, Token::S_PLUS},
-                {Token::A_SUBTRACT, Token::S_SUBTRACT},
-                {Token::A_DIVIDE, Token::S_DIVIDE},
-                {Token::A_MULTIPLY, Token::S_MULTIPLY},
-                {Token::A_MODULO, Token::S_MODULO}                
-            };
+  std::vector<std::vector<WyrmAPI::TokenType>> opOrder = {
+      {WyrmAPI::TokenType::MODULO},
+      {WyrmAPI::TokenType::MULTIPLY, WyrmAPI::TokenType::DIVIDE},
+      {WyrmAPI::TokenType::ADD, WyrmAPI::TokenType::SUBTRACT},
+      {WyrmAPI::TokenType::GREATER_THAN, WyrmAPI::TokenType::LESSER_THAN,
+       WyrmAPI::TokenType::NOT},
+      {WyrmAPI::TokenType::NOT_EQUAL, WyrmAPI::TokenType::EQUAL,
+       WyrmAPI::TokenType::GREATER_EQUAL_THAN,
+       WyrmAPI::TokenType::LESSER_EQUAL_THAN, WyrmAPI::TokenType::AND,
+       WyrmAPI::TokenType::OR}};
 
-            Nodes::Node *root;
+  std::vector<WyrmAPI::TokenType> assignations = {
+      WyrmAPI::TokenType::ASSIGMENT,
+      WyrmAPI::TokenType::ASSIGMENT_ADD,
+      WyrmAPI::TokenType::ASSIGMENT_SUBTRACT,
+      WyrmAPI::TokenType::ASSIGMENT_MULTIPLY,
+      WyrmAPI::TokenType::ASSIGMENT_DIVIDE,
+      WyrmAPI::TokenType::ASSIGMENT_MODULO};
 
-            void GenerateCode(int from, int to, Nodes::Node *parent);
+  std::map<WyrmAPI::TokenType, WyrmAPI::TokenType> opMap = {
+      {WyrmAPI::TokenType::ADD, WyrmAPI::TokenType::ASSIGMENT_ADD},
+      {WyrmAPI::TokenType::SUBTRACT, WyrmAPI::TokenType::ASSIGMENT_SUBTRACT},
+      {WyrmAPI::TokenType::DIVIDE, WyrmAPI::TokenType::ASSIGMENT_DIVIDE},
+      {WyrmAPI::TokenType::MULTIPLY, WyrmAPI::TokenType::ASSIGMENT_MULTIPLY},
+      {WyrmAPI::TokenType::MODULO, WyrmAPI::TokenType::ASSIGMENT_MODULO}};
 
-            void ThrowError();
+  std::map<WyrmAPI::TokenType, WyrmAPI::OpSymbol> tokenToSymbol = {
+      {WyrmAPI::ADD, WyrmAPI::OpSymbol::OP_ADD},
+      {WyrmAPI::SUBTRACT, WyrmAPI::OpSymbol::OP_SUBTRACT}, // -
+      {WyrmAPI::MULTIPLY, WyrmAPI::OpSymbol::OP_MUL},      // *
+      {WyrmAPI::DIVIDE, WyrmAPI::OpSymbol::OP_DIV},        // /
+      {WyrmAPI::MODULO, WyrmAPI::OpSymbol::OP_MOD},        // %
+      {WyrmAPI::AMPERSAND, WyrmAPI::OpSymbol::OP_AMP},     // &
+      {WyrmAPI::PIPE, WyrmAPI::OpSymbol::OP_PIPE},         // |
+      {WyrmAPI::QUESTION_MARK, WyrmAPI::OpSymbol::OP_QM},
+      {WyrmAPI::INV_QUESTION_MARK, WyrmAPI::OpSymbol::OP_IQM},
+      {WyrmAPI::UP_ARROW, WyrmAPI::OpSymbol::OP_UP},
+      {WyrmAPI::AT_SYMBOL, WyrmAPI::OpSymbol::OP_AT},
+      {WyrmAPI::LEFT_SHIFT, WyrmAPI::OpSymbol::OP_LEFTSHIFT},
+      {WyrmAPI::RIGHT_SHIFT, WyrmAPI::OpSymbol::OP_RIGHTSHIFT},
+      {WyrmAPI::AND, WyrmAPI::OpSymbol::OP_AND},
+      {WyrmAPI::OR, WyrmAPI::OpSymbol::OP_OR},
+      {WyrmAPI::NOT, WyrmAPI::OpSymbol::OP_NOT},
+      {WyrmAPI::EQUAL, WyrmAPI::OpSymbol::OP_EQ},
+      {WyrmAPI::MORE_EQUAL, WyrmAPI::OpSymbol::OP_MEQ},
+      {WyrmAPI::NOT_EQUAL, WyrmAPI::OpSymbol::OP_NEQ},
+      {WyrmAPI::NOT_MORE_EQUAL, WyrmAPI::OpSymbol::OP_MNEQ},
+      {WyrmAPI::GREATER_THAN, WyrmAPI::OpSymbol::OP_GT},
+      {WyrmAPI::LESSER_THAN, WyrmAPI::OpSymbol::OP_LT},
+      {WyrmAPI::GREATER_EQUAL_THAN, WyrmAPI::OpSymbol::OP_GEQ},
+      {WyrmAPI::LESSER_EQUAL_THAN, WyrmAPI::OpSymbol::OP_LEQ},
+      {WyrmAPI::DOLLAR, WyrmAPI::OpSymbol::OP_DOLLAR},           // $
+      {WyrmAPI::ARROW_RIGHT, WyrmAPI::OpSymbol::OP_ARROW_RIGHT}, // ->
+      {WyrmAPI::ARROW_LEFT, WyrmAPI::OpSymbol::OP_ARROW_LEFT}};
 
-            void GetCodeFunction(Nodes::Node **root, int from, int *end);
-            void GetCodeLine(Nodes::Node *root, int from, int to);
-            void GetCodeConditional(Nodes::Node **root, int from, int *end);
-            void GetCodeWhile(Nodes::Node **root, int from, int *end);
-            void GetCodeReturn(Nodes::Node **root, int from, int *end);
-            void GetCodeFor(Nodes::Node **root, int from, int *end);
-            void GetCodeBreak(Nodes::Node **root, int from, int *end);
-            void GetCodeSkip(Nodes::Node **root, int from, int *end);
+  Nodes::Node *root;
 
-            bool Eat(int pos, Token::TokenType comp, int *from);
+  void GenerateCode(int from, int to, Nodes::Node *parent);
 
-            int GetNext(int from, int lim, Token::TokenType type);
-            int GetNextCodeSep(int from, int lim);
+  void ThrowError();
 
-            void GetArguments(int from, int to, std::vector<Nodes::Node *>* parent);
-            void GetFunctionParameters(int from, int to, std::vector<Nodes::Node *>* container);
-            void GetFunctionParameter(int from, int to, Nodes::Node** writeNode);
-            void GetAssignation(int from, int to, Nodes::Node** writeNode);
-            void GetAssignations(int from, int to, std::vector<Nodes::Node *> *container);
-            void GetConditional(int from, int* to, Nodes::Node* pushNode);
-            void GetCodeBlock(int from, int* to, Nodes::Node* parent);
-            
-            void GetExpression(int from, int to, Nodes::Node** writeNode);
-            void GetLiteral(int index, Nodes::Node** writeNode);
+  void GetCodeFunction(Nodes::Node **root, int from, int *end);
+  void GetCodeLine(Nodes::Node *root, int from, int to);
+  void GetCodeConditional(Nodes::Node **root, int from, int *end);
+  void GetCodeWhile(Nodes::Node **root, int from, int *end);
+  void GetCodeReturn(Nodes::Node **root, int from, int *end);
+  void GetCodeFor(Nodes::Node **root, int from, int *end);
+  void GetCodeBreak(Nodes::Node **root, int from, int *end);
+  void GetCodeSkip(Nodes::Node **root, int from, int *end);
 
-            bool CodeLoop(int *from, int *nF, Nodes::Node *parent);
+  bool Eat(int pos, WyrmAPI::TokenType comp, int *from);
 
-            bool ContainsAssignation(int from, int to);
+  int GetNext(int from, int lim, WyrmAPI::TokenType type);
+  int GetNextCodeSep(int from, int lim);
 
-            bool IsOf( std::vector<Token::TokenType> list, Token::TokenType type);
-            
-            ThatAPI::OpSymbol GetOpFromToken(Token::TokenType t);
-    };
-}
+  void GetArguments(int from, int to, std::vector<Nodes::Node *> *parent);
+  void GetFunctionParameters(int from, int to,
+                             std::vector<Nodes::Node *> *container);
+  void GetFunctionParameter(int from, int to, Nodes::Node **writeNode);
+  void GetAssignation(int from, int to, Nodes::Node **writeNode);
+  void GetAssignations(int from, int to, std::vector<Nodes::Node *> *container);
+  void GetConditional(int from, int *to, Nodes::Node *pushNode);
+  void GetCodeBlock(int from, int *to, Nodes::Node *parent);
+
+  void GetExpression(int from, int to, Nodes::Node **writeNode);
+  void GetLiteral(int index, Nodes::Node **writeNode);
+
+  bool CodeLoop(int *from, int *nF, Nodes::Node *parent);
+
+  bool ContainsAssignation(int from, int to);
+
+  bool IsOf(std::vector<WyrmAPI::TokenType> list, WyrmAPI::TokenType type);
+};
+} // namespace That

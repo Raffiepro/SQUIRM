@@ -131,46 +131,46 @@ std::string Reinterpreter::AssembleTempSkip(Nodes::Node *n){
 }
 
 std::string Reinterpreter::GetOperationGraphic(int op){
-    ThatAPI::OpSymbol oper = (ThatAPI::OpSymbol) op;
+    WyrmAPI::OpSymbol oper = (WyrmAPI::OpSymbol) op;
     switch (oper)
     {
-    case ThatAPI::OpSymbol::OP_ADD:
+    case WyrmAPI::OpSymbol::OP_ADD:
         return "+";
         break;
-    case ThatAPI::OpSymbol::OP_SUBTRACT:
+    case WyrmAPI::OpSymbol::OP_SUBTRACT:
         return "-";
         break;
-    case ThatAPI::OpSymbol::OP_MUL:
+    case WyrmAPI::OpSymbol::OP_MUL:
         return "*";
         break;
-    case ThatAPI::OpSymbol::OP_DIV:
+    case WyrmAPI::OpSymbol::OP_DIV:
         return "/";
         break;
-    case ThatAPI::OpSymbol::OP_MOD:
+    case WyrmAPI::OpSymbol::OP_MOD:
         return "%";
         break;
-    case ThatAPI::OpSymbol::OP_AND:
+    case WyrmAPI::OpSymbol::OP_AND:
         return "&&";
         break;
-    case ThatAPI::OpSymbol::OP_OR:
+    case WyrmAPI::OpSymbol::OP_OR:
         return "||";
         break;
-    case ThatAPI::OpSymbol::OP_NOT:
+    case WyrmAPI::OpSymbol::OP_NOT:
         return "!";
         break;
-    case ThatAPI::OpSymbol::OP_LT:
+    case WyrmAPI::OpSymbol::OP_LT:
         return "<";
         break;
-    case ThatAPI::OpSymbol::OP_GT:
+    case WyrmAPI::OpSymbol::OP_GT:
         return ">";
         break;
-    case ThatAPI::OpSymbol::OP_LEQ:
+    case WyrmAPI::OpSymbol::OP_LEQ:
         return "<=";
         break;
-    case ThatAPI::OpSymbol::OP_GEQ:
+    case WyrmAPI::OpSymbol::OP_GEQ:
         return ">=";
         break;
-    case ThatAPI::OpSymbol::OP_EQ:
+    case WyrmAPI::OpSymbol::OP_EQ:
         return "==";
         break;
     default:

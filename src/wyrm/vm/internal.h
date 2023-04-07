@@ -15,9 +15,9 @@ namespace That {
             READ,
         };
         
-        void LoadOperations(Book *book, std::unordered_map<unsigned int, ThatAPI::Operation> *ops);
+        void LoadOperations(Book *book, std::unordered_map<unsigned int, WyrmAPI::Operation> *ops);
 
-        unsigned int HashOperation(ThatAPI::Operation op);
-        unsigned int HashOperation(ThatAPI::OpType optype, ThatAPI::OpSymbol symbol, int type);
+        unsigned int HashOperation(WyrmAPI::Operation op);
+        unsigned int HashOperation(WyrmAPI::OpType optype, WyrmAPI::OpSymbol symbol, int type);
     }
 }

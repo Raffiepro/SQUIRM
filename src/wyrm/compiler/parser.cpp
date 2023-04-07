@@ -8,120 +8,121 @@
 
 using namespace That;
 
-Parser::Parser(Book *book, std::vector<Token> tokens){
-    this->tokens = tokens;
-    this->book = book;
+Parser::Parser(Book *book, std::vector<Token> tokens) {
+  this->tokens = tokens;
+  this->book = book;
 
-    // Nodes::Node root(Nodes::NodeType::NODE);
-    root = new Nodes::Node();
+  // Nodes::Node root(Nodes::NodeType::NODE);
+  root = new Nodes::Node();
+  try {
+    GenerateCode(0, this->tokens.size(), root);
+    // root->Debug();
+  } catch (std::string p) {
+    // Erroreado
+    Debug::LogError(p);
+  }
+}
+
+Nodes::Node *Parser::GetAST() { return root; }
+
+bool Parser::CodeLoop(int *from, int *nF, Nodes::Node *parent) {
+  // No hi ha manera de treure això ja que son funcions estàtiques
+  Nodes::Node *next;
+
+  try {
+    GetCodeFunction(&next, *from, nF);
+    if (*nF != *from) {
+      parent->children.push_back(next);
+      *from = *nF;
+      return true;
+    }
+
+    GetCodeConditional(&next, *from, nF);
+    if (*nF != *from) {
+      parent->children.push_back(next);
+      *from = *nF;
+      return true;
+    }
+
+    GetCodeWhile(&next, *from, nF);
+    if (*nF != *from) {
+      parent->children.push_back(next);
+      *from = *nF;
+      return true;
+    }
+
+    GetCodeReturn(&next, *from, nF);
+    if (*nF != *from) {
+      parent->children.push_back(next);
+      *from = *nF;
+      return true;
+    }
+
+    GetCodeFor(&next, *from, nF);
+    if (*nF != *from) {
+      parent->children.push_back(next);
+      *from = *nF;
+      return true;
+    }
+
+    GetCodeBreak(&next, *from, nF);
+    if (*nF != *from) {
+      parent->children.push_back(next);
+      *from = *nF;
+      return true;
+    }
+
+    GetCodeSkip(&next, *from, nF);
+    if (*nF != *from) {
+      parent->children.push_back(next);
+      *from = *nF;
+      return true;
+    }
+  } catch (std::string s) {
+    throw(s);
+  }
+  return false;
+}
+
+void Parser::GenerateCode(int from, int to, Nodes::Node *parent) {
+
+  int currentEnd;
+  while (from < to) {
+    // Val aqui anem a fer check de una funció!
+    int nF = from;
+
     try {
-        GenerateCode(0, this->tokens.size(), root);
-        // root->Debug();
-    } catch(std::string p){
-        // Erroreado
-        Debug::LogError(p);
+      if (CodeLoop(&from, &nF, parent))
+        continue;
+    } catch (std::string s) {
+      throw(s);
     }
 
+    currentEnd = GetNext(from, to, WyrmAPI::TokenType::SEPARATOR);
+    if (currentEnd == to &&
+        tokens[currentEnd].type != WyrmAPI::TokenType::SEPARATOR)
+      throw(std::string("Syntax error: Expected ';' at end of expression"));
+    GetCodeLine(parent, from, currentEnd);
+    from = currentEnd + 1;
+
+    // throw std::string("Miau por la ventana");
+  }
 }
 
+void Parser::GetCodeBreak(Nodes::Node **root, int from, int *end) {
+  if (!Eat(from, WyrmAPI::TokenType::BREAK, &from))
+    return;
 
-Nodes::Node* Parser::GetAST(){
-    return root;
+  Nodes::Node *brek = new Nodes::Node(Nodes::NodeType::BREAK);
+
+  *end = from + 1;
+  *root = brek;
 }
 
-bool Parser::CodeLoop(int *from, int *nF, Nodes::Node *parent){
-    // No hi ha manera de treure això ja que son funcions estàtiques
-    Nodes::Node *next;
+void Parser::GetCodeSkip(Nodes::Node **root, int from, int *end) {
+  if (!Eat(from, WyrmAPI::TokenType::CONTINUE, &from))
+    return;
 
-    try {
-        GetCodeFunction(&next, *from, nF);
-        if(*nF != *from) { parent->children.push_back(next); *from = *nF; return true; }
-
-        GetCodeConditional(&next, *from, nF);
-        if(*nF != *from) { parent->children.push_back(next); *from = *nF; return true; }
-
-        GetCodeWhile(&next, *from, nF);
-        if(*nF != *from) { parent->children.push_back(next); *from = *nF; return true; }
-
-        GetCodeReturn(&next, *from, nF);
-        if(*nF != *from) { parent->children.push_back(next); *from = *nF; return true; }
-    
-        GetCodeFor(&next, *from, nF);
-        if(*nF != *from) { parent->children.push_back(next); *from = *nF; return true; }
-
-        GetCodeBreak(&next, *from, nF);
-        if(*nF != *from) { parent->children.push_back(next); *from = *nF; return true; }
-
-        GetCodeSkip(&next, *from, nF);
-        if(*nF != *from) { parent->children.push_back(next); *from = *nF; return true; }
-    } catch(std::string s){
-        throw(s);
-    }
-    return false;
-}
-
-void Parser::GenerateCode(int from, int to, Nodes::Node *parent){
-    
-    int currentEnd;
-    while(from < to){
-        // Val aqui anem a fer check de una funció!
-        int nF = from;
-
-        try {
-            if(CodeLoop(&from, &nF, parent)) continue;
-        } catch(std::string s){
-            throw(s);
-        }
-
-        currentEnd = GetNext(from, to, Token::SEMICOLON);
-        if(currentEnd == to && tokens[currentEnd].type != Token::SEMICOLON) 
-            throw(std::string("Syntax error: Expected ';' at end of expression"));
-        GetCodeLine(parent, from, currentEnd);
-        from = currentEnd + 1;
-
-        // throw std::string("Miau por la ventana");
-    }
-}
-
-void Parser::GetCodeBreak(Nodes::Node **root, int from, int *end){
-    if(!Eat(from, Token::TokenType::K_BREAK, &from)) return;
-
-    Nodes::Node *brek = new Nodes::Node(Nodes::NodeType::BREAK);
-
-    *end = from + 1;
-    *root = brek;
-}
-
-void Parser::GetCodeSkip(Nodes::Node **root, int from, int *end){
-    if(!Eat(from, Token::TokenType::K_CONTINUE, &from)) return;
-
-    Nodes::Node *skip = new Nodes::Node(Nodes::NodeType::SKIP);
-
-    *end = from + 1;
-    *root = skip;
-}
-
-void Parser::GetCodeFor(Nodes::Node **root, int from, int *end){ 
-    if(!Eat(from, Token::TokenType::K_FOR, &from)) return;
-
-    int to = GetNextCodeSep(from, -1);
-    // Suport per : ? 
-
-    // Ara aconseguim les 3 expressions que hi ha a dins de to!
-
-    Nodes::Node *fo = new Nodes::Node(Nodes::NodeType::FOR);
-    Nodes::Node *exp, *code = new Nodes::Node();
-    // for <a> ; <b> ; <c> {}
-
-    int tempTo;
-    // a - Es una code line
-    tempTo = GetNext(from, -1, Token::TokenType::SEMICOLON);
-    exp = new Nodes::Node();
-    GetCodeLine(exp, from, tempTo);
-    fo->children.push_back(exp);
-    
-    from = tempTo + 1;
-    // b, una expression
   Nodes::Node *skip = new Nodes::Node(Nodes::NodeType::SKIP);
 
   *end = from + 1;
@@ -129,7 +130,7 @@ void Parser::GetCodeFor(Nodes::Node **root, int from, int *end){
 }
 
 void Parser::GetCodeFor(Nodes::Node **root, int from, int *end) {
-  if (!Eat(from, Token::TokenType::K_FOR, &from))
+  if (!Eat(from, WyrmAPI::TokenType::FOR, &from))
     return;
 
   int to = GetNextCodeSep(from, -1);
@@ -143,44 +144,25 @@ void Parser::GetCodeFor(Nodes::Node **root, int from, int *end) {
 
   int tempTo;
   // a - Es una code line
-  tempTo = GetNext(from, -1, Token::TokenType::SEMICOLON);
+  tempTo = GetNext(from, -1, WyrmAPI::TokenType::SEMICOLON);
   exp = new Nodes::Node();
   GetCodeLine(exp, from, tempTo);
   fo->children.push_back(exp);
 
   from = tempTo + 1;
   // b, una expression
-  tempTo = GetNext(from, -1, Token::TokenType::SEMICOLON);
+  Nodes::Node *skip = new Nodes::Node(Nodes::NodeType::SKIP);
 
-  try {
-    GetExpression(from, tempTo - 1, &exp);
-  } catch (std::string p) {
-    throw(p);
-  }
-
-  fo->children.push_back(exp);
-
-  // c, una altra codeline
-  from = tempTo + 1;
-
-  exp = new Nodes::Node();
-  GetCodeLine(exp, from, to);
-  fo->children.push_back(exp);
-
-  GetCodeBlock(to, &from, code);
-
-  fo->children.push_back(code);
-
-  *end = from;
-  *root = fo;
+  *end = from + 1;
+  *root = skip;
 }
 
 void Parser::GetCodeReturn(Nodes::Node **root, int from, int *end) {
-  if (!Eat(from, Token::TokenType::K_RETURN, &from))
+  if (!Eat(from, WyrmAPI::TokenType::RETURN, &from))
     return;
 
   Nodes::Node *ret = new Nodes::Node(Nodes::NodeType::RETURN), *exp;
-  int to = GetNext(from, -1, Token::TokenType::SEMICOLON);
+  int to = GetNext(from, -1, WyrmAPI::TokenType::SEMICOLON);
 
   // std::cout << from << " " << to << std::endl;
   if (from != to) {
@@ -206,15 +188,15 @@ if(<condició>){
 */
 
 void Parser::GetCodeConditional(Nodes::Node **root, int from, int *end) {
-  if (!Eat(from, Token::TokenType::K_IF, &from))
+  if (!Eat(from, WyrmAPI::TokenType::IF, &from))
     return;
 
   Nodes::Node *theIf = new Nodes::Node(Nodes::NodeType::IF);
 
   GetConditional(from, &from, theIf);
 
-  while (Eat(from, Token::TokenType::K_ELSE, &from)) {
-    if (Eat(from, Token::TokenType::K_IF, &from)) {
+  while (Eat(from, WyrmAPI::TokenType::ELSE, &from)) {
+    if (Eat(from, WyrmAPI::TokenType::IF, &from)) {
       GetConditional(from, &from, theIf);
       theIf->nd += 1;
       continue;
@@ -238,7 +220,7 @@ while expressió {
 }
 */
 void Parser::GetCodeWhile(Nodes::Node **root, int from, int *end) {
-  if (!Eat(from, Token::TokenType::K_WHILE, &from))
+  if (!Eat(from, WyrmAPI::TokenType::WHILE, &from))
     return;
 
   Nodes::Node *bucle = new Nodes::Node(Nodes::NodeType::WHILE);
@@ -305,13 +287,13 @@ func <def> => type { // Sense arguments retorna el tipus
 */
 void Parser::GetCodeFunction(Nodes::Node **root, int from, int *end) {
 
-  if (!Eat(from, Token::TokenType::FUNCTION_DECLARATION, &from))
+  if (!Eat(from, WyrmAPI::TokenType::FUNCTION_DECLARATION, &from))
     return;
 
   Nodes::Node *function = new Nodes::Node(Nodes::NodeType::FUNCTION);
 
   // A partir d'aqui són excepcions
-  if (!Eat(from, Token::TokenType::IDENTIFIER, &from))
+  if (!Eat(from, WyrmAPI::TokenType::IDENTIFIER, &from))
     throw(std::string("Syntax error: Expected function identifier"));
 
   from--;
@@ -324,7 +306,7 @@ void Parser::GetCodeFunction(Nodes::Node **root, int from, int *end) {
               *identifier = new Nodes::Node(Nodes::NodeType::REFERENCE);
 
   int to, to2;
-  if (Eat(from, Token::TokenType::TWO_POINTS, &from)) {
+  if (Eat(from, WyrmAPI::TokenType::TWO_POINTS, &from)) {
     // Tipus 1, 3 - Tenim paràmetres! Ara falta veure si hi ha return type
     // if(!Eat(this->tokens[from].type, Token::TokenType::PARENTHESIS_OPEN,
     // &from)) return; Val ara estem apuntant al primer parèntesis i ara
@@ -332,10 +314,10 @@ void Parser::GetCodeFunction(Nodes::Node **root, int from, int *end) {
 
     function->nd = parameters.size();
 
-    int finTo = GetNext(from, -1, Token::TokenType::CURLY_BRACKET_OPEN);
+    int finTo = GetNext(from, -1, WyrmAPI::TokenType::CURLY_BRACKET_OPEN);
 
-    to = GetNext(from, finTo, Token::TokenType::ARROW);
-    to2 = GetNext(from, -1, Token::TokenType::TWO_POINTS);
+    to = GetNext(from, finTo, WyrmAPI::TokenType::WIDE_ARROW_LEFT);
+    to2 = GetNext(from, -1, WyrmAPI::TokenType::TWO_POINTS);
     if (to2 < to)
       to = to2;
 
@@ -347,9 +329,9 @@ void Parser::GetCodeFunction(Nodes::Node **root, int from, int *end) {
     // from = to+1;
   }
 
-  if (Eat(from, Token::TokenType::ARROW, &from)) {
+  if (Eat(from, WyrmAPI::TokenType::WIDE_ARROW_LEFT, &from)) {
     // Ara tenim return type! Anem a llegir-lo!
-    if (this->tokens[from].type != Token::TYPE) {
+    if (this->tokens[from].type != WyrmAPI::TokenType::TYPE) {
       throw std::string("Syntax error: Expected return type");
     };
     int typeId = book->GetTypeFromName(this->tokens[from].value);
@@ -387,7 +369,7 @@ void Parser::GetFunctionParameters(int from, int to,
   int tA = from;
 
   do {
-    tA = GetNext(from, to + 1, Token::TokenType::COMMA);
+    tA = GetNext(from, to + 1, WyrmAPI::TokenType::COMMA);
 
     GetFunctionParameter(from, tA - 1, &next);
     container->push_back(next);
@@ -414,7 +396,7 @@ void Parser::GetFunctionParameter(int from, int to, Nodes::Node **writeNode) {
 // i tipus és opcional en cas que l'expressió sigui <var> = exp
 void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
 
-  if (this->tokens[from].type == Token::TYPE) {
+  if (this->tokens[from].type == WyrmAPI::TokenType::TYPE) {
     // Aqui podriem optimitzar memòria
     Nodes::Node *typeNode = new Nodes::Node(Nodes::NodeType::TYPE);
     typeNode->nd = book->GetTypeFromName(
@@ -442,7 +424,7 @@ void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
       // Posem les declaracions a dins!
       root->children.push_back(assignations[i]);
     }
-  } else if (this->tokens[from].type == Token::IDENTIFIER &&
+  } else if (this->tokens[from].type == WyrmAPI::TokenType::IDENTIFIER &&
              IsOf(assignations, this->tokens[from + 1].type)) {
     // Només assignations, res a veure
 
@@ -464,7 +446,7 @@ void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
 
     int tA, tB;
     do {
-      tA = GetNext(from, -1, Token::TokenType::COMMA);
+      tA = GetNext(from, -1, WyrmAPI::TokenType::COMMA);
 
       if (tA > to)
         tA = to;
@@ -530,7 +512,7 @@ void Parser::GetAssignation(int from, int to, Nodes::Node **writeNode) {
   Nodes::Node *assignation = new Nodes::Node(Nodes::ASSIGNATION);
   assignation->SetDataString(id);
 
-  if (this->tokens[from - 1].type != Token::TokenType::A_ASSIGMENT) {
+  if (this->tokens[from - 1].type != WyrmAPI::TokenType::ASSIGMENT) {
     // Es una operació cal operar ara mateix!!!
     Nodes::Node *op = new Nodes::Node(Nodes::NodeType::EXP_BINARY);
     Nodes::Node *ref = new Nodes::Node(Nodes::NodeType::REFERENCE);
@@ -574,7 +556,7 @@ void Parser::GetAssignations(int from, int to,
   int tA = from;
 
   do {
-    tA = GetNext(from, to + 1, Token::TokenType::COMMA);
+    tA = GetNext(from, to + 1, WyrmAPI::TokenType::COMMA);
     // Val llavors tenim que:
     // a = 3 + 5, b =
     // | f      | tA
@@ -590,8 +572,8 @@ void Parser::GetAssignations(int from, int to,
   } while (from < to || tA < to);
 }
 
-bool Parser::Eat(int pos, Token::TokenType comp, int *from) {
-  Token::TokenType tok = this->tokens[pos].type;
+bool Parser::Eat(int pos, WyrmAPI::TokenType comp, int *from) {
+  WyrmAPI::TokenType tok = this->tokens[pos].type;
   if (*from >= this->tokens.size())
     return false;
 
@@ -604,25 +586,25 @@ bool Parser::Eat(int pos, Token::TokenType comp, int *from) {
   }
 }
 
-int Parser::GetNext(int from, int lim, Token::TokenType type) {
+int Parser::GetNext(int from, int lim, WyrmAPI::TokenType type) {
   // Trobem el proxim type respectant la jerarquia de parèntesis
   int j = 0;
-  Token::TokenType t = this->tokens[from].type;
+  WyrmAPI::TokenType t = this->tokens[from].type;
   while (from < this->tokens.size() && t != type) {
     do {
-      if (t == Token::TokenType::PARENTHESIS_CLOSE)
+      if (t == WyrmAPI::TokenType::PARENTHESIS_CLOSE)
         j--;
-      if (t == Token::TokenType::PARENTHESIS_OPEN)
+      if (t == WyrmAPI::TokenType::PARENTHESIS_OPEN)
         j++;
 
-      if (t == Token::TokenType::CURLY_BRACKET_CLOSE)
+      if (t == WyrmAPI::TokenType::CURLY_BRACKET_CLOSE)
         j--;
-      if (t == Token::TokenType::CURLY_BRACKET_OPEN)
+      if (t == WyrmAPI::TokenType::CURLY_BRACKET_OPEN)
         j++;
 
-      if (t == Token::TokenType::SQUARE_BRACKET_CLOSE)
+      if (t == WyrmAPI::TokenType::SQUARE_BRACKET_CLOSE)
         j--;
-      if (t == Token::TokenType::SQUARE_BRACKET_OPEN)
+      if (t == WyrmAPI::TokenType::SQUARE_BRACKET_OPEN)
         j++;
 
       from++;
@@ -658,7 +640,7 @@ void Parser::GetArguments(int from, int to,
   int tA = from;
 
   do {
-    tA = GetNext(from, to + 1, Token::TokenType::COMMA);
+    tA = GetNext(from, to + 1, WyrmAPI::TokenType::COMMA);
     // Val llavors tenim que:
     // 3 + 5, f()
     // | f      | tA
@@ -705,14 +687,14 @@ void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
 
   // Comprovem primer ara si això es una call
   if (this->tokens[from].IsIdentifier()) {
-    if (this->tokens[from + 1].type == Token::PARENTHESIS_OPEN) {
-      int l = GetNext(from + 1, to, Token::PARENTHESIS_CLOSE);
+    if (this->tokens[from + 1].type == WyrmAPI::TokenType::PARENTHESIS_OPEN) {
+      int l = GetNext(from + 1, to, WyrmAPI::TokenType::PARENTHESIS_CLOSE);
 
       if (l == to) {
         std::string value = this->tokens[from].value;
 
         from++;
-        if (Eat(from, Token::PARENTHESIS_OPEN, &from)) {
+        if (Eat(from, WyrmAPI::TokenType::PARENTHESIS_OPEN, &from)) {
           Nodes::Node *call = new Nodes::Node(Nodes::NodeType::EXP_CALL);
           call->SetDataString(value);
 
@@ -726,10 +708,10 @@ void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
   }
 
   // Cas que els parèntesis siguin buits
-  if (this->tokens[from].type == Token::PARENTHESIS_OPEN) {
-    if (this->tokens[to].type == Token::PARENTHESIS_CLOSE) {
+  if (this->tokens[from].type == WyrmAPI::TokenType::PARENTHESIS_OPEN) {
+    if (this->tokens[to].type == WyrmAPI::TokenType::PARENTHESIS_CLOSE) {
       int f = from + 1;
-      f = GetNext(f, -1, Token::PARENTHESIS_CLOSE);
+      f = GetNext(f, -1, WyrmAPI::TokenType::PARENTHESIS_CLOSE);
       if (f == to) {
 
         try {
@@ -765,7 +747,7 @@ void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
         // Ei és una operació unaria!
         op = new Nodes::Node(Nodes::NodeType::EXP_UNARY);
 
-        op->nd = (int)GetOpFromToken(opOrder[i][k]);
+        op->nd = (int)tokenToSymbol[opOrder[i][k]];
 
         try {
           GetExpression(from + 1, to, &first);
@@ -783,7 +765,7 @@ void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
         op = new Nodes::Node(Nodes::NodeType::EXP_BINARY);
 
         // Aqui suposo que s'haura de passar per algun map
-        op->nd = (int)GetOpFromToken(opOrder[i][k]);
+        op->nd = (int)tokenToSymbol[opOrder[i][k]];
 
         try {
           GetExpression(from, n - 1, &first);
@@ -809,7 +791,8 @@ void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
   throw(std::string("Syntax error: Expected expression"));
 }
 
-bool Parser::IsOf(std::vector<Token::TokenType> list, Token::TokenType type) {
+bool Parser::IsOf(std::vector<WyrmAPI::TokenType> list,
+                  WyrmAPI::TokenType type) {
   for (int i = 0; i < list.size(); i++)
     if (type == list[i])
       return true;
@@ -820,8 +803,8 @@ int Parser::GetNextCodeSep(int from, int lim) {
   // Ok eh hem d'aconseguir el proxim '{', o ':', el que vingui abans:
   int c, p;
   try {
-    c = GetNext(from, lim, Token::TokenType::CURLY_BRACKET_OPEN);
-    p = GetNext(from, lim, Token::TokenType::TWO_POINTS);
+    c = GetNext(from, lim, WyrmAPI::TokenType::CURLY_BRACKET_OPEN);
+    p = GetNext(from, lim, WyrmAPI::TokenType::TWO_POINTS);
   } catch (std::string r) {
     throw(r);
   }
@@ -850,13 +833,13 @@ void Parser::GetCodeBlock(int from, int *to, Nodes::Node *parent) {
     throw(p);
   }
 
-  if (Eat(from, Token::TokenType::CURLY_BRACKET_OPEN, &from)) {
-    *to = GetNext(from, -1, Token::TokenType::CURLY_BRACKET_CLOSE);
+  if (Eat(from, WyrmAPI::TokenType::CURLY_BRACKET_OPEN, &from)) {
+    *to = GetNext(from, -1, WyrmAPI::TokenType::CURLY_BRACKET_CLOSE);
 
     GenerateCode(from, *to, parent);
     *to = *to + 1;
-  } else if (Eat(from, Token::TokenType::TWO_POINTS, &from)) {
-    *to = GetNext(from, -1, Token::TokenType::SEMICOLON);
+  } else if (Eat(from, WyrmAPI::TokenType::TWO_POINTS, &from)) {
+    *to = GetNext(from, -1, WyrmAPI::TokenType::SEMICOLON);
     GenerateCode(from, *to, parent);
     *to = *to + 1;
   } else {
@@ -868,57 +851,7 @@ void Parser::GetCodeBlock(int from, int *to, Nodes::Node *parent) {
 bool Parser::ContainsAssignation(int from, int to) {
   for (int i = from; i < to; i++) {
     if (IsOf(assignations, this->tokens[i].type))
-bool Parser::ContainsAssignation(int from, int to){
-    for(int i = from; i < to; i++){
-        if(IsOf(assignations, this->tokens[i].type)) return true;
-    }
-    return false;
-}
-
-/*
-T_INT,                  // int          X
-T_REAL,                 // real         X
-T_STRING,               // string       X
-T_BOOLEAN,              // bool         X
-*/
-
-ThatAPI::OpSymbol Parser::GetOpFromToken(Token::TokenType t){
-    switch(t){
-        case Token::S_PLUS:
-            return ThatAPI::OpSymbol::OP_ADD;
-        case Token::S_SUBTRACT:
-            return ThatAPI::OpSymbol::OP_SUBTRACT;
-        case Token::S_MULTIPLY:
-            return ThatAPI::OpSymbol::OP_MUL;
-        case Token::S_DIVIDE:
-            return ThatAPI::OpSymbol::OP_DIV;
-        case Token::S_MODULO:
-            return ThatAPI::OpSymbol::OP_MOD;
-        case Token::S_NOT:
-            return ThatAPI::OpSymbol::OP_NOT;
-        case Token::S_OR:
-            return ThatAPI::OpSymbol::OP_OR;
-        case Token::S_AND:
-            return ThatAPI::OpSymbol::OP_AND;
-        case Token::C_EQUAL:
-            return ThatAPI::OpSymbol::OP_EQ;
-        case Token::C_NOT_EQUAL:
-            return ThatAPI::OpSymbol::OP_NEQ;
-        case Token::C_GREATER_THAN:
-            return ThatAPI::OpSymbol::OP_GT;
-        case Token::C_LESSER_THAN:
-            return ThatAPI::OpSymbol::OP_LT;
-        case Token::C_LESSER_EQUAL_THAN:
-            return ThatAPI::OpSymbol::OP_LEQ;
-        case Token::C_GREATER_EQUAL_THAN:
-            return ThatAPI::OpSymbol::OP_GEQ;
-    }
-
-    /* {Token::S_MODULO},
-                {Token::S_MULTIPLY, Token::S_DIVIDE},
-                {Token::S_PLUS, Token::S_SUBTRACT},
-                {Token::C_GREATER_THAN, Token::C_LESSER_THAN, Token::S_NOT},
-                {Token::C_NOT_EQUAL, Token::C_EQUAL, Token::C_GREATER_EQUAL_THAN, Token::C_LESSER_EQUAL_THAN,
-                Token::S_AND, Token::S_OR}
-    */
+      return true;
+  }
+  return false;
 }

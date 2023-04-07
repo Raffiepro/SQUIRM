@@ -39,4 +39,4 @@ ADD_CUSTOM_TARGET(
 )
 
 
-ADD_DEPENDENCIES(That version)
+ADD_DEPENDENCIES(Wyrm version)

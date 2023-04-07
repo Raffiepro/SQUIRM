@@ -31,66 +31,55 @@ Kernel::~Kernel() { /* Destructor */
 void Kernel::DebugTokens(std::vector<Token> tokens) {
   std::cout << termcolor::red << termcolor::bold
             << "Tokens:" << termcolor::reset << std::endl;
-  std::map<That::Token::TokenType, std::string> mapo = {
-      {Token::TokenType::ERROR, "ERROR"},
-      {Token::TokenType::TYPE, "TYPE"},
-
-      {Token::TokenType::S_PLUS, "S_PLUS"},         // +            X
-      {Token::TokenType::S_SUBTRACT, "S_SUBTRACT"}, // -            X
-      {Token::TokenType::S_MULTIPLY, "S_MULTIPLY"}, // *            X
-      {Token::TokenType::S_DIVIDE, "S_DIVIDE"},     // /            X
-      {Token::TokenType::S_MODULO, "S_MODULO"},     // %            X
-
-      {Token::TokenType::S_INCREMENT, "S_INCREMENT"}, // ++           X
-      {Token::TokenType::S_DECREMENT, "S_DECREMENT"}, // --           X
-      {Token::TokenType::S_NOT, "S_NOT"},             // !
-
-      {Token::TokenType::S_AND, "S_AND"},
-      {Token::TokenType::S_OR, "S_OR"},
-
-      {Token::TokenType::C_EQUAL, "C_EQUAL"},               // ==           X
-      {Token::TokenType::C_GREATER_THAN, "C_GREATER_THAN"}, // >            X
-      {Token::TokenType::C_LESSER_THAN, "C_LESSER_THAN"},   // <            X
-      {Token::TokenType::C_GREATER_EQUAL_THAN, "C_GREATER_EQUAL_THAN"}, // >= X
-      {Token::TokenType::C_LESSER_EQUAL_THAN, "C_LESSER_EQUAL_THAN"},   // <= X
-      {Token::TokenType::C_NOT_EQUAL, "C_NOT_EQUAL"}, // !=           X
-
-      {Token::TokenType::A_ASSIGMENT, "A_ASSIGMENT"}, // =            X
-      {Token::TokenType::A_ADD, "A_ADD"},             // +=           X
-      {Token::TokenType::A_SUBTRACT, "A_SUBTRACT"},   // -=           X
-      {Token::TokenType::A_MULTIPLY, "A_MULTIPLY"},   // *=           X
-      {Token::TokenType::A_DIVIDE, "A_DIVIDE"},       // /=           X
-      {Token::TokenType::A_MODULO, "A_MODULO"},       // %=           X
-
-      {Token::TokenType::COMMA, "COMMA"},                         // ,        X
-      {Token::TokenType::POINT, "POINT"},                         // .        X
-      {Token::TokenType::PARENTHESIS_OPEN, "PARENTHESIS_OPEN"},   // (        X
-      {Token::TokenType::PARENTHESIS_CLOSE, "PARENTHESIS_CLOSE"}, // )        X
-      {Token::TokenType::SQUARE_BRACKET_OPEN, "SQUARE_BRACKET_OPEN"},   // [ X
-      {Token::TokenType::SQUARE_BRACKET_CLOSE, "SQUARE_BRACKET_CLOSE"}, // ] X
-      {Token::TokenType::CURLY_BRACKET_OPEN, "CURLY_OPEN"},   // {        X
-      {Token::TokenType::CURLY_BRACKET_CLOSE, "CURLY_CLOSE"}, // }        X
-      {Token::TokenType::DOLLAR, "DOLLAR"},                   // $
-      {Token::TokenType::SEMICOLON, "SEMICOLON"},             // ;        X
-      {Token::TokenType::TWO_POINTS, "TWO_POINTS"},           // :        X
-      {Token::TokenType::ARROW, "ARROW"},                     // ->
-
-      {Token::TokenType::K_IF, "IF"},             // if        X
-      {Token::TokenType::K_ELSE, "ELSE"},         // else      X
-      {Token::TokenType::K_WHILE, "WHILE"},       // while     X
-      {Token::TokenType::K_RETURN, "RETURN"},     // return    X
-      {Token::TokenType::K_BREAK, "BREAK"},       // stop      X
-      {Token::TokenType::K_CONTINUE, "CONTINUE"}, // skip      X
-      {Token::TokenType::K_FOR, "FOR"},
-
-      {Token::TokenType::LITERAL, "LITERAL"}, // 3        X
-
-      {Token::TokenType::FUNCTION_DECLARATION, "FUNC"}, // func     X
-      {Token::TokenType::MODULE_DECLARATION, "USE"},    // use      X
-      {Token::TokenType::IMPORT_DECLARATION, "IMPORT"}, // import   X
-
-      {Token::TokenType::IDENTIFIER, "ID"} //  algo     X
-
+  std::map<WyrmAPI::TokenType, std::string> mapo = {
+      {WyrmAPI::TokenType::ERROR, "ERROR"},
+      {WyrmAPI::TokenType::TYPE, "TYPE"},
+      {WyrmAPI::TokenType::ADD, "ADD"},             // +            X
+      {WyrmAPI::TokenType::SUBTRACT, "SUBTRACT"},   // -            X
+      {WyrmAPI::TokenType::MULTIPLY, "MULTIPLY"},   // *            X
+      {WyrmAPI::TokenType::DIVIDE, "DIVIDE"},       // /            X
+      {WyrmAPI::TokenType::MODULO, "MODULO"},       // %            X
+      {WyrmAPI::TokenType::INCREMENT, "INCREMENT"}, // ++           X
+      {WyrmAPI::TokenType::DECREMENT, "DECREMENT"}, // --           X
+      {WyrmAPI::TokenType::NOT, "NOT"},             // !
+      {WyrmAPI::TokenType::AND, "AND"},
+      {WyrmAPI::TokenType::OR, "OR"},
+      {WyrmAPI::TokenType::EQUAL, "EQUAL"},               // ==           X
+      {WyrmAPI::TokenType::GREATER_THAN, "GREATER_THAN"}, // >            X
+      {WyrmAPI::TokenType::LESSER_THAN, "LESSER_THAN"},   // <            X
+      {WyrmAPI::TokenType::GREATER_EQUAL_THAN, "GREATER_EQUAL_THAN"}, // >= X
+      {WyrmAPI::TokenType::LESSER_EQUAL_THAN, "LESSER_EQUAL_THAN"},   // <= X
+      {WyrmAPI::TokenType::NOT_EQUAL, "NOT_EQUAL"},         // !=           X
+      {WyrmAPI::TokenType::ASSIGMENT, "ASSIGMENT"},         // =            X
+      {WyrmAPI::TokenType::ASSIGMENT_ADD, "ASSIGMENT_ADD"}, // +=           X
+      {WyrmAPI::TokenType::ASSIGMENT_SUBTRACT, "ASSIGMENT_SUBTRACT"}, // -= X
+      {WyrmAPI::TokenType::ASSIGMENT_MULTIPLY, "ASSIGMENT_MULTIPLY"}, // *= X
+      {WyrmAPI::TokenType::ASSIGMENT_DIVIDE, "ASSIGMENT_DIVIDE"},     // /= X
+      {WyrmAPI::TokenType::ASSIGMENT_MODULO, "ASSIGMENT_MODULO"},     // %= X
+      {WyrmAPI::TokenType::COMMA, "COMMA"},                       // ,        X
+      {WyrmAPI::TokenType::POINT, "POINT"},                       // .        X
+      {WyrmAPI::TokenType::PARENTHESIS_OPEN, "PARENTHESIS_OPEN"}, // (        X
+      {WyrmAPI::TokenType::PARENTHESIS_CLOSE, "PARENTHESIS_CLOSE"},       // ) X
+      {WyrmAPI::TokenType::SQUARE_BRACKET_OPEN, "SQUARE_BRACKET_OPEN"},   // [ X
+      {WyrmAPI::TokenType::SQUARE_BRACKET_CLOSE, "SQUARE_BRACKET_CLOSE"}, // ] X
+      {WyrmAPI::TokenType::CURLY_BRACKET_OPEN, "CURLY_OPEN"},   // {        X
+      {WyrmAPI::TokenType::CURLY_BRACKET_CLOSE, "CURLY_CLOSE"}, // }        X
+      {WyrmAPI::TokenType::DOLLAR, "DOLLAR"},                   // $
+      {WyrmAPI::TokenType::SEMICOLON, "SEMICOLON"},             // ;        X
+      {WyrmAPI::TokenType::TWO_POINTS, "TWO_POINTS"},           // :        X
+      {WyrmAPI::TokenType::ARROW_RIGHT, "ARROW_RIGHT"},         // ->
+      {WyrmAPI::TokenType::IF, "IF"},                           // if        X
+      {WyrmAPI::TokenType::ELSE, "ELSE"},                       // else      X
+      {WyrmAPI::TokenType::WHILE, "WHILE"},                     // while     X
+      {WyrmAPI::TokenType::RETURN, "RETURN"},                   // return    X
+      {WyrmAPI::TokenType::BREAK, "BREAK"},                     // stop      X
+      {WyrmAPI::TokenType::CONTINUE, "CONTINUE"},               // skip      X
+      {WyrmAPI::TokenType::FOR, "FOR"},
+      {WyrmAPI::TokenType::LITERAL, "LITERAL"},           // 3        X
+      {WyrmAPI::TokenType::FUNCTION_DECLARATION, "FUNC"}, // func     X
+      {WyrmAPI::TokenType::MODULE_DECLARATION, "USE"},    // use      X
+      {WyrmAPI::TokenType::IMPORT_DECLARATION, "IMPORT"}, // import   X
+      {WyrmAPI::TokenType::IDENTIFIER, "ID"}              //  algo     X
   };
 
   for (int i = 0; i < tokens.size(); i++) {
@@ -117,6 +106,7 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
   while (std::getline(file, line)) {
     code += line + "\n";
   }
+  std::cout << "El codigo: " << code << std::endl;
 
   That::Lexer lexer(code.data(), code.size(), &book);
 

@@ -6,14 +6,9 @@
 #include "operations.h"
 #include "types.h"
 
-// Aqui posem algunes funcions
-void IntegerAdd(ThatAPI::Data *a, ThatAPI::Data *b, ThatAPI::Data *res) {
-  std::cout << "Testeando" << std::endl;
-}
-
-extern "C++" {
-ThatAPI::Library Load() {
-  ThatAPI::Library l("base", "Base library of Wyrm");
+extern "C" {
+WyrmAPI::Library Load() {
+  WyrmAPI::Library l("base", "Base library of Wyrm");
 
   l.RegisterType(Base::GInt());
 

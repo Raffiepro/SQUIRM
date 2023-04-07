@@ -1,3 +1,3 @@
 #!/bin/bash
 ./build.sh
-./That -d script.wyrm
+./Wyrm -d script.wyrm

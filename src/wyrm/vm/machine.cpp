@@ -80,7 +80,7 @@ void VM::Process(Instruction ins, int* current, std::vector<Atom> *constants, At
             // A veure aqui caldria eh aconseguir la funció i constants de A i doncs executar recursivament i tal
             break;
         case InstructionID::BINARY:
-            Operate((ThatAPI::OpSymbol) ins.GetA(), registers + ins.GetB(), registers + ins.GetC(), registers + ins.GetD());
+            Operate((WyrmAPI::OpSymbol) ins.GetA(), registers + ins.GetB(), registers + ins.GetC(), registers + ins.GetD());
             break;
         default: // Nose excepcion supongo??? XD
             throw(std::string("Undefined instruction error " + std::to_string(tipus)));
@@ -94,29 +94,29 @@ void VM::Process(Instruction ins, int* current, std::vector<Atom> *constants, At
     // if(debug) RegDump();
 }
 
-void VM::Operate(ThatAPI::OpSymbol op, Atom* a, Atom* b, Atom* c){
+void VM::Operate(WyrmAPI::OpSymbol op, Atom* a, Atom* b, Atom* c){
     //if(operations.count({op, a->type, b->type})){
-    operations[Internal::HashOperation(ThatAPI::OpType::OP_BINARY, op, a->typeId)].binaryOperation(a->data, b->data, c->data);
+    operations[Internal::HashOperation(WyrmAPI::OpType::OP_BINARY, op, a->typeId)].binaryOperation(a->data, b->data, c->data);
     return;
     // TODO: Suport per operadors?
 }
 
-std::string VM::GetOperationName(ThatAPI::OpSymbol t){
-    std::map<ThatAPI::OpSymbol, std::string> m = {
-        {ThatAPI::OP_ADD,       "+"},
-        {ThatAPI::OP_SUBTRACT,    "-"},
-        {ThatAPI::OP_MUL,      "*"},
-        {ThatAPI::OP_DIV,    "/"},
-        {ThatAPI::OP_MOD,      "%"},
-        {ThatAPI::OP_EQ,      "=="},
-        {ThatAPI::OP_NEQ,      "!="},
-        {ThatAPI::OP_NOT,      "!"},
-        {ThatAPI::OP_GT,      ">"},
-        {ThatAPI::OP_LT,      "<"},
-        {ThatAPI::OP_GEQ,      ">="},
-        {ThatAPI::OP_LEQ,      "<="},
-        {ThatAPI::OP_AND,      "&&"},
-        {ThatAPI::OP_OR,      "||"}
+std::string VM::GetOperationName(WyrmAPI::OpSymbol t){
+    std::map<WyrmAPI::OpSymbol, std::string> m = {
+        {WyrmAPI::OP_ADD,       "+"},
+        {WyrmAPI::OP_SUBTRACT,    "-"},
+        {WyrmAPI::OP_MUL,      "*"},
+        {WyrmAPI::OP_DIV,    "/"},
+        {WyrmAPI::OP_MOD,      "%"},
+        {WyrmAPI::OP_EQ,      "=="},
+        {WyrmAPI::OP_NEQ,      "!="},
+        {WyrmAPI::OP_NOT,      "!"},
+        {WyrmAPI::OP_GT,      ">"},
+        {WyrmAPI::OP_LT,      "<"},
+        {WyrmAPI::OP_GEQ,      ">="},
+        {WyrmAPI::OP_LEQ,      "<="},
+        {WyrmAPI::OP_AND,      "&&"},
+        {WyrmAPI::OP_OR,      "||"}
     };
     return m[t];
 }

@@ -5,5 +5,5 @@
 #include "operations.h"
 
 namespace Base {
-ThatAPI::Type GInt();
+WyrmAPI::Type GInt();
 }

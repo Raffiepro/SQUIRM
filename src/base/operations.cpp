@@ -2,17 +2,17 @@
 
 #include <iostream>
 
-ThatAPI::Operation Base::GIntAdd() {
-  ThatAPI::Operation integerAdd;
+WyrmAPI::Operation Base::GIntAdd() {
+  WyrmAPI::Operation integerAdd;
 
-  integerAdd.operationType = ThatAPI::OpType::OP_BINARY;
-  integerAdd.simbol = ThatAPI::OpSymbol::OP_ADD;
+  integerAdd.operationType = WyrmAPI::OpType::OP_BINARY;
+  integerAdd.simbol = WyrmAPI::OpSymbol::OP_ADD;
   integerAdd.elementType = "Integer";
   integerAdd.binaryOperation = Base::OIntAdd;
 
   return integerAdd;
 }
 
-void Base::OIntAdd(ThatAPI::Data *a, ThatAPI::Data *b, ThatAPI::Data *res) {
+void Base::OIntAdd(WyrmAPI::Data *a, WyrmAPI::Data *b, WyrmAPI::Data *res) {
   std::cout << "Testeando" << std::endl;
 }

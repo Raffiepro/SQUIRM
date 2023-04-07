@@ -88,6 +88,6 @@ std::string Nodes::Node::GetDataString(){
     return s;
 }
 
-ThatAPI::Data Nodes::Node::GetData(){
-    return ThatAPI::Data(); // TODO
+WyrmAPI::Data Nodes::Node::GetData(){
+    return WyrmAPI::Data(); // TODO
 }

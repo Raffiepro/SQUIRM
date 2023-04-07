@@ -26,14 +26,14 @@ namespace That {
             Book *book;
 
             // std::stack<int> offsets;
-            std::unordered_map<unsigned int, ThatAPI::Operation> operations;
+            std::unordered_map<unsigned int, WyrmAPI::Operation> operations;
 
             void MemDump(uint8_t *data, int size);
 
             void Process(Instruction ins, int* current, std::vector<Atom> *constants, Atom* registers);
-            void Operate(ThatAPI::OpSymbol op, Atom* a, Atom* b, Atom *c);
+            void Operate(WyrmAPI::OpSymbol op, Atom* a, Atom* b, Atom *c);
 
-            std::string GetOperationName(ThatAPI::OpSymbol t);
+            std::string GetOperationName(WyrmAPI::OpSymbol t);
 
             bool debug;
             unsigned int offset;

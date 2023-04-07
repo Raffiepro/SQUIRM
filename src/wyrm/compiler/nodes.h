@@ -56,7 +56,7 @@ namespace That {
                 bool IsValue();
                 bool IsExpression();
 
-                ThatAPI::Data GetData();
+                WyrmAPI::Data GetData();
 
                 void SetDataString(std::string s);
                 std::string GetDataString();

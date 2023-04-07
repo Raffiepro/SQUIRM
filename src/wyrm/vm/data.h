@@ -102,7 +102,7 @@ namespace That {
     };
 
     struct Atom {
-        ThatAPI::Data *data;
+        WyrmAPI::Data *data;
         int typeId;
     };
 

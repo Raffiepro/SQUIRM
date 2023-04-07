@@ -8,9 +8,9 @@ cmake --build .
 cd ..
 cd build
 
-mkdir That 2> /dev/null
-cp src/wyrm/That That/
+mkdir Wyrm 2> /dev/null
+cp src/wyrm/Wyrm Wyrm/
 
-mkdir That/libs 2> /dev/null
-cp src/base/libbase.so That/libs
-cp src/test/libtest.so That/libs
+mkdir Wyrm/libs 2> /dev/null
+cp src/base/libbase.so Wyrm/libs
+cp src/test/libtest.so Wyrm/libs
