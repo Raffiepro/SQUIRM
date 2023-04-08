@@ -2,8 +2,4 @@
 
 #include "_base.h"
 
-namespace Base {
-
-WyrmAPI::Literal GIntLit();
-
-}
+extern "C" namespace Base { WyrmAPI::LexerInfo *GIntLit(char *c); }

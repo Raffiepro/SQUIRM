@@ -3,6 +3,7 @@
 
 // Aquest header comunica entre el llenguatge i la api d'aquest
 
+#include <iostream>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -145,7 +146,7 @@ struct LexerInfo {
 
   LexerInfo() {}
 
-  LexerInfo(std::string value, bool valid, int end) {
+  LexerInfo(bool valid, std::string value, int end) {
     this->value = value;
     this->valid = valid;
     this->end = end;
@@ -156,20 +157,20 @@ struct LexerInfo {
 
 struct Literal { // Qualsevol cosa que no comenci amb un punt
   std::string name;
-  LexerInfo (*policy)(char *); // El que retorna es el offset del literal,
-                               // el punter es a on detectar
+  LexerInfo *(*policy)(char *); // El que retorna es el offset del literal,
+                                // el punter es a on detectar
   // Ha de retornar -1 en cas que no s'hagi detectat res
 
-  Literal(std::string name, LexerInfo (*policy)(char *)) {
+  Literal(std::string name, LexerInfo *(*policy)(char *)) {
     this->name = name;
     this->policy = policy;
   }
 };
 
 struct Type {
-  std::string name;
+  std::string wname;
   std::string cname;
-  std::string displayName;
+  std::string name;
   bool extended;
   Data neutral;
 };
@@ -194,6 +195,47 @@ private:
   int elementTypeId;
 };
 
+struct LoadInfo {
+  std::string name;
+  std::string desc;
+};
+
+class Library {
+public:
+  virtual LoadInfo PreLoad() { return LoadInfo(); }
+  virtual void Load(){};
+
+  void RegisterType(Type *t) { types.push_back(t); }
+
+  void RegisterOperation(OpSymbol symbol, OpType opType,
+                         std::string elementType, std::string opFunction) {
+    opPreloadData.push_back({symbol, opType, elementType, opFunction});
+  }
+
+  void RegisterLiteral(std::string name, std::string policyFunc) {
+    litPreloadData.push_back({name, policyFunc});
+  }
+
+  std::vector<Type *> _GetTypeList() { return types; }
+
+  std::vector<std::tuple<OpSymbol, OpType, std::string, std::string>>
+  _GetOperations() {
+    return opPreloadData;
+  }
+  std::vector<std::tuple<std::string, std::string>> _GetLiterals() {
+    return litPreloadData;
+  }
+
+private:
+  std::vector<Type *> types;
+  std::vector<Operation> operations;
+  std::vector<Literal> literals;
+
+  std::vector<std::tuple<OpSymbol, OpType, std::string, std::string>>
+      opPreloadData;
+  std::vector<std::tuple<std::string, std::string>> litPreloadData;
+};
+/*
 class Library {
   std::string libraryName;
   std::string libraryDesc;
@@ -203,10 +245,14 @@ class Library {
   std::vector<Literal> literals;
 
 public:
+  Library() {}
+
   Library(std::string name, std::string description) {
     this->libraryName = name;
     this->libraryDesc = description;
   }
+
+  virtual void Load();
 
   std::string GetLibraryName() { return libraryName; }
 
@@ -222,7 +268,10 @@ public:
 
   void RegisterOperation(Operation op) { operations.push_back(op); }
 
-  void RegisterLiteral(Literal lit) { literals.push_back(lit); }
+  void RegisterLiteral(Literal lit) {
+    literals.push_back(lit);
+    std::cout << "Literal registrado" << std::endl;
+  }
 
   int GetType(std::string typeName) {
     for (int i = 0; i < types.size(); i++) {
@@ -232,4 +281,5 @@ public:
     return -1; // O throw
   }
 };
+  */
 } // namespace WyrmAPI

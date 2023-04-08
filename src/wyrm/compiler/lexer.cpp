@@ -207,14 +207,14 @@ void Lexer::skipComment(int *next) {
 
 int Lexer::CheckLiterals(int *next) {
   if (isEnd(*next))
-    return 1;
+    return 0;
 
   for (int i = 0; i < book->literals.size(); i++) {
-    WyrmAPI::LexerInfo r = book->literals[i].policy(code + *next);
+    WyrmAPI::LexerInfo *r = book->literals[i].policy(code + *next);
     std::string s;
-    if (r.valid) {
-      std::string value = r.value;
-      *next += r.end;
+    if (r->valid) {
+      std::string value = r->value;
+      *next += r->end;
       tokenList.push_back(Token(WyrmAPI::TokenType::LITERAL, value, i));
       return 1;
     }
@@ -225,7 +225,7 @@ int Lexer::CheckLiterals(int *next) {
 
 int Lexer::CheckTypes(int *next) {
   if (isEnd(*next))
-    return 1;
+    return 0;
 
   int size = 0;
   while (!isEnd(*next + size)) {
@@ -237,7 +237,7 @@ int Lexer::CheckTypes(int *next) {
   }
 
   for (int i = 0; i < book->types.size(); i++) {
-    std::string name = book->types[i].name;
+    std::string name = book->types[i]->name;
     bool valid = true;
 
     for (int j = 0; j < name.size(); j++) {
@@ -253,6 +253,7 @@ int Lexer::CheckTypes(int *next) {
 
     if (valid) {
       tokenList.push_back(Token(WyrmAPI::TokenType::TYPE, i));
+      *next += name.size();
       return 1;
     }
   }
@@ -263,9 +264,9 @@ int Lexer::CheckTypes(int *next) {
 int Lexer::CheckKeywords(int *next) {
 
   if (isEnd(*next))
-    return 1;
+    return 0;
   if (isEmpty(code[*next]))
-    return 1;
+    return 0;
 
   // Aqui cal comprovar que comença per una lletra i tal
   int pos = *next;
@@ -281,12 +282,12 @@ int Lexer::CheckKeywords(int *next) {
     for (auto pair : ort) {
       if (std::get<1>(pair) == word) {
         bestType = std::get<0>(pair);
-        bestTypeLength = i;
+        bestTypeLength = i + 1;
       }
     }
   }
 
-  if (bestType == WyrmAPI::TokenType::ERROR)
+  if (bestType == WyrmAPI::TokenType::ERROR || bestTypeLength == 0)
     return 0;
 
   // Si se puede pues añadimos el token
@@ -299,22 +300,25 @@ int Lexer::CheckIdentifiers(int *next) {
   // Anem ciclant fins que ens trobem alguna cosa que no es lletra o numero
   std::string identifier = "";
   int pos = *next;
+  int i = 0;
   while (NotSymbol(code[pos])) {
     identifier += code[pos];
     pos++;
+    i++;
   }
 
   tokenList.push_back(Token(WyrmAPI::TokenType::IDENTIFIER, identifier));
-  *next += pos;
+  *next += i;
 
   return 1;
 }
 
 int Lexer::GenerateTokens() {
-  std::cout << codeSize << std::endl;
+  std::string t;
   for (int i = 0; i < codeSize;) {
-    std::cout << i << std::endl;
     skipComment(&i);
+    if (isEnd(i))
+      break;
 
     if (CheckKeywords(&i)) {
       flush(&i);

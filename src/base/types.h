@@ -4,6 +4,4 @@
 
 #include "operations.h"
 
-namespace Base {
-WyrmAPI::Type GInt();
-}
+extern "C" namespace Base { WyrmAPI::Type *GInt(); }

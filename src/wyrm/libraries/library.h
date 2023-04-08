@@ -7,16 +7,16 @@
 #include <vector>
 
 namespace That {
-    class Book {
-        // std::vector<WyrmAPI::Library> libs;
-        public:
-            std::vector<WyrmAPI::Type> types;
-            std::vector<WyrmAPI::Operation> operations;
-            std::vector<WyrmAPI::Literal> literals;       
+class Book {
+  // std::vector<WyrmAPI::Library> libs;
+public:
+  std::vector<WyrmAPI::Type *> types;
+  std::vector<WyrmAPI::Operation> operations;
+  std::vector<WyrmAPI::Literal> literals;
 
-            Book();
+  Book();
 
-            void RegisterLibraries();
-            int GetTypeFromName(std::string name);
-    };
-}
+  void RegisterLibraries();
+  int GetTypeFromName(std::string name);
+};
+} // namespace That

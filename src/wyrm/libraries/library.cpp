@@ -14,30 +14,80 @@ void That::Book::RegisterLibraries() {
 
   for (const auto &dirEntry :
        std::filesystem::recursive_directory_iterator(p)) {
+
     void *handle = dlopen(dirEntry.path().c_str(), RTLD_LAZY);
     if (!handle) {
-      std::cerr << "Error obrint llibreria" << std::endl;
+      std::cerr << "Error obrint llibreria " << dirEntry.path().c_str()
+                << std::endl;
       exit(1);
     }
 
-    auto loadLibFunc = (WyrmAPI::Library(*)(void))dlsym(handle, "Load");
-    WyrmAPI::Library l = loadLibFunc();
+    WyrmAPI::Library *(*CreateLibFunc)(void) =
+        (WyrmAPI::Library * (*)(void)) dlsym(handle, "CreateLib");
+    void (*DestroyLibFunc)(WyrmAPI::Library *) =
+        (void (*)(WyrmAPI::Library *))dlsym(handle, "DestroyLib");
 
-    std::cout << "Carregada llibreria amb nom: " << l.GetLibraryName()
-              << std::endl;
-    std::cout << l.GetLibraryDesc() << std::endl;
+    WyrmAPI::Library *l = CreateLibFunc();
 
-    std::vector<WyrmAPI::Type> types = l.GetTypeList();
+    WyrmAPI::LoadInfo info = l->PreLoad();
+
+    std::cout << info.name << " - " << info.desc << std::endl;
+
+    l->Load();
+
+    std::vector<WyrmAPI::Type *> types = l->_GetTypeList();
     for (int i = 0; i < types.size(); i++) {
       this->types.push_back(types[i]);
     }
 
-    std::vector<WyrmAPI::Operation> operations = l.GetOperationList();
-    for (int i = 0; i < operations.size(); i++) {
-      this->operations.push_back(operations[i]);
-      this->operations[this->operations.size() - 1].SetOperationId(
-          this->operations.size() - 1);
+    // Carreguem coses
+    std::vector<std::tuple<std::string, std::string>> literals =
+        l->_GetLiterals();
+
+    for (int i = 0; i < literals.size(); i++) {
+      WyrmAPI::Literal lit(std::get<0>(literals[i]),
+                           (WyrmAPI::LexerInfo * (*)(char *))
+                               dlsym(handle, std::get<1>(literals[i]).c_str()));
+
+      this->literals.push_back(lit);
+      std::cout << "Hola registrat literalment" << std::endl;
+
+      char c[] = "Hola que tal";
+      lit.policy(c);
     }
+
+    std::vector<std::tuple<WyrmAPI::OpSymbol, WyrmAPI::OpType, std::string,
+                           std::string>>
+        operations = l->_GetOperations();
+    for (int i = 0; i < operations.size(); i++) {
+      WyrmAPI::Operation op;
+      op.simbol = std::get<0>(operations[i]);
+      op.operationType = std::get<1>(operations[i]);
+      op.elementType = std::get<2>(operations[i]);
+
+      switch (op.operationType) {
+      case WyrmAPI::OpType::OP_BINARY:
+
+        op.binaryOperation =
+            (void (*)(WyrmAPI::Data *, WyrmAPI::Data *, WyrmAPI::Data *))dlsym(
+                handle, std::get<3>(operations[i]).c_str());
+        break;
+      case WyrmAPI::OpType::OP_UNARY:
+        op.unaryOperation = (void (*)(WyrmAPI::Data *, WyrmAPI::Data *))dlsym(
+            handle, std::get<3>(operations[i]).c_str());
+        break;
+      case WyrmAPI::OpType::OP_CONVERSION:
+        op.conversion = (void (*)(WyrmAPI::Data *))dlsym(
+            handle, std::get<3>(operations[i]).c_str());
+        break;
+      default:
+        break;
+      }
+
+      this->operations.push_back(op);
+    }
+
+    DestroyLibFunc(l);
   }
 
   /*
@@ -53,7 +103,7 @@ void That::Book::RegisterLibraries() {
 
 int That::Book::GetTypeFromName(std::string name) {
   for (int i = 0; i < types.size(); i++) {
-    if (types[i].name == name)
+    if (types[i]->name == name)
       return i;
   }
   return -1; // Error

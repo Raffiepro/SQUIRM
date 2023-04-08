@@ -13,4 +13,4 @@ cp src/wyrm/Wyrm Wyrm/
 
 mkdir Wyrm/libs 2> /dev/null
 cp src/base/libbase.so Wyrm/libs
-cp src/test/libtest.so Wyrm/libs
+# cp src/test/libtest.so Wyrm/libs
