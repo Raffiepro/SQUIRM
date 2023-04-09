@@ -15,11 +15,15 @@ struct Literal { // Qualsevol cosa que no comenci amb un punt
   // retornar -1 en cas que no s'hagi detectat res
   WyrmAPI::Data *(*toData)(std::string);
 
+  bool (*compLit)(WyrmAPI::Data *, WyrmAPI::Data *);
+
   Literal(std::string name, WyrmAPI::LexerInfo *(*policy)(char *, int),
-          WyrmAPI::Data *(*toData)(std::string r)) {
+          WyrmAPI::Data *(*toData)(std::string r),
+          bool (*compLit)(WyrmAPI::Data *, WyrmAPI::Data *)) {
     this->name = name;
     this->policy = policy;
     this->toData = toData;
+    this->compLit = compLit;
   }
 };
 

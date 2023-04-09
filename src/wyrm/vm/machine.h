@@ -30,8 +30,8 @@ private:
 
   void MemDump(uint8_t *data, int size);
 
-  void Process(Instruction ins, int *current, std::vector<Atom> *constants,
-               Atom *registers);
+  void Process(Instruction ins, int *current, std::vector<Atom *> *constants,
+               Atom **registers);
   void Operate(WyrmAPI::OpSymbol op, Atom *a, Atom *b, Atom *c);
 
   std::string GetOperationName(WyrmAPI::OpSymbol t);

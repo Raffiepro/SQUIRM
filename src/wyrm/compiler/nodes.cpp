@@ -63,8 +63,8 @@ void Nodes::Node::Debug() {
     }
   }
 
-  if (this->data != NULL)
-    std::cout << ", data: " << this->data->num;
+  if (this->atom != NULL)
+    std::cout << ", atom: " << this->atom->data->num;
   std::cout << " ]";
 }
 

@@ -7,6 +7,12 @@
 #include "lexer.h"
 
 namespace Wyrm {
+
+struct Atom {
+  WyrmAPI::Data *data;
+  int typeId;
+};
+
 namespace Nodes {
 enum NodeType {
   NODE,
@@ -47,7 +53,7 @@ public:
   bool allocable = false;
   int nd;
   std::string sData;
-  WyrmAPI::Data *data = NULL;
+  Atom *atom = NULL;
 
   void Debug();
 

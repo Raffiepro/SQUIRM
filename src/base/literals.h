@@ -8,4 +8,7 @@ extern "C" namespace Base {
 
   WyrmAPI::Data *DInt(std::string s);
   WyrmAPI::Data *DString(std::string s);
+
+  bool CInt(WyrmAPI::Data * a, WyrmAPI::Data * b);
+  bool CString(WyrmAPI::Data * a, WyrmAPI::Data * b);
 }

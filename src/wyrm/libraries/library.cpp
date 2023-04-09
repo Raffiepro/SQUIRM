@@ -41,15 +41,17 @@ void Wyrm::Book::RegisterLibraries() {
     }
 
     // Carreguem coses
-    std::vector<std::tuple<std::string, std::string, std::string>> literals =
-        l->_GetLiterals();
+    std::vector<std::tuple<std::string, std::string, std::string, std::string>>
+        literals = l->_GetLiterals();
 
     for (int i = 0; i < literals.size(); i++) {
       Literal lit(std::get<0>(literals[i]),
                   (WyrmAPI::LexerInfo * (*)(char *, int))
                       dlsym(handle, std::get<1>(literals[i]).c_str()),
                   (WyrmAPI::Data * (*)(std::string))
-                      dlsym(handle, std::get<2>(literals[i]).c_str()));
+                      dlsym(handle, std::get<2>(literals[i]).c_str()),
+                  (bool (*)(WyrmAPI::Data *, WyrmAPI::Data *))dlsym(
+                      handle, std::get<3>(literals[i]).c_str()));
 
       this->literals.push_back(lit);
 

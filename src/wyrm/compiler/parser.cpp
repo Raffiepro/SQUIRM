@@ -669,7 +669,12 @@ void Parser::GetLiteral(int index, Nodes::Node **writeNode) {
   Token token = this->tokens[index];
   Nodes::Node *lit = new Nodes::Node(Nodes::NodeType::VALUE);
 
-  lit->data = book->literals[token.data].toData(token.value);
+  Atom *atom = new Atom;
+
+  atom->data = book->literals[token.data].toData(token.value);
+  atom->typeId = token.data;
+
+  lit->atom = atom;
 
   *writeNode = lit;
 }

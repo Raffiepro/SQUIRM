@@ -6,16 +6,16 @@
     <p align="center">
     The most powerful programming language
     <br />
-    <a href="https://git.aranroig.com/BinarySandia04/that/issues">Informa d'un error</a>
+    <a href="https://git.aranroig.com/BinarySandia04/Wyrm/issues">Informa d'un error</a>
 </p>
 <p align="center">
-  <a href="https://git.aranroig.com/BinarySandia04/that">Pàgina web del repositori</a>
+  <a href="https://git.aranroig.com/BinarySandia04/Wyrm">Pàgina web del repositori</a>
 </p>
 <p align="center">
-<img src="https://img.shields.io/github/repo-size/BinarySandia04/That-mirror?color=%23fff&label=Repo%20size&style=for-the-badge">
-<img src="https://img.shields.io/github/languages/code-size/BinarySandia04/That-mirror?color=%23ccc&style=for-the-badge">
-<img src="https://img.shields.io/github/v/tag/BinarySandia04/That-mirror?color=%23a5dff2&label=Version&style=for-the-badge">
-<img src="https://img.shields.io/github/downloads/BinarySandia04/That-mirror/total?style=for-the-badge">
+<img src="https://img.shields.io/github/repo-size/BinarySandia04/Wyrm?color=%23fff&label=Repo%20size&style=for-the-badge">
+<img src="https://img.shields.io/github/languages/code-size/BinarySandia04/Wyrm?color=%23ccc&style=for-the-badge">
+<img src="https://img.shields.io/github/v/tag/BinarySandia04/Wyrm?color=%23a5dff2&label=Version&style=for-the-badge">
+<img src="https://img.shields.io/github/downloads/BinarySandia04/Wyrm/total?style=for-the-badge">
 </p>
 
 ## Coses

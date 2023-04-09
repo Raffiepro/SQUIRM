@@ -132,7 +132,7 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
     std::cout << std::endl;
   }
 
-  Assembler assembler(ast);
+  Assembler assembler(&book, ast);
 
   if (CHECK_BIT(flags, 2)) {
     // Compilem a C++

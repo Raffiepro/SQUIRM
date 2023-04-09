@@ -8,7 +8,7 @@
 #include <tuple>
 #include <vector>
 
-#define N_SYMBOLS 14
+#define N_SYMBOLS 27
 
 namespace WyrmAPI {
 
@@ -184,8 +184,8 @@ public:
   }
 
   void RegisterLiteral(std::string name, std::string policyFunc,
-                       std::string dataFunc) {
-    litPreloadData.push_back({name, policyFunc, dataFunc});
+                       std::string dataFunc, std::string compFunc) {
+    litPreloadData.push_back({name, policyFunc, dataFunc, compFunc});
   }
 
   std::vector<Type *> _GetTypeList() { return types; }
@@ -195,7 +195,7 @@ public:
   _GetOperations() {
     return opPreloadData;
   }
-  std::vector<std::tuple<std::string, std::string, std::string>>
+  std::vector<std::tuple<std::string, std::string, std::string, std::string>>
   _GetLiterals() {
     return litPreloadData;
   }
@@ -206,6 +206,7 @@ private:
   std::vector<
       std::tuple<OpSymbol, OpType, std::string, std::string, std::string>>
       opPreloadData;
-  std::vector<std::tuple<std::string, std::string, std::string>> litPreloadData;
+  std::vector<std::tuple<std::string, std::string, std::string, std::string>>
+      litPreloadData;
 };
 } // namespace WyrmAPI

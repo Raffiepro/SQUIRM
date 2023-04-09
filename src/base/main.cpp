@@ -12,7 +12,7 @@ WyrmAPI::LoadInfo Library::PreLoad() {
   WyrmAPI::LoadInfo info;
   info.name = "Base";
   info.desc = "Base library for Wyrm";
-
+  // Aquí s'haurien de posar dependencies suposo
   return info;
 }
 
@@ -33,26 +33,12 @@ void Library::Load() {
   // identificar-lo res més), després el nom de la politica per identificar el
   // literal a partir del codi, i finalment un nom per passar aquesta part de
   // codi a un struct propi, que després es torna a reinterpretar al fer les
-  // operacions
-  RegisterLiteral("Integer", "PInt", "DInt");
-  RegisterLiteral("String", "PString", "DString");
+  // operacions.
+  //
+  // Tots els literals estàn obligats a tenir una operació de comparació
+  RegisterLiteral("Integer", "PInt", "DInt", "CInt");
+  RegisterLiteral("String", "PString", "DString", "CString");
 }
 
 extern "C" Library *CreateLib() { return new Library; }
 extern "C" void DestroyLib(Library *lib) { delete lib; }
-
-/*
-extern "C" {
-WyrmAPI::Library Load() {
-  WyrmAPI::Library l("base", "Base library of Wyrm");
-
-  l.RegisterType(Base::GInt());
-
-  l.RegisterOperation(Base::GIntAdd());
-
-  l.RegisterLiteral(Base::GIntLit());
-
-  return l;
-}
-}
-*/
