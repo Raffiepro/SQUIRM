@@ -3,7 +3,7 @@
 #include <string>
 #include "../compiler/nodes.h"
 
-namespace That {
+namespace Wyrm {
     class Reinterpreter {
         public:
             std::string GetCode(Nodes::Node *ast);

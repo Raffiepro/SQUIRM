@@ -5,7 +5,7 @@
 
 #define BASE 62
 
-using namespace That;
+using namespace Wyrm;
 
 void Arit::GetNumber(std::string s, char **out, int *nd){
     // Convertim s un string a un nombre de GMP i el guardem a out!

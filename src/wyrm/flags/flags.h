@@ -10,7 +10,7 @@
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
 // Aixo per si volem posar mes flags al començar l'execució suposo nose
-namespace That {
+namespace Wyrm {
     namespace Flag {
         enum Flags {
             RUN = 0,

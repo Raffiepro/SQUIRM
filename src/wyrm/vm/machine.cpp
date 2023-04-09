@@ -8,7 +8,7 @@
 #include "../headers/termcolor.hpp"
 #include "../libraries/library.h"
 
-using namespace That;
+using namespace Wyrm;
 
 void VM::MemDump(uint8_t *data, int size){
     std::cout << "[Dump] Size: " << size << std::endl;

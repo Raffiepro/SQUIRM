@@ -5,15 +5,15 @@
 #include "../headers/termcolor.hpp"
 #include "../flags/flags.h"
 
-That::Shell::Shell(){
+Wyrm::Shell::Shell(){
 
 }
 
-That::Shell::~Shell(){
+Wyrm::Shell::~Shell(){
 
 }
 
-void That::Shell::CreateShell(Kernel *kernel){
+void Wyrm::Shell::CreateShell(Kernel *kernel){
     std::string line;
 
     std::cout << termcolor::color<255, 168, 46> << termcolor::bold << ">> " << termcolor::reset;

@@ -12,7 +12,7 @@
 TODO: Val una manera de com construir aixo i ja tenir llenguatge estaria moolt bé
 */
 
-namespace That {
+namespace Wyrm {
     class Assembler {
         public:
             Assembler(Nodes::Node* ast);

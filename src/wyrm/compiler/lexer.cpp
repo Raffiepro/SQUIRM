@@ -9,7 +9,7 @@
 #define NEW_LINE '\n'
 #define TAB '\t'
 
-using namespace That;
+using namespace Wyrm;
 
 Token::Token(WyrmAPI::TokenType type, std::string value, int data) {
   this->type = type;
@@ -84,7 +84,8 @@ Lexer::GetOrtography() {
        {WyrmAPI::INCREMENT, "++"},
        {WyrmAPI::DECREMENT, "--"},
        {WyrmAPI::ASSIGMENT, "="},
-       {WyrmAPI::SEMICOLON, ";"},
+       {WyrmAPI::SEPARATOR, ";"},
+       {WyrmAPI::SEPARATOR, "\n"},
        {WyrmAPI::ASSIGMENT_ADD, "+="},
        {WyrmAPI::ASSIGMENT_SUBTRACT, "-="},
        {WyrmAPI::ASSIGMENT_MULTIPLY, "*="},
@@ -108,8 +109,6 @@ Lexer::GetOrtography() {
        {WyrmAPI::LONG_ARROW_LEFT, "<--"},
        {WyrmAPI::LONG_WIDE_ARROW_RIGHT, "==>"},
        {WyrmAPI::LONG_WIDE_ARROW_LEFT, "<=="},
-       {WyrmAPI::QUOT, "'"},            // '
-       {WyrmAPI::DOUBLE_QUOT, "\""},    // "
        {WyrmAPI::IF, "if"},             // if
        {WyrmAPI::ELSE, "else"},         // else
        {WyrmAPI::WHILE, "while"},       // while
@@ -133,7 +132,7 @@ int Lexer::isNumber(char c) {
   return false;
 }
 
-int Lexer::isEmpty(char c) { return c == SPACE || c == NEW_LINE || c == TAB; }
+int Lexer::isEmpty(char c) { return c == SPACE || c == TAB; }
 
 void Lexer::flush(int *next) {
   int pos = *next;
@@ -155,38 +154,6 @@ int Lexer::isEnd(int pos) { return pos >= codeSize; }
 
 void Lexer::addError() { tokenList.push_back(Token()); }
 
-/*
-void Lexer::getString(int *next) {
-  int pos = *next;
-  std::string s = "";
-
-  int start = pos;
-
-  char check = code[pos];
-  pos++;
-  while (code[pos] != check) {
-    if (code[pos] == '\\') {
-      if (!isEnd(pos + 1)) {
-        if (code[pos + 1] == check) {
-          s += check;
-          pos += 2;
-          continue;
-        }
-      } else {
-        // Error
-        addError();
-        return;
-      }
-    }
-    s += code[pos];
-    pos++;
-  }
-
-  *next = pos + 1;
-  tokenList.push_back(Token(Token::L_STRING, s));
-  // Sin error
-}
-*/
 void Lexer::skipComment(int *next) {
   if (code[*next] == COMMENT) {
     int pos = *next;
@@ -210,7 +177,8 @@ int Lexer::CheckLiterals(int *next) {
     return 0;
 
   for (int i = 0; i < book->literals.size(); i++) {
-    WyrmAPI::LexerInfo *r = book->literals[i].policy(code + *next);
+    WyrmAPI::LexerInfo *r =
+        book->literals[i].policy(code + *next, codeSize - *next);
     std::string s;
     if (r->valid) {
       std::string value = r->value;

@@ -5,7 +5,7 @@
 
 #include "assembler.h"
 
-namespace That {
+namespace Wyrm {
     class Serializer {
         public:
             Serializer(Book *book);

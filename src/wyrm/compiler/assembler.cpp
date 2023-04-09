@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-using namespace That;
+using namespace Wyrm;
 
 Assembler::Assembler(Nodes::Node* ast){
     try {

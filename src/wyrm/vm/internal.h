@@ -1,23 +1,25 @@
 #pragma once
 
-#include "data.h"
 #include "../libraries/library.h"
+#include "data.h"
 
-#include <vector>
 #include <map>
-#include <unordered_map>
 #include <tuple>
+#include <unordered_map>
+#include <vector>
 
-namespace That {
-    namespace Internal {
-        enum InternalFunctions {
-            PRINT,
-            READ,
-        };
-        
-        void LoadOperations(Book *book, std::unordered_map<unsigned int, WyrmAPI::Operation> *ops);
+namespace Wyrm {
+namespace Internal {
+enum InternalFunctions {
+  PRINT,
+  READ,
+};
 
-        unsigned int HashOperation(WyrmAPI::Operation op);
-        unsigned int HashOperation(WyrmAPI::OpType optype, WyrmAPI::OpSymbol symbol, int type);
-    }
-}
+void LoadOperations(Book *book,
+                    std::unordered_map<unsigned int, Operation> *ops);
+
+unsigned int HashOperation(Operation op);
+unsigned int HashOperation(WyrmAPI::OpType optype, WyrmAPI::OpSymbol symbol,
+                           int type);
+} // namespace Internal
+} // namespace Wyrm

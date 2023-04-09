@@ -1,6 +1,6 @@
 #include "flags.h"
 
-That::Flag::RunInfo That::Flag::GetRunInfo(std::vector<std::string> args){
+Wyrm::Flag::RunInfo Wyrm::Flag::GetRunInfo(std::vector<std::string> args){
     Flag::RunInfo info;
 
     std::vector<std::string> files;

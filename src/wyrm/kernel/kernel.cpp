@@ -20,7 +20,7 @@
 #include "kernel.h"
 #include "shell.h"
 
-using namespace That;
+using namespace Wyrm;
 
 Kernel::Kernel() { /* Constructor */
 }
@@ -33,6 +33,7 @@ void Kernel::DebugTokens(std::vector<Token> tokens) {
             << "Tokens:" << termcolor::reset << std::endl;
   std::map<WyrmAPI::TokenType, std::string> mapo = {
       {WyrmAPI::TokenType::ERROR, "ERROR"},
+      {WyrmAPI::TokenType::SEPARATOR, "SEPARATOR"},
       {WyrmAPI::TokenType::TYPE, "TYPE"},
       {WyrmAPI::TokenType::ADD, "ADD"},             // +            X
       {WyrmAPI::TokenType::SUBTRACT, "SUBTRACT"},   // -            X
@@ -106,9 +107,12 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
   while (std::getline(file, line)) {
     code += line + "\n";
   }
-  std::cout << "El codigo: " << code << std::endl;
+  if (CHECK_BIT(flags, 1)) {
+    std::cout << termcolor::color<0, 150, 255> << code << termcolor::reset
+              << std::endl;
+  }
 
-  That::Lexer lexer(code.data(), code.size(), &book);
+  Wyrm::Lexer lexer(code.data(), code.size(), &book);
 
   lexer.GenerateTokens();
   std::vector<Token> tokens = *(lexer.GetTokens());

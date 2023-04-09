@@ -6,16 +6,16 @@
 #include <tuple>
 #include <unordered_map>
 
-using namespace That;
+using namespace Wyrm;
 
 void Internal::LoadOperations(
-    Book *book, std::unordered_map<unsigned int, WyrmAPI::Operation> *ops) {
+    Book *book, std::unordered_map<unsigned int, Operation> *ops) {
   for (int i = 0; i < book->operations.size(); i++) {
     ops->insert({i, book->operations[i]});
   }
 }
 
-unsigned int Internal::HashOperation(WyrmAPI::Operation op) {
+unsigned int Internal::HashOperation(Operation op) {
   return op.operationType * (op.simbol * N_SYMBOLS + op.GetOperationId());
 }
 

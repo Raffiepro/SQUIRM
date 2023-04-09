@@ -8,7 +8,7 @@
 /*
 En principi el Kernel és l'objecte capaç de compilar i interpretar el codi suposo
 */
-namespace That {
+namespace Wyrm {
     class Kernel {
         public:
             Kernel();
@@ -20,6 +20,6 @@ namespace That {
             void PrintVersion();
             void Cli();
         private:
-            void DebugTokens(std::vector<That::Token> tokens);
+            void DebugTokens(std::vector<Wyrm::Token> tokens);
     };
 }

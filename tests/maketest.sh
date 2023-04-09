@@ -21,7 +21,7 @@ wrong=0
 rmdir -r _build 2> /dev/null
 mkdir _build 2> /dev/null
 
-printf "%-12s | %-8s | %-8s | %-8s | %-8s\n" "Test" "C++" "That(C)" "Python" "That(I)"
+printf "%-12s | %-8s | %-8s | %-8s | %-8s\n" "Test" "C++" "Wyrm(C)" "Python" "Wyrm(I)"
 
 dotest() {
     tests=$(($tests + 1))
@@ -36,16 +36,16 @@ dotest() {
     g++ code.cpp -lm -o code
     # echo "C++:"
     local T1=`(time ./code > cpp.out) 2>&1 | grep real | awk '{print $2}'`
-    ../That -c code.wyrm
+    ../Wyrm -c code.wyrm
 
-    # echo "That (C):"
+    # echo "Wyrm (C):"
     local T2=`(time ./code > wyrmc.out) 2>&1 | grep real | awk '{print $2}'`
     rm code
 
     # echo "Python:"
     local T3=`(time python3 code.py > py.out) 2>&1 | grep real | awk '{print $2}'`
 
-    local T4=`(time ../That code.wyrm > wyrmi.out) 2>&1 | grep real | awk '{print $2}'`
+    local T4=`(time ../Wyrm code.wyrm > wyrmi.out) 2>&1 | grep real | awk '{print $2}'`
     
     printf " | $Yellow%-8s$Reset | $Yellow%-8s$Reset | $Yellow%-8s$Reset | $Yellow%-8s$Reset\n" $T1 $T2 $T3 $T4
 

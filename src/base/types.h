@@ -4,4 +4,7 @@
 
 #include "operations.h"
 
-extern "C" namespace Base { WyrmAPI::Type *GInt(); }
+extern "C" namespace Base {
+  WyrmAPI::Type *TInt();
+  WyrmAPI::Type *TString();
+}

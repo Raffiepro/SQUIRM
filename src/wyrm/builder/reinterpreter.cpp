@@ -7,7 +7,7 @@
 #include "../compiler/nodes.h"
 #include "../../api/wyrm.h"
 
-using namespace That;
+using namespace Wyrm;
 
 std::string Reinterpreter::GetCode(Nodes::Node* node){
     return "#include <bits/stdc++.h>\nint main(){" + GetCodeBlock(node) + "}";

@@ -6,7 +6,7 @@
 
 #include "../libraries/library.h"
 
-namespace That {
+namespace Wyrm {
 
 class Token {
 public:
@@ -64,4 +64,4 @@ private:
   Book *book;
 };
 
-} // namespace That
+} // namespace Wyrm

@@ -1,6 +1,6 @@
 #include "data.h"
 
-using namespace That;
+using namespace Wyrm;
 
 Instruction::Instruction(){
     Instruction(InstructionID::HALT, ParamType::E);

@@ -3,7 +3,7 @@
 #include <string>
 #include <filesystem>
 
-namespace That {
+namespace Wyrm {
     namespace Builder {
         void BuildCode(std::string code, std::string outName);
         std::string GetExeName(std::string name);

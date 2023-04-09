@@ -6,7 +6,7 @@
 
 #include "../../api/wyrm.h"
 
-namespace That {
+namespace Wyrm {
 
     /*
     enum Type {

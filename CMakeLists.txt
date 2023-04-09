@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(That VERSION 0.1)
+project(Wyrm VERSION 0.1)
 
 SET(CMAKE_COLOR_MAKEFILE ON)
 

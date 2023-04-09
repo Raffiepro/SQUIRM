@@ -876,7 +876,7 @@ namespace termcolor
             static WORD defaultAttributes = 0;
 
             // Windows doesn't have ANSI escape sequences and so we use special
-            // API to change Terminal output color. That means we can't
+            // API to change Terminal output color. Wyrm means we can't
             // manipulate colors by means of "std::stringstream" and hence
             // should do nothing in this case.
             if (!_internal::is_atty(stream))

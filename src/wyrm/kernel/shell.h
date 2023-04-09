@@ -3,7 +3,7 @@
 #include <iostream>
 #include "kernel.h"
 
-namespace That {
+namespace Wyrm {
     class Shell {
         public:
             Shell();

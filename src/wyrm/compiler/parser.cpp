@@ -2,11 +2,12 @@
 
 #include "../headers/debug.hpp"
 #include "airthmetic.h"
+#include "nodes.h"
 
 #include <iostream>
 #include <vector>
 
-using namespace That;
+using namespace Wyrm;
 
 Parser::Parser(Book *book, std::vector<Token> tokens) {
   this->tokens = tokens;
@@ -104,6 +105,12 @@ void Parser::GenerateCode(int from, int to, Nodes::Node *parent) {
       throw(std::string("Syntax error: Expected ';' at end of expression"));
     GetCodeLine(parent, from, currentEnd);
     from = currentEnd + 1;
+
+    // Per si n hi ha 2
+    if (tokens[from].type == WyrmAPI::TokenType::SEPARATOR) {
+      if (from < to)
+        from++;
+    }
 
     // throw std::string("Miau por la ventana");
   }
@@ -660,7 +667,11 @@ void Parser::GetArguments(int from, int to,
 // TODO: Que aixo funcioni amb les politiques dels tipus i tal
 void Parser::GetLiteral(int index, Nodes::Node **writeNode) {
   Token token = this->tokens[index];
-  Nodes::Node *lit = new Nodes::Node;
+  Nodes::Node *lit = new Nodes::Node(Nodes::NodeType::VALUE);
+
+  lit->data = book->literals[token.data].toData(token.value);
+
+  *writeNode = lit;
 }
 
 void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {

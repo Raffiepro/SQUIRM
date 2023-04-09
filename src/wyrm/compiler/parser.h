@@ -6,16 +6,16 @@
 #include "lexer.h"
 #include "nodes.h"
 
-namespace That {
+namespace Wyrm {
 
 class Parser {
 public:
-  Parser(Book *book, std::vector<That::Token> tokens);
+  Parser(Book *book, std::vector<Wyrm::Token> tokens);
 
   Nodes::Node *GetAST();
 
 private:
-  std::vector<That::Token> tokens;
+  std::vector<Wyrm::Token> tokens;
   Book *book;
 
   std::vector<std::vector<WyrmAPI::TokenType>> opOrder = {
@@ -111,4 +111,4 @@ private:
 
   bool IsOf(std::vector<WyrmAPI::TokenType> list, WyrmAPI::TokenType type);
 };
-} // namespace That
+} // namespace Wyrm

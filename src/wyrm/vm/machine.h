@@ -1,43 +1,44 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 #include <map>
-#include <unordered_map>
 #include <stack>
+#include <unordered_map>
+#include <vector>
 
-#include "internal.h"
-#include "data.h"
 #include "../flags/flags.h"
 #include "../libraries/library.h"
+#include "data.h"
+#include "internal.h"
 
 #define UINT32_SIZE 4
 
-namespace That {
-    class VM {
-        
-        public:
-            VM(Book *book, Flag::Flags flags);
-            void Run(MachineCode code);
-            
-        private:
-            // std::vector<reg_t> stack;
-            Flag::Flags flags;
-            Book *book;
+namespace Wyrm {
+class VM {
 
-            // std::stack<int> offsets;
-            std::unordered_map<unsigned int, WyrmAPI::Operation> operations;
+public:
+  VM(Book *book, Flag::Flags flags);
+  void Run(MachineCode code);
 
-            void MemDump(uint8_t *data, int size);
+private:
+  // std::vector<reg_t> stack;
+  Flag::Flags flags;
+  Book *book;
 
-            void Process(Instruction ins, int* current, std::vector<Atom> *constants, Atom* registers);
-            void Operate(WyrmAPI::OpSymbol op, Atom* a, Atom* b, Atom *c);
+  // std::stack<int> offsets;
+  std::unordered_map<unsigned int, Operation> operations;
 
-            std::string GetOperationName(WyrmAPI::OpSymbol t);
+  void MemDump(uint8_t *data, int size);
 
-            bool debug;
-            unsigned int offset;
-            
-            // void RegDump(Regs* regs, int n);
-    };
-}
+  void Process(Instruction ins, int *current, std::vector<Atom> *constants,
+               Atom *registers);
+  void Operate(WyrmAPI::OpSymbol op, Atom *a, Atom *b, Atom *c);
+
+  std::string GetOperationName(WyrmAPI::OpSymbol t);
+
+  bool debug;
+  unsigned int offset;
+
+  // void RegDump(Regs* regs, int n);
+};
+} // namespace Wyrm

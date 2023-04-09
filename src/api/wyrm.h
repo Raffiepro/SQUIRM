@@ -1,5 +1,5 @@
 #pragma once
-// That api handler
+// Wyrm api handler
 
 // Aquest header comunica entre el llenguatge i la api d'aquest
 
@@ -14,7 +14,7 @@ namespace WyrmAPI {
 
 struct Data {
   int num;
-  uint8_t *data;
+  void *data;
 
   Data(int num) { this->num = num; }
 
@@ -155,44 +155,13 @@ struct LexerInfo {
   LexerInfo(bool valid) { this->valid = valid; }
 };
 
-struct Literal { // Qualsevol cosa que no comenci amb un punt
-  std::string name;
-  LexerInfo *(*policy)(char *); // El que retorna es el offset del literal,
-                                // el punter es a on detectar
-  // Ha de retornar -1 en cas que no s'hagi detectat res
-
-  Literal(std::string name, LexerInfo *(*policy)(char *)) {
-    this->name = name;
-    this->policy = policy;
-  }
-};
-
 struct Type {
   std::string wname;
   std::string cname;
+  std::string cstructdef;
   std::string name;
-  bool extended;
+  bool extended; // Si guarda un int o més
   Data neutral;
-};
-
-class Operation {
-public:
-  OpSymbol simbol;
-  OpType operationType;
-  std::string elementType;
-
-  int GetOperationId() { return elementTypeId; }
-
-  void SetOperationId(int id) { elementTypeId = id; }
-
-  union {
-    void (*binaryOperation)(Data *a, Data *b, Data *res);
-    void (*unaryOperation)(Data *a, Data *res);
-    void (*conversion)(Data *res);
-  };
-
-private:
-  int elementTypeId;
 };
 
 struct LoadInfo {
@@ -203,83 +172,40 @@ struct LoadInfo {
 class Library {
 public:
   virtual LoadInfo PreLoad() { return LoadInfo(); }
-  virtual void Load(){};
+  virtual void Load() {}
 
   void RegisterType(Type *t) { types.push_back(t); }
 
   void RegisterOperation(OpSymbol symbol, OpType opType,
-                         std::string elementType, std::string opFunction) {
-    opPreloadData.push_back({symbol, opType, elementType, opFunction});
+                         std::string fromElementType, std::string toElementType,
+                         std::string opFunction) {
+    opPreloadData.push_back(
+        {symbol, opType, fromElementType, toElementType, opFunction});
   }
 
-  void RegisterLiteral(std::string name, std::string policyFunc) {
-    litPreloadData.push_back({name, policyFunc});
+  void RegisterLiteral(std::string name, std::string policyFunc,
+                       std::string dataFunc) {
+    litPreloadData.push_back({name, policyFunc, dataFunc});
   }
 
   std::vector<Type *> _GetTypeList() { return types; }
 
-  std::vector<std::tuple<OpSymbol, OpType, std::string, std::string>>
+  std::vector<
+      std::tuple<OpSymbol, OpType, std::string, std::string, std::string>>
   _GetOperations() {
     return opPreloadData;
   }
-  std::vector<std::tuple<std::string, std::string>> _GetLiterals() {
+  std::vector<std::tuple<std::string, std::string, std::string>>
+  _GetLiterals() {
     return litPreloadData;
   }
 
 private:
   std::vector<Type *> types;
-  std::vector<Operation> operations;
-  std::vector<Literal> literals;
 
-  std::vector<std::tuple<OpSymbol, OpType, std::string, std::string>>
+  std::vector<
+      std::tuple<OpSymbol, OpType, std::string, std::string, std::string>>
       opPreloadData;
-  std::vector<std::tuple<std::string, std::string>> litPreloadData;
+  std::vector<std::tuple<std::string, std::string, std::string>> litPreloadData;
 };
-/*
-class Library {
-  std::string libraryName;
-  std::string libraryDesc;
-
-  std::vector<Type> types;
-  std::vector<Operation> operations;
-  std::vector<Literal> literals;
-
-public:
-  Library() {}
-
-  Library(std::string name, std::string description) {
-    this->libraryName = name;
-    this->libraryDesc = description;
-  }
-
-  virtual void Load();
-
-  std::string GetLibraryName() { return libraryName; }
-
-  std::string GetLibraryDesc() { return libraryDesc; }
-
-  std::vector<Type> GetTypeList() { return types; }
-
-  std::vector<Operation> GetOperationList() { return operations; }
-
-  std::vector<Literal> GetLiterals() { return literals; }
-
-  void RegisterType(Type t) { types.push_back(t); }
-
-  void RegisterOperation(Operation op) { operations.push_back(op); }
-
-  void RegisterLiteral(Literal lit) {
-    literals.push_back(lit);
-    std::cout << "Literal registrado" << std::endl;
-  }
-
-  int GetType(std::string typeName) {
-    for (int i = 0; i < types.size(); i++) {
-      if (types[i].name == typeName)
-        return i;
-    }
-    return -1; // O throw
-  }
-};
-  */
 } // namespace WyrmAPI

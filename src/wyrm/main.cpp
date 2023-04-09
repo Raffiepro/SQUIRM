@@ -6,7 +6,7 @@
 #include "kernel/shell.h"
 #include "headers/debug.hpp"
 
-using namespace That;
+using namespace Wyrm;
 
 int Run(Flag::RunInfo runInfo);
 
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
 }
 
 int Run(Flag::RunInfo runInfo){
-    That::Kernel kernel;
+    Wyrm::Kernel kernel;
 
     if(runInfo.files.size() == 0){
         kernel.PrintVersion();
