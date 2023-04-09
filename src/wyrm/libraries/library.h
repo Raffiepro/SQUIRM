@@ -27,6 +27,23 @@ struct Literal { // Qualsevol cosa que no comenci amb un punt
   }
 };
 
+struct Type {
+  std::string name;
+  std::string wname;
+  bool extended;
+  WyrmAPI::Data neutral;
+  void (*defFunction)(WyrmAPI::Data *);
+
+  Type(std::string name, std::string wname, bool extended,
+       WyrmAPI::Data neutral, void (*defFunction)(WyrmAPI::Data *)) {
+    this->name = name;
+    this->wname = wname;
+    this->extended = extended;
+    this->neutral = neutral;
+    this->defFunction = defFunction;
+  }
+};
+
 class Operation {
 public:
   WyrmAPI::OpSymbol simbol;
@@ -53,7 +70,7 @@ private:
 class Book {
   // std::vector<WyrmAPI::Library> libs;
 public:
-  std::vector<WyrmAPI::Type *> types;
+  std::vector<Type> types;
   std::vector<Operation> operations;
   std::vector<Literal> literals;
 

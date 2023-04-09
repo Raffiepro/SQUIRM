@@ -205,7 +205,7 @@ int Lexer::CheckTypes(int *next) {
   }
 
   for (int i = 0; i < book->types.size(); i++) {
-    std::string name = book->types[i]->name;
+    std::string name = book->types[i].name;
     bool valid = true;
 
     for (int j = 0; j < name.size(); j++) {

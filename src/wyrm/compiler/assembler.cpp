@@ -520,6 +520,7 @@ int Assembler::GetConstId(Nodes::Node *val) {
   for (i = 0; i < constants.size(); i++) {
     // Comparem constants[i].data amb val->data
     if (t == constants[i]->typeId) {
+      bool val = book->literals[t].compLit(a->data, constants[i]->data);
       if (book->literals[t].compLit(a->data, constants[i]->data)) {
         return i;
       }

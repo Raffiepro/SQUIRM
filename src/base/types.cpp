@@ -1,24 +1,13 @@
 #include "types.h"
 #include "_base.h"
 
-WyrmAPI::Type *Base::TInt() {
-  WyrmAPI::Type *integer = new WyrmAPI::Type();
-  integer->cname = "int";
-  integer->cstructdef = "";
-  integer->wname = "int";
-  integer->name = "Integer";
-  integer->extended = false;
-  integer->neutral = WyrmAPI::Data(0);
-  return integer;
-}
+#include <iostream>
 
-WyrmAPI::Type *Base::TString() {
-  WyrmAPI::Type *string = new WyrmAPI::Type();
-  string->cname = "std::string";
-  string->cstructdef = "";
-  string->wname = "string";
-  string->name = "String";
-  string->extended = true;
-  string->neutral = WyrmAPI::Data(0); // ""
-  return string;
+void Base::DefInt(WyrmAPI::Data *d) { std::cout << d->num << std::endl; }
+
+void Base::DefString(WyrmAPI::Data *d) {
+  char *c = (char *)d->data;
+  for (int i = 0; i < d->num; i++)
+    std::cout << c[i];
+  std::cout << std::endl;
 }

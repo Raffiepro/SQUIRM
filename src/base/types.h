@@ -5,6 +5,6 @@
 #include "operations.h"
 
 extern "C" namespace Base {
-  WyrmAPI::Type *TInt();
-  WyrmAPI::Type *TString();
+  void DefInt(WyrmAPI::Data * d);
+  void DefString(WyrmAPI::Data * d);
 }

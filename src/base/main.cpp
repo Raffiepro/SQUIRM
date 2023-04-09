@@ -19,8 +19,9 @@ WyrmAPI::LoadInfo Library::PreLoad() {
 void Library::Load() {
   // Registrem tipus! Només necessitem el seu nom i com es declaren a C, i a
   // Wyrm, quin es el valor neutral, i també si són extesos o poden ser ints
-  RegisterType(Base::TInt());
-  RegisterType(Base::TString());
+
+  RegisterType("Integer", "int", false, WyrmAPI::Data(0), "DefInt");
+  RegisterType("String", "string", true, WyrmAPI::Data(0), "DefString");
 
   // Per registrar operacions necessitem primer donar quin simbol s'utilitza,
   // després quin tipus és l'operació (binària o unitaria) i després

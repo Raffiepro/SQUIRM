@@ -35,9 +35,15 @@ void Wyrm::Book::RegisterLibraries() {
 
     l->Load();
 
-    std::vector<WyrmAPI::Type *> types = l->_GetTypeList();
+    std::vector<
+        std::tuple<std::string, std::string, bool, WyrmAPI::Data, std::string>>
+        types = l->_GetTypeList();
     for (int i = 0; i < types.size(); i++) {
-      this->types.push_back(types[i]);
+      Type t(std::get<0>(types[i]).c_str(), std::get<1>(types[i]).c_str(),
+             std::get<2>(types[i]), std::get<3>(types[i]),
+             (void (*)(WyrmAPI::Data *))dlsym(handle,
+                                              std::get<4>(types[i]).c_str()));
+      this->types.push_back(t);
     }
 
     // Carreguem coses
@@ -45,6 +51,7 @@ void Wyrm::Book::RegisterLibraries() {
         literals = l->_GetLiterals();
 
     for (int i = 0; i < literals.size(); i++) {
+
       Literal lit(std::get<0>(literals[i]),
                   (WyrmAPI::LexerInfo * (*)(char *, int))
                       dlsym(handle, std::get<1>(literals[i]).c_str()),
@@ -101,7 +108,7 @@ void Wyrm::Book::RegisterLibraries() {
 
 int Wyrm::Book::GetTypeFromName(std::string name) {
   for (int i = 0; i < types.size(); i++) {
-    if (types[i]->name == name)
+    if (types[i].name == name)
       return i;
   }
   return -1; // Error

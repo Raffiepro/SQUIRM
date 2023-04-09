@@ -49,3 +49,17 @@ WyrmAPI::Data *Base::DString(std::string s) {
   res->data = (void *)c;
   return res;
 }
+
+bool Base::CInt(WyrmAPI::Data *a, WyrmAPI::Data *b) { return a->num == b->num; }
+
+bool Base::CString(WyrmAPI::Data *a, WyrmAPI::Data *b) {
+  if (a->num == b->num) {
+    char *ca = (char *)a->data, *cb = (char *)b->data;
+    for (int i = 0; i < a->num; i++) {
+      if (ca[i] != cb[i])
+        return false;
+    }
+    return true;
+  }
+  return false;
+}

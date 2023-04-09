@@ -155,15 +155,6 @@ struct LexerInfo {
   LexerInfo(bool valid) { this->valid = valid; }
 };
 
-struct Type {
-  std::string wname;
-  std::string cname;
-  std::string cstructdef;
-  std::string name;
-  bool extended; // Si guarda un int o més
-  Data neutral;
-};
-
 struct LoadInfo {
   std::string name;
   std::string desc;
@@ -174,7 +165,11 @@ public:
   virtual LoadInfo PreLoad() { return LoadInfo(); }
   virtual void Load() {}
 
-  void RegisterType(Type *t) { types.push_back(t); }
+  void RegisterType(std::string name, std::string wname, bool extended,
+                    Data neutral, std::string defFunction) {
+    typesPreloadData.push_back({name, wname, extended, neutral, defFunction});
+  }
+  //  void RegisterType(Type *t) { types.push_back(t); }
 
   void RegisterOperation(OpSymbol symbol, OpType opType,
                          std::string fromElementType, std::string toElementType,
@@ -188,7 +183,11 @@ public:
     litPreloadData.push_back({name, policyFunc, dataFunc, compFunc});
   }
 
-  std::vector<Type *> _GetTypeList() { return types; }
+  std::vector<
+      std::tuple<std::string, std::string, bool, WyrmAPI::Data, std::string>>
+  _GetTypeList() {
+    return typesPreloadData;
+  }
 
   std::vector<
       std::tuple<OpSymbol, OpType, std::string, std::string, std::string>>
@@ -201,8 +200,9 @@ public:
   }
 
 private:
-  std::vector<Type *> types;
-
+  std::vector<
+      std::tuple<std::string, std::string, bool, WyrmAPI::Data, std::string>>
+      typesPreloadData;
   std::vector<
       std::tuple<OpSymbol, OpType, std::string, std::string, std::string>>
       opPreloadData;
