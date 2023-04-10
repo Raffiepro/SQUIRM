@@ -4,6 +4,7 @@ file(GLOB SOURCES
     */*.cpp
     *.h
     *.cpp
+    ${PROJECT_SOURCE_DIR}/src/api/*.h
 )
 
 file(GLOB ../api/wyrm)

@@ -13,6 +13,7 @@ find_package(Git)
 
 add_subdirectory(src/wyrm)
 add_subdirectory(src/base)
+add_subdirectory(src/amph)
 
 # DEBUG QUITAR SI NO SE QUIERE DEBUG
 # add_compile_definitions(DEBUG)

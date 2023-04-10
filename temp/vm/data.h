@@ -4,22 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "../../api/wyrm.h"
+#include "../_base.h"
 #include "../compiler/nodes.h"
 
 namespace Wyrm {
-
-/*
-enum Type {
-    INT,
-    NUMBER,
-    REAL,
-    STRING,
-    BOOL,
-    FUNCTION,
-    _NULL,
-};
-*/
 
 struct Reservation {
   std::string identifier;

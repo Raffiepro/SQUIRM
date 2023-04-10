@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../api/wyrm.h"
+#include "_base.h"
 #include "main.h"
 
 #include "literals.h"

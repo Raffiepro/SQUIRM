@@ -1,0 +1,3 @@
+/home/arans/that/scripts/.that/CMakeFiles/build.dir
+/home/arans/that/scripts/.that/CMakeFiles/edit_cache.dir
+/home/arans/that/scripts/.that/CMakeFiles/rebuild_cache.dir

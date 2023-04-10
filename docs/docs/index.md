@@ -5,7 +5,7 @@ This documentation will guide you through every aspect of the Wyrm programming l
 Wyrm is an interpreted and compiled programming language. It is aimed to be very embeddable from both ends. You can create C/C++ libraries for a Wyrm project to extend its functionality, and the Wyrm interpreter can be embeddable everywhere from its source code.
 
 - Wyrm: The name of the language. Translates Wyrm code to 
-- Phi: An interpreter of Wyrm
+- Amph: An interpreter of Wyrm
 - Drac: A transcompiler of Wyrm to C/C++
 - Zmey: A package manager for Wyrm
 

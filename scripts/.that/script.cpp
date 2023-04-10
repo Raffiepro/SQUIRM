@@ -1,0 +1,2 @@
+#include <bits/stdc++.h>
+int main(){int n = 2000;std::cout << "--- That ---" << std::endl;int i = 2;int t = 0;while((t<n)){int divisible = 0;for(int j = 2;(j<i);j = (j+1)){if(((i%j)==0)){divisible = 1;}}i = (i+1);if((divisible==0)){t = (t+1);}}std::cout << i << std::endl;}

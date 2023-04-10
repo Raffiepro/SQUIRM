@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../api/wyrm.h"
+#include "../_base.h"
 #include <dlfcn.h>
 
 #include <filesystem>
