@@ -1,6 +1,5 @@
 #include "lexer.h"
-#include "../../api/wyrm.h"
-#include "../libraries/library.h"
+#include "../_base.h"
 #include <iostream>
 #include <string>
 

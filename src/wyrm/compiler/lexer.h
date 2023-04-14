@@ -4,7 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "../libraries/library.h"
+#include "../_base.h"
+#include "../kernel/library.h"
 
 namespace Wyrm {
 

@@ -1,3 +1,6 @@
+#pragma once
+
+#include "termcolor.hpp"
 
 namespace WyrmAPI {
 struct Data {
@@ -8,4 +11,26 @@ struct Data {
 
   Data() {}
 };
+
+namespace Debug {
+template <typename T> void Log(T t) {
+  std::cout << termcolor::grey << t << termcolor::reset;
 }
+
+template <typename T> void LogError(T t) {
+  std::cout << termcolor::red << t << termcolor::reset << std::endl;
+}
+
+template <typename T> void LogImportant(T t) {
+  std::cout << termcolor::yellow << t << termcolor::reset;
+}
+
+template <typename T> void LogOutput(T t) {
+  std::cout << termcolor::color<120, 255, 0> << t << termcolor::reset;
+}
+
+template <typename T> void Print(T t) {
+  std::cout << termcolor::green << t << termcolor::reset;
+}
+}; // namespace Debug
+} // namespace WyrmAPI

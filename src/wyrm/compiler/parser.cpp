@@ -1,9 +1,5 @@
 #include "parser.h"
 
-#include "../headers/debug.hpp"
-#include "airthmetic.h"
-#include "nodes.h"
-
 #include <iostream>
 #include <vector>
 
@@ -14,7 +10,7 @@ Parser::Parser(Book *book, std::vector<Token> tokens) {
   this->book = book;
 
   // Nodes::Node root(Nodes::NodeType::NODE);
-  root = new Nodes::Node();
+  root = new Node();
   try {
     GenerateCode(0, this->tokens.size(), root);
     // root->Debug();
@@ -24,11 +20,11 @@ Parser::Parser(Book *book, std::vector<Token> tokens) {
   }
 }
 
-Nodes::Node *Parser::GetAST() { return root; }
+Node *Parser::GetAST() { return root; }
 
-bool Parser::CodeLoop(int *from, int *nF, Nodes::Node *parent) {
+bool Parser::CodeLoop(int *from, int *nF, Node *parent) {
   // No hi ha manera de treure això ja que son funcions estàtiques
-  Nodes::Node *next;
+  Node *next;
 
   try {
     GetCodeFunction(&next, *from, nF);
@@ -85,7 +81,7 @@ bool Parser::CodeLoop(int *from, int *nF, Nodes::Node *parent) {
   return false;
 }
 
-void Parser::GenerateCode(int from, int to, Nodes::Node *parent) {
+void Parser::GenerateCode(int from, int to, Node *parent) {
 
   int currentEnd;
   while (from < to) {
@@ -116,27 +112,27 @@ void Parser::GenerateCode(int from, int to, Nodes::Node *parent) {
   }
 }
 
-void Parser::GetCodeBreak(Nodes::Node **root, int from, int *end) {
-  if (!Eat(from, WyrmAPI::TokenType::BREAK, &from))
+void Parser::GetCodeBreak(Node **root, int from, int *end) {
+  if (!Eat(from, TokenType::BREAK, &from))
     return;
 
-  Nodes::Node *brek = new Nodes::Node(Nodes::NodeType::BREAK);
+  Node *brek = new Node(NodeType::BREAK_NODE);
 
   *end = from + 1;
   *root = brek;
 }
 
-void Parser::GetCodeSkip(Nodes::Node **root, int from, int *end) {
+void Parser::GetCodeSkip(Node **root, int from, int *end) {
   if (!Eat(from, WyrmAPI::TokenType::CONTINUE, &from))
     return;
 
-  Nodes::Node *skip = new Nodes::Node(Nodes::NodeType::SKIP);
+  Node *skip = new Node(NodeType::SKIP);
 
   *end = from + 1;
   *root = skip;
 }
 
-void Parser::GetCodeFor(Nodes::Node **root, int from, int *end) {
+void Parser::GetCodeFor(Node **root, int from, int *end) {
   if (!Eat(from, WyrmAPI::TokenType::FOR, &from))
     return;
 
@@ -145,30 +141,30 @@ void Parser::GetCodeFor(Nodes::Node **root, int from, int *end) {
 
   // Ara aconseguim les 3 expressions que hi ha a dins de to!
 
-  Nodes::Node *fo = new Nodes::Node(Nodes::NodeType::FOR);
-  Nodes::Node *exp, *code = new Nodes::Node();
+  Node *fo = new Node(NodeType::FOR_NODE);
+  Node *exp, *code = new Node();
   // for <a> ; <b> ; <c> {}
 
   int tempTo;
   // a - Es una code line
   tempTo = GetNext(from, -1, WyrmAPI::TokenType::SEMICOLON);
-  exp = new Nodes::Node();
+  exp = new Node();
   GetCodeLine(exp, from, tempTo);
   fo->children.push_back(exp);
 
   from = tempTo + 1;
   // b, una expression
-  Nodes::Node *skip = new Nodes::Node(Nodes::NodeType::SKIP);
+  Node *skip = new Node(NodeType::SKIP);
 
   *end = from + 1;
   *root = skip;
 }
 
-void Parser::GetCodeReturn(Nodes::Node **root, int from, int *end) {
+void Parser::GetCodeReturn(Node **root, int from, int *end) {
   if (!Eat(from, WyrmAPI::TokenType::RETURN, &from))
     return;
 
-  Nodes::Node *ret = new Nodes::Node(Nodes::NodeType::RETURN), *exp;
+  Node *ret = new Node(NodeType::RETURN_NODE), *exp;
   int to = GetNext(from, -1, WyrmAPI::TokenType::SEMICOLON);
 
   // std::cout << from << " " << to << std::endl;
@@ -194,11 +190,11 @@ if(<condició>){
 }
 */
 
-void Parser::GetCodeConditional(Nodes::Node **root, int from, int *end) {
+void Parser::GetCodeConditional(Node **root, int from, int *end) {
   if (!Eat(from, WyrmAPI::TokenType::IF, &from))
     return;
 
-  Nodes::Node *theIf = new Nodes::Node(Nodes::NodeType::IF);
+  Node *theIf = new Node(NodeType::IF_NODE);
 
   GetConditional(from, &from, theIf);
 
@@ -208,7 +204,7 @@ void Parser::GetCodeConditional(Nodes::Node **root, int from, int *end) {
       theIf->nd += 1;
       continue;
     } else {
-      Nodes::Node *theElse = new Nodes::Node(Nodes::NodeType::NODE);
+      Node *theElse = new Node(NodeType::NODE);
       GetCodeBlock(from, &from, theElse);
       theIf->children.push_back(theElse);
     }
@@ -226,11 +222,11 @@ while expressió {
     // codi
 }
 */
-void Parser::GetCodeWhile(Nodes::Node **root, int from, int *end) {
+void Parser::GetCodeWhile(Node **root, int from, int *end) {
   if (!Eat(from, WyrmAPI::TokenType::WHILE, &from))
     return;
 
-  Nodes::Node *bucle = new Nodes::Node(Nodes::NodeType::WHILE);
+  Node *bucle = new Node(NodeType::WHILE_NODE);
   GetConditional(from, end, bucle);
 
   *root = bucle;
@@ -242,14 +238,14 @@ Aconsegueix parsejar una cosa de la forma
     // Codi
 }
 */
-void Parser::GetConditional(int from, int *end, Nodes::Node *pushNode) {
+void Parser::GetConditional(int from, int *end, Node *pushNode) {
   // Aconseguim la condició
-  Nodes::Node *content = new Nodes::Node(Nodes::NodeType::NODE);
+  Node *content = new Node(NodeType::NODE);
 
   int to = GetNextCodeSep(from, -1);
 
   // std::cout << "EXP: " << from << " " << to - 1 << std::endl;
-  Nodes::Node *expression;
+  Node *expression;
   try {
     GetExpression(from, to - 1, &expression);
   } catch (std::string p) {
@@ -292,12 +288,12 @@ func <def> => type { // Sense arguments retorna el tipus
     <AST>
 }
 */
-void Parser::GetCodeFunction(Nodes::Node **root, int from, int *end) {
+void Parser::GetCodeFunction(Node **root, int from, int *end) {
 
   if (!Eat(from, WyrmAPI::TokenType::FUNCTION_DECLARATION, &from))
     return;
 
-  Nodes::Node *function = new Nodes::Node(Nodes::NodeType::FUNCTION);
+  Node *function = new Node(NodeType::FUNCTION);
 
   // A partir d'aqui són excepcions
   if (!Eat(from, WyrmAPI::TokenType::IDENTIFIER, &from))
@@ -307,10 +303,9 @@ void Parser::GetCodeFunction(Nodes::Node **root, int from, int *end) {
   std::string funcIdentifier = this->tokens[from].value;
   from++;
 
-  std::vector<Nodes::Node *> parameters;
-  Nodes::Node *code = new Nodes::Node(),
-              *type = new Nodes::Node(Nodes::NodeType::TYPE),
-              *identifier = new Nodes::Node(Nodes::NodeType::REFERENCE);
+  std::vector<Node *> parameters;
+  Node *code = new Node(), *type = new Node(NodeType::TYPE_NODE),
+       *identifier = new Node(NodeType::REFERENCE);
 
   int to, to2;
   if (Eat(from, WyrmAPI::TokenType::TWO_POINTS, &from)) {
@@ -368,11 +363,11 @@ void Parser::GetCodeFunction(Nodes::Node **root, int from, int *end) {
 
 // int a, string b, real c
 void Parser::GetFunctionParameters(int from, int to,
-                                   std::vector<Nodes::Node *> *container) {
+                                   std::vector<Node *> *container) {
   if (from > to)
     return;
 
-  Nodes::Node *next;
+  Node *next;
   int tA = from;
 
   do {
@@ -386,10 +381,10 @@ void Parser::GetFunctionParameters(int from, int to,
 }
 
 // int a
-void Parser::GetFunctionParameter(int from, int to, Nodes::Node **writeNode) {
+void Parser::GetFunctionParameter(int from, int to, Node **writeNode) {
   // En principi to - from = 1
-  Nodes::Node *param = new Nodes::Node(Nodes::NodeType::PARAMETER),
-              *typeNode = new Nodes::Node(Nodes::NodeType::TYPE);
+  Node *param = new Node(NodeType::PARAMETER),
+       *typeNode = new Node(NodeType::TYPE_NODE);
   param->SetDataString(this->tokens[to].value);
   typeNode->nd = book->GetTypeFromName(this->tokens[from].value);
   param->children.push_back(typeNode);
@@ -401,11 +396,11 @@ void Parser::GetFunctionParameter(int from, int to, Nodes::Node **writeNode) {
 // <tipus> <var> = exp
 // On var es opcional, pero si es posa cal el "="
 // i tipus és opcional en cas que l'expressió sigui <var> = exp
-void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
+void Parser::GetCodeLine(Node *root, int from, int to) {
 
   if (this->tokens[from].type == WyrmAPI::TokenType::TYPE) {
     // Aqui podriem optimitzar memòria
-    Nodes::Node *typeNode = new Nodes::Node(Nodes::NodeType::TYPE);
+    Node *typeNode = new Node(NodeType::TYPE_NODE);
     typeNode->nd = book->GetTypeFromName(
         this->tokens[from]
             .value); // Hauriem de tenir una taula amb tipus més endavant?
@@ -415,7 +410,7 @@ void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
 
     // AQUI CAL FER UNA AMABLE LLISTA DE EXPRESSIONS I MODIFICAR-LES SEGONS EL
     // TIPUS
-    std::vector<Nodes::Node *> assignations;
+    std::vector<Node *> assignations;
     try {
       GetAssignations(from, to - 1, &assignations);
     } catch (std::string p) {
@@ -425,7 +420,7 @@ void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
     // Modifiquem les assignacions per tal de fer declaracions
     for (int i = 0; i < assignations.size(); i++) {
 
-      assignations[i]->type = Nodes::NodeType::DECLARATION;
+      assignations[i]->type = NodeType::DECLARATION;
       assignations[i]->children.push_back(typeNode);
 
       // Posem les declaracions a dins!
@@ -435,7 +430,7 @@ void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
              IsOf(assignations, this->tokens[from + 1].type)) {
     // Només assignations, res a veure
 
-    std::vector<Nodes::Node *> assignations;
+    std::vector<Node *> assignations;
 
     try {
       GetAssignations(from, to - 1, &assignations);
@@ -449,7 +444,7 @@ void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
   } else {
     // És una expressió, la afegim simplement (PERO AIXO ES UN PRINT!!!)
     // detectem comes i les entrellacem!
-    Nodes::Node *exp;
+    Node *exp;
 
     int tA, tB;
     do {
@@ -463,7 +458,7 @@ void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
       } catch (std::string p) {
         throw(p);
       }
-      Nodes::Node *def = new Nodes::Node(Nodes::NodeType::DEF_FUNCTION);
+      Node *def = new Node(NodeType::DEF_FUNCTION);
       def->children.push_back(exp);
 
       root->children.push_back(def);
@@ -484,14 +479,14 @@ void Parser::GetCodeLine(Nodes::Node *root, int from, int to) {
   }
 }
 
-void Parser::GetAssignation(int from, int to, Nodes::Node **writeNode) {
+void Parser::GetAssignation(int from, int to, Node **writeNode) {
   // En principi from es l'identifier, despres va un igual, i després una
   // expressió fins a to
   std::string id = this->tokens[from].value;
-  Nodes::Node *exp;
+  Node *exp;
 
   if (from == to) {
-    Nodes::Node *assignation = new Nodes::Node(Nodes::ASSIGNATION);
+    Node *assignation = new Node(NodeType::ASSIGNATION);
     assignation->SetDataString(id);
 
     *writeNode = assignation;
@@ -516,13 +511,13 @@ void Parser::GetAssignation(int from, int to, Nodes::Node **writeNode) {
     throw(std::string("Syntax error: Unexcepted assignation"));
   }
 
-  Nodes::Node *assignation = new Nodes::Node(Nodes::ASSIGNATION);
+  Node *assignation = new Node(NodeType::ASSIGNATION);
   assignation->SetDataString(id);
 
   if (this->tokens[from - 1].type != WyrmAPI::TokenType::ASSIGMENT) {
     // Es una operació cal operar ara mateix!!!
-    Nodes::Node *op = new Nodes::Node(Nodes::NodeType::EXP_BINARY);
-    Nodes::Node *ref = new Nodes::Node(Nodes::NodeType::REFERENCE);
+    Node *op = new Node(NodeType::EXP_BINARY);
+    Node *ref = new Node(NodeType::REFERENCE);
 
     ref->SetDataString(id);
     op->nd = (int)opMap[this->tokens[from - 1].type];
@@ -538,8 +533,7 @@ void Parser::GetAssignation(int from, int to, Nodes::Node **writeNode) {
   *writeNode = assignation;
 }
 
-void Parser::GetAssignations(int from, int to,
-                             std::vector<Nodes::Node *> *container) {
+void Parser::GetAssignations(int from, int to, std::vector<Node *> *container) {
   /*
   Tenim uns tokens de la forma
   a = 3, b += 5, c = "Hola que tal", d = f(2,3) + c, e = 4
@@ -548,7 +542,7 @@ void Parser::GetAssignations(int from, int to,
   if (from > to)
     return;
 
-  Nodes::Node *next;
+  Node *next;
 
   if (from == to) {
     // Empty assignation
@@ -633,8 +627,7 @@ int Parser::GetNext(int from, int lim, WyrmAPI::TokenType type) {
     return lim;
 }
 
-void Parser::GetArguments(int from, int to,
-                          std::vector<Nodes::Node *> *parent) {
+void Parser::GetArguments(int from, int to, std::vector<Node *> *parent) {
   // Tenim expressions separades per comes, ex:
   // 2, 3, hola(), f() + 45
   // Volem passar-les a una llista guardada dins de parent
@@ -643,7 +636,7 @@ void Parser::GetArguments(int from, int to,
   if (from > to)
     return;
 
-  Nodes::Node *next;
+  Node *next;
   int tA = from;
 
   do {
@@ -665,9 +658,9 @@ void Parser::GetArguments(int from, int to,
 }
 
 // TODO: Que aixo funcioni amb les politiques dels tipus i tal
-void Parser::GetLiteral(int index, Nodes::Node **writeNode) {
+void Parser::GetLiteral(int index, Node **writeNode) {
   Token token = this->tokens[index];
-  Nodes::Node *lit = new Nodes::Node(Nodes::NodeType::VALUE);
+  Node *lit = new Node(NodeType::VALUE);
 
   Atom *atom = new Atom;
 
@@ -679,7 +672,7 @@ void Parser::GetLiteral(int index, Nodes::Node **writeNode) {
   *writeNode = lit;
 }
 
-void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
+void Parser::GetExpression(int from, int to, Node **writeNode) {
   // std::cout << "F: " << from << " T: " << to << std::endl;
   if (from > to) {
     throw(std::string("Syntax error: Expected expression"));
@@ -692,7 +685,7 @@ void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
     }
 
     if (this->tokens[from].IsIdentifier()) {
-      Nodes::Node *id = new Nodes::Node(Nodes::NodeType::REFERENCE);
+      Node *id = new Node(NodeType::REFERENCE);
       id->SetDataString(this->tokens[from].value);
       *writeNode = id;
       // std::cout << "IDENTIFIER" << std::endl;
@@ -711,7 +704,7 @@ void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
 
         from++;
         if (Eat(from, WyrmAPI::TokenType::PARENTHESIS_OPEN, &from)) {
-          Nodes::Node *call = new Nodes::Node(Nodes::NodeType::EXP_CALL);
+          Node *call = new Node(NodeType::EXP_CALL);
           call->SetDataString(value);
 
           GetArguments(from, to - 1, &(call->children));
@@ -756,12 +749,12 @@ void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
 
       // Val estem en la forma exp (simbol) exp, hem de trobar el simbol, estem
       // al final doncs iterem fins a trobar algun simbol potser
-      Nodes::Node *op, *first, *second;
+      Node *op, *first, *second;
       if (n == from) {
 
         // std::cout << "Vale tenim el ???a " << n << std::endl;
         // Ei és una operació unaria!
-        op = new Nodes::Node(Nodes::NodeType::EXP_UNARY);
+        op = new Node(NodeType::EXP_UNARY);
 
         op->nd = (int)tokenToSymbol[opOrder[i][k]];
 
@@ -778,7 +771,7 @@ void Parser::GetExpression(int from, int to, Nodes::Node **writeNode) {
 
       if (n != to) { // L'hem trobat
         // from --- n simbol n --- to
-        op = new Nodes::Node(Nodes::NodeType::EXP_BINARY);
+        op = new Node(NodeType::EXP_BINARY);
 
         // Aqui suposo que s'haura de passar per algun map
         op->nd = (int)tokenToSymbol[opOrder[i][k]];
@@ -841,7 +834,7 @@ int Parser::GetNextCodeSep(int from, int lim) {
 // ----------------- : <linea>
 //   |
 // from
-void Parser::GetCodeBlock(int from, int *to, Nodes::Node *parent) {
+void Parser::GetCodeBlock(int from, int *to, Node *parent) {
 
   try {
     from = GetNextCodeSep(from, -1);
@@ -849,13 +842,13 @@ void Parser::GetCodeBlock(int from, int *to, Nodes::Node *parent) {
     throw(p);
   }
 
-  if (Eat(from, WyrmAPI::TokenType::CURLY_BRACKET_OPEN, &from)) {
-    *to = GetNext(from, -1, WyrmAPI::TokenType::CURLY_BRACKET_CLOSE);
+  if (Eat(from, TokenType::CURLY_BRACKET_OPEN, &from)) {
+    *to = GetNext(from, -1, TokenType::CURLY_BRACKET_CLOSE);
 
     GenerateCode(from, *to, parent);
     *to = *to + 1;
-  } else if (Eat(from, WyrmAPI::TokenType::TWO_POINTS, &from)) {
-    *to = GetNext(from, -1, WyrmAPI::TokenType::SEMICOLON);
+  } else if (Eat(from, TokenType::TWO_POINTS, &from)) {
+    *to = GetNext(from, -1, TokenType::SEMICOLON);
     GenerateCode(from, *to, parent);
     *to = *to + 1;
   } else {

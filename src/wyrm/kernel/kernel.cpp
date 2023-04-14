@@ -5,19 +5,13 @@
 
 #include <gmp.h>
 
-#include "../builder/builder.h"
-#include "../builder/reinterpreter.h"
-#include "../compiler/assembler.h"
 #include "../compiler/lexer.h"
 #include "../compiler/parser.h"
-#include "../compiler/serializer.h"
 #include "../flags/flags.h"
-#include "../headers/debug.hpp"
-#include "../headers/termcolor.hpp"
-#include "../libraries/library.h"
 #include "../version.h"
 #include "../vm/machine.h"
 #include "kernel.h"
+#include "library.h"
 #include "shell.h"
 
 using namespace Wyrm;
@@ -28,7 +22,7 @@ Kernel::Kernel() { /* Constructor */
 Kernel::~Kernel() { /* Destructor */
 }
 
-void Kernel::DebugTokens(std::vector<Token> tokens) {
+void Kernel::DebugTokens(std::vector<Wyrm::Token> tokens) {
   std::cout << termcolor::red << termcolor::bold
             << "Tokens:" << termcolor::reset << std::endl;
   std::map<WyrmAPI::TokenType, std::string> mapo = {
@@ -123,7 +117,7 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
 
   Parser parser(&book, tokens);
 
-  Nodes::Node *ast = parser.GetAST();
+  Node *ast = parser.GetAST();
 
   if (CHECK_BIT(flags, 1)) {
     std::cout << termcolor::red << termcolor::bold << "AST:" << termcolor::reset
