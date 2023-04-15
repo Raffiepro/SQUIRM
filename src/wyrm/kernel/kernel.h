@@ -1,25 +1,26 @@
 #pragma once
 
-#include <string>
-#include "../flags/flags.h"
 #include "../compiler/lexer.h"
+#include "../flags/flags.h"
+#include <string>
 #define DEBUG
 
 /*
-En principi el Kernel és l'objecte capaç de compilar i interpretar el codi suposo
+En principi el Kernel és l'objecte capaç de compilar i interpretar el codi
+suposo
 */
 namespace Wyrm {
-    class Kernel {
-        public:
-            Kernel();
-            ~Kernel();
+class Kernel {
+public:
+  Kernel();
+  ~Kernel();
 
-            void RunScript(std::string file, Flag::Flags flags);
-            void SendByteScript(char name[]);
+  void RunScript(std::string file, Flag::Flags flags);
+  void SendByteScript(char name[]);
 
-            void PrintVersion();
-            void Cli();
-        private:
-            void DebugTokens(std::vector<Wyrm::Token> tokens);
-    };
-}
+  void PrintVersion();
+
+private:
+  void DebugTokens(std::vector<Wyrm::Token> tokens);
+};
+} // namespace Wyrm
