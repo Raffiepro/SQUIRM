@@ -67,12 +67,18 @@ private:
   int elementTypeId;
 };
 
+class InternalRunner {
+  
+};
+
 class Book {
   // std::vector<WyrmAPI::Library> libs;
 public:
   std::vector<Type> types;
   std::vector<Operation> operations;
   std::vector<Literal> literals;
+
+  std::vector<InternalRunner> runners;
 
   Book();
 

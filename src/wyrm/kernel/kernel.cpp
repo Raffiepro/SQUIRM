@@ -124,6 +124,8 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
     std::cout << std::endl;
   }
 
+  
+
   // I ara aqui hem de carregar un assembler
   /*
   Assembler assembler(&book, ast);
