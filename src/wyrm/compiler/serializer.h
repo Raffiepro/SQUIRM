@@ -17,6 +17,11 @@ public:
   void SerializeAtom(FILE *f, WyrmAPI::Atom *atom);
   void SerializeNode(FILE *f, WyrmAPI::Node *n, std::vector<std::string> &libs);
 
+  std::string ReadString(FILE *f);
+  WyrmAPI::Node* Serializer::ReadNode(FILE *f);
+  WyrmAPI::TreeCode LoadFromFile(std::string fileName);
+
+
 private:
   Book *book;
 };

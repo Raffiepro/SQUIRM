@@ -299,7 +299,12 @@ struct RunnerInfo {
 class TreeCode {
 
 public:
+
+  TreeCode() {}
+
   TreeCode(Node *root) { this->root = root; }
+
+  void AddDependency(std::string s) { deps.push_back(s); }
 
   std::vector<std::string> &GetDependencies() { return deps; }
 

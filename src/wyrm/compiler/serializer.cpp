@@ -38,16 +38,20 @@ void Serializer::SerializeString(FILE *f, std::string s) {
 }
 
 void Serializer::SerializeAtom(FILE *f, WyrmAPI::Atom *atom) {
-  int typeId = atom->typeId;
-  fwrite(&typeId, sizeof(int), 1, f);
-  fwrite(&(atom->data->num), sizeof(int), 1, f);
-  fwrite(&(atom->data->data), 1, atom->data->num, f); // Va en bytes i tal
+  if(atom == NULL){
+    int m1 = -1;
+    fwrite(&m1, sizeof(int), 1, f);
+  } else {
+    int typeId = atom->typeId;
+    fwrite(&typeId, sizeof(int), 1, f);
+    fwrite(&(atom->data->num), sizeof(int), 1, f);
+    fwrite(&(atom->data->data), 1, atom->data->num, f); // Va en bytes i tal
+  }
 }
 
 void Serializer::SerializeNode(FILE *f, WyrmAPI::Node *n,
                                std::vector<std::string> &libs) {
-  if (n->atom != NULL)
-    SerializeAtom(f, n->atom);
+  SerializeAtom(f, n->atom);
 
   fwrite(&(n->allocable), sizeof(bool), 1, f);
   fwrite(&(n->nd), sizeof(int), 1, f);
@@ -63,6 +67,46 @@ void Serializer::SerializeNode(FILE *f, WyrmAPI::Node *n,
   for (int i = 0; i < nodeCount; i++) {
     SerializeNode(f, n->children[i], libs);
   }
+}
+
+WyrmAPI::TreeCode Serializer::LoadFromFile(std::string fileName){
+  FILE *f = fopen(fileName.c_str(), "rb");
+  if (!f) {
+    WyrmAPI::Debug::LogError("Error reading file " + fileName + "!");
+    return;
+  }
+
+  WyrmAPI::TreeCode result;
+
+  // Carreguem deps
+  unsigned int depCount;
+  fread(&depCount, sizeof(unsigned int), 1, f);
+  for(unsigned int i = 0; i < depCount; i++){
+    std::string lib = ReadString(f);
+    result.AddDependency(lib);
+  }
+
+  result.root = ReadNode(f);
+
+  return result;
+}
+
+std::string Serializer::ReadString(FILE *f){
+  unsigned int size;
+  fread(&size, sizeof(unsigned int), 1, f);
+
+  std::string read = "";
+  char c;
+  for(unsigned int i = 0; i < size; i++){
+    fread(&c, sizeof(char), 1, f);
+    read += c;
+  }
+
+  return read;
+}
+
+WyrmAPI::Node* Serializer::ReadNode(FILE *f){
+
 }
 
 /*
