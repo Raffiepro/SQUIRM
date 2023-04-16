@@ -7,6 +7,7 @@
 
 #include "../compiler/lexer.h"
 #include "../compiler/parser.h"
+#include "../compiler/serializer.h"
 #include "../flags/flags.h"
 #include "../version.h"
 #include "kernel.h"
@@ -124,9 +125,15 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
     std::cout << std::endl;
   }
 
-  
-
   // I ara aqui hem de carregar un assembler
+  // Pero si no n'hi ha doncs serialitzem i tal
+
+  Serializer ser(&book);
+
+  WyrmAPI::TreeCode codeInfo(ast);
+
+  std::cout << "hola" << std::endl;
+  ser.SerializeToFile(codeInfo, "a.wy");
   /*
   Assembler assembler(&book, ast);
 

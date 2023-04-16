@@ -97,7 +97,7 @@ public:
   bool allocable = false;
   int nd;
   std::string sData;
-  Atom *atom = NULL;
+  Atom *atom = NULL; // CUIDADO CON ESTO! PUEDE SER NULL
 
   void Debug() {
     std::map<NodeType, std::string> trans = {{NODE, "NODE"},
@@ -291,27 +291,22 @@ struct LoadInfo {
   std::string desc;
 };
 
-
 struct RunnerInfo {
   std::string runFunction;
   bool live;
 };
 
 class TreeCode {
-  
-  public:
-    TreeCode(Node* root){
-      this->root = root;
-    }
 
-    std::vector<std::string>& GetDependencies(){
-      return deps;
-    }
-    
-    Node* root;
-  private:
-    std::vector<std::string> deps;
+public:
+  TreeCode(Node *root) { this->root = root; }
 
+  std::vector<std::string> &GetDependencies() { return deps; }
+
+  Node *root;
+
+private:
+  std::vector<std::string> deps;
 };
 
 class Library {
@@ -337,8 +332,8 @@ public:
     litPreloadData.push_back({name, policyFunc, dataFunc, compFunc});
   }
 
-  void RegisterRunner(std::string name, RunnerInfo runnerInfo){
-      runnerPreloadData.push_back({name, runnerInfo});
+  void RegisterRunner(std::string name, RunnerInfo runnerInfo) {
+    runnerPreloadData.push_back({name, runnerInfo});
   }
 
   std::vector<
@@ -357,7 +352,7 @@ public:
     return litPreloadData;
   }
 
-  std::vector<std::tuple<std::string, RunnerInfo>> _GetRunners(){
+  std::vector<std::tuple<std::string, RunnerInfo>> _GetRunners() {
     return runnerPreloadData;
   }
 
