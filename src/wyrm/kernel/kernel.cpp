@@ -21,75 +21,6 @@ Kernel::Kernel() { /* Constructor */
 Kernel::~Kernel() { /* Destructor */
 }
 
-void Kernel::DebugTokens(std::vector<Wyrm::Token> tokens) {
-  std::cout << termcolor::red << termcolor::bold
-            << "Tokens:" << termcolor::reset << std::endl;
-  std::map<TokenType, std::string> mapo = {
-      {TokenType::ERROR, "ERROR"},
-      {TokenType::SEPARATOR, "SEPARATOR"},
-      {TokenType::TYPE, "TYPE"},
-      {TokenType::ADD, "ADD"},             // +            X
-      {TokenType::SUBTRACT, "SUBTRACT"},   // -            X
-      {TokenType::MULTIPLY, "MULTIPLY"},   // *            X
-      {TokenType::DIVIDE, "DIVIDE"},       // /            X
-      {TokenType::MODULO, "MODULO"},       // %            X
-      {TokenType::INCREMENT, "INCREMENT"}, // ++           X
-      {TokenType::DECREMENT, "DECREMENT"}, // --           X
-      {TokenType::NOT, "NOT"},             // !
-      {TokenType::AND, "AND"},
-      {TokenType::OR, "OR"},
-      {TokenType::EQUAL, "EQUAL"},                             // ==           X
-      {TokenType::GREATER_THAN, "GREATER_THAN"},               // >            X
-      {TokenType::LESSER_THAN, "LESSER_THAN"},                 // <            X
-      {TokenType::GREATER_EQUAL_THAN, "GREATER_EQUAL_THAN"},   // >= X
-      {TokenType::LESSER_EQUAL_THAN, "LESSER_EQUAL_THAN"},     // <= X
-      {TokenType::NOT_EQUAL, "NOT_EQUAL"},                     // !=           X
-      {TokenType::ASSIGMENT, "ASSIGMENT"},                     // =            X
-      {TokenType::ASSIGMENT_ADD, "ASSIGMENT_ADD"},             // +=           X
-      {TokenType::ASSIGMENT_SUBTRACT, "ASSIGMENT_SUBTRACT"},   // -= X
-      {TokenType::ASSIGMENT_MULTIPLY, "ASSIGMENT_MULTIPLY"},   // *= X
-      {TokenType::ASSIGMENT_DIVIDE, "ASSIGMENT_DIVIDE"},       // /= X
-      {TokenType::ASSIGMENT_MODULO, "ASSIGMENT_MODULO"},       // %= X
-      {TokenType::COMMA, "COMMA"},                             // ,        X
-      {TokenType::POINT, "POINT"},                             // .        X
-      {TokenType::PARENTHESIS_OPEN, "PARENTHESIS_OPEN"},       // (        X
-      {TokenType::PARENTHESIS_CLOSE, "PARENTHESIS_CLOSE"},     // ) X
-      {TokenType::SQUARE_BRACKET_OPEN, "SQUARE_BRACKET_OPEN"}, // [ X
-      {TokenType::SQUARE_BRACKET_CLOSE, "SQUARE_BRACKET_CLOSE"}, // ] X
-      {TokenType::CURLY_BRACKET_OPEN, "CURLY_OPEN"},             // {        X
-      {TokenType::CURLY_BRACKET_CLOSE, "CURLY_CLOSE"},           // }        X
-      {TokenType::DOLLAR, "DOLLAR"},                             // $
-      {TokenType::SEMICOLON, "SEMICOLON"},                       // ;        X
-      {TokenType::TWO_POINTS, "TWO_POINTS"},                     // :        X
-      {TokenType::ARROW_RIGHT, "ARROW_RIGHT"},                   // ->
-      {TokenType::IF, "IF"},                                     // if        X
-      {TokenType::ELSE, "ELSE"},                                 // else      X
-      {TokenType::WHILE, "WHILE"},                               // while     X
-      {TokenType::RETURN, "RETURN"},                             // return    X
-      {TokenType::BREAK, "BREAK"},                               // stop      X
-      {TokenType::CONTINUE, "CONTINUE"},                         // skip      X
-      {TokenType::FOR, "FOR"},
-      {TokenType::LITERAL, "LITERAL"},           // 3        X
-      {TokenType::FUNCTION_DECLARATION, "FUNC"}, // func     X
-      {TokenType::MODULE_DECLARATION, "USE"},    // use      X
-      {TokenType::IMPORT_DECLARATION, "IMPORT"}, // import   X
-      {TokenType::IDENTIFIER, "ID"}              //  algo     X
-  };
-
-  for (int i = 0; i < tokens.size(); i++) {
-    std::cout << "[";
-    std::cout << "type: " << mapo[tokens[i].type];
-    if (tokens[i].value.size() > 0) {
-      std::cout << ", value: " << tokens[i].value << "]";
-    } else {
-      std::cout << "]";
-    }
-    if (i < tokens.size() - 1)
-      std::cout << ", ";
-  }
-  std::cout << std::endl;
-}
-
 void Kernel::RunScript(std::string name, Flag::Flags flags) {
   std::fstream file(name);
 
@@ -105,13 +36,13 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
               << std::endl;
   }
 
-  Wyrm::Lexer lexer(code.data(), code.size(), &book);
+  Wyrm::Lexer lexer((char *) code.data(), code.size(), &book);
 
   lexer.GenerateTokens();
   std::vector<Token> tokens = *(lexer.GetTokens());
 
   if (CHECK_BIT(flags, 1)) {
-    DebugTokens(tokens);
+    WyrmAPI::DebugTokens(tokens);
   }
 
   Parser parser(&book, tokens);
@@ -134,6 +65,7 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
 
   std::cout << "hola" << std::endl;
   ser.SerializeToFile(codeInfo, "a.wy");
+  
   /*
   Assembler assembler(&book, ast);
 

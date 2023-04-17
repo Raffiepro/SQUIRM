@@ -10,6 +10,151 @@
 #include <vector>
 
 namespace WyrmAPI {
+
+
+enum OpType {
+  OP_UNARY,
+  OP_BINARY,
+  OP_CONVERSION,
+};
+
+enum OpSymbol {
+  OP_ADD,
+  OP_SUBTRACT,
+  OP_MUL,
+  OP_DIV,
+  OP_MOD,
+  OP_LT,
+  OP_GT,
+  OP_LEQ,
+  OP_GEQ,
+  OP_NEQ,
+  OP_EQ,
+  OP_AND,
+  OP_OR,
+  OP_NOT,
+  OP_AMP,
+  OP_PIPE,
+  OP_QM,
+  OP_IQM,
+  OP_UP,
+  OP_AT,
+  OP_LEFTSHIFT,
+  OP_RIGHTSHIFT,
+  OP_MEQ,
+  OP_MNEQ,
+  OP_DOLLAR,
+  OP_ARROW_RIGHT,
+  OP_ARROW_LEFT
+};
+
+
+enum NodeType {
+  NODE,
+  ERROR_NODE,
+  DECLARATION,
+  ASSIGNATION,
+  REFERENCE,
+  PARAMETER,
+  TYPE_NODE,
+  IF_NODE,
+  WHILE_NODE,
+  FOR_NODE,
+  BREAK_NODE,
+  SKIP,
+  RETURN_NODE,
+  FUNCTION,
+  DEF_FUNCTION,
+  NODE_ERROR,
+  EXP_BINARY,
+  EXP_UNARY,
+  EXP_CALL,
+  VALUE,
+};
+
+enum TokenType {
+  ADD,               // +
+  SUBTRACT,          // -
+  MULTIPLY,          // *
+  DIVIDE,            // /
+  MODULO,            // %
+  AMPERSAND,         // &
+  PIPE,              // |
+  QUESTION_MARK,     // ?
+  INV_QUESTION_MARK, // ¿
+  UP_ARROW,          // ^
+  AT_SYMBOL,         // @
+  LEFT_SHIFT,        // <<
+  RIGHT_SHIFT,       // >>
+
+  AND, // &&
+  OR,  // ||
+  NOT, // !
+
+  EQUAL, // ==
+  MORE_EQUAL,
+  NOT_EQUAL,
+  NOT_MORE_EQUAL,     // !=
+  GREATER_THAN,       // >
+  LESSER_THAN,        // <
+  GREATER_EQUAL_THAN, // >=
+  LESSER_EQUAL_THAN,  // <=
+
+  INCREMENT, // ++
+  DECREMENT, // --
+
+  ASSIGMENT,          // =
+  ASSIGMENT_ADD,      // +=
+  ASSIGMENT_SUBTRACT, // -=
+  ASSIGMENT_MULTIPLY, // *=
+  ASSIGMENT_DIVIDE,   // /=
+  ASSIGMENT_MODULO,   // %=
+
+  COMMA,                // ,
+  POINT,                // .
+  PARENTHESIS_OPEN,     // (
+  PARENTHESIS_CLOSE,    // )
+  SQUARE_BRACKET_OPEN,  // [
+  SQUARE_BRACKET_CLOSE, // ]
+  CURLY_BRACKET_OPEN,   // {
+  CURLY_BRACKET_CLOSE,  // }
+  DOLLAR,               // $
+  SEMICOLON,            // ;
+
+  TWO_POINTS, // :
+  ARROW_RIGHT,
+  ARROW_LEFT,
+  LONG_ARROW_RIGHT,
+  LONG_ARROW_LEFT,
+  WIDE_ARROW_RIGHT,
+  WIDE_ARROW_LEFT,
+  LONG_WIDE_ARROW_RIGHT,
+  LONG_WIDE_ARROW_LEFT, // ->
+  QUOT,                 // '
+  DOUBLE_QUOT,          // "
+
+  IF,       // if
+  ELSE,     // else
+  WHILE,    // while
+  FOR,      // for
+  RETURN,   // return
+  BREAK,    // stop
+  CONTINUE, // skip
+
+  LITERAL, // 3
+  TYPE,    // int
+
+  FUNCTION_DECLARATION, // func
+  MODULE_DECLARATION,   // use
+  IMPORT_DECLARATION,   // import
+
+  IDENTIFIER, // algo
+  SEPARATOR,
+
+  ERROR
+};
+
+
 struct Data {
   int num;
   void *data;
@@ -40,29 +185,6 @@ template <typename T> void Print(T t) {
   std::cout << termcolor::green << t << termcolor::reset;
 }
 }; // namespace Debug
-
-enum NodeType {
-  NODE,
-  ERROR_NODE,
-  DECLARATION,
-  ASSIGNATION,
-  REFERENCE,
-  PARAMETER,
-  TYPE_NODE,
-  IF_NODE,
-  WHILE_NODE,
-  FOR_NODE,
-  BREAK_NODE,
-  SKIP,
-  RETURN_NODE,
-  FUNCTION,
-  DEF_FUNCTION,
-  NODE_ERROR,
-  EXP_BINARY,
-  EXP_UNARY,
-  EXP_CALL,
-  VALUE,
-};
 
 struct Atom {
   Data *data;
@@ -152,123 +274,109 @@ public:
   std::string GetDataString() { return this->sData; }
 };
 
-enum OpType {
-  OP_UNARY,
-  OP_BINARY,
-  OP_CONVERSION,
+class Token {
+public:
+  Token(TokenType type, int data){
+    this->type = type;
+    this->data = data;
+  }
+  Token(TokenType type, std::string value, int data){
+    this->type = type;
+    this->value = value;
+    this->data = data;
+  }
+  Token(TokenType type, std::string value){
+    this->value = value;
+    this->type = type;
+  }
+  Token(TokenType type){
+    this->type = type;
+  }
+
+  Token() { this->type = WyrmAPI::TokenType::ERROR; }
+  ~Token() {}
+
+  bool IsLiteral(){
+    return this->type == WyrmAPI::TokenType::LITERAL;
+  }
+
+  bool IsIdentifier(){
+    return this->type == WyrmAPI::TokenType::IDENTIFIER;
+  }
+
+  std::string value;
+  WyrmAPI::TokenType type;
+  int data;
 };
 
-enum OpSymbol {
-  OP_ADD,
-  OP_SUBTRACT,
-  OP_MUL,
-  OP_DIV,
-  OP_MOD,
-  OP_LT,
-  OP_GT,
-  OP_LEQ,
-  OP_GEQ,
-  OP_NEQ,
-  OP_EQ,
-  OP_AND,
-  OP_OR,
-  OP_NOT,
-  OP_AMP,
-  OP_PIPE,
-  OP_QM,
-  OP_IQM,
-  OP_UP,
-  OP_AT,
-  OP_LEFTSHIFT,
-  OP_RIGHTSHIFT,
-  OP_MEQ,
-  OP_MNEQ,
-  OP_DOLLAR,
-  OP_ARROW_RIGHT,
-  OP_ARROW_LEFT
-};
+void DebugTokens(std::vector<WyrmAPI::Token> tokens) {
+  // std::cout << termcolor::red << termcolor::bold
+  //          << "Tokens:" << termcolor::reset << std::endl;
+  std::map<TokenType, std::string> mapo = {
+      {TokenType::ERROR, "ERROR"},
+      {TokenType::SEPARATOR, "SEPARATOR"},
+      {TokenType::TYPE, "TYPE"},
+      {TokenType::ADD, "ADD"},             // +            X
+      {TokenType::SUBTRACT, "SUBTRACT"},   // -            X
+      {TokenType::MULTIPLY, "MULTIPLY"},   // *            X
+      {TokenType::DIVIDE, "DIVIDE"},       // /            X
+      {TokenType::MODULO, "MODULO"},       // %            X
+      {TokenType::INCREMENT, "INCREMENT"}, // ++           X
+      {TokenType::DECREMENT, "DECREMENT"}, // --           X
+      {TokenType::NOT, "NOT"},             // !
+      {TokenType::AND, "AND"},
+      {TokenType::OR, "OR"},
+      {TokenType::EQUAL, "EQUAL"},                             // ==           X
+      {TokenType::GREATER_THAN, "GREATER_THAN"},               // >            X
+      {TokenType::LESSER_THAN, "LESSER_THAN"},                 // <            X
+      {TokenType::GREATER_EQUAL_THAN, "GREATER_EQUAL_THAN"},   // >= X
+      {TokenType::LESSER_EQUAL_THAN, "LESSER_EQUAL_THAN"},     // <= X
+      {TokenType::NOT_EQUAL, "NOT_EQUAL"},                     // !=           X
+      {TokenType::ASSIGMENT, "ASSIGMENT"},                     // =            X
+      {TokenType::ASSIGMENT_ADD, "ASSIGMENT_ADD"},             // +=           X
+      {TokenType::ASSIGMENT_SUBTRACT, "ASSIGMENT_SUBTRACT"},   // -= X
+      {TokenType::ASSIGMENT_MULTIPLY, "ASSIGMENT_MULTIPLY"},   // *= X
+      {TokenType::ASSIGMENT_DIVIDE, "ASSIGMENT_DIVIDE"},       // /= X
+      {TokenType::ASSIGMENT_MODULO, "ASSIGMENT_MODULO"},       // %= X
+      {TokenType::COMMA, "COMMA"},                             // ,        X
+      {TokenType::POINT, "POINT"},                             // .        X
+      {TokenType::PARENTHESIS_OPEN, "PARENTHESIS_OPEN"},       // (        X
+      {TokenType::PARENTHESIS_CLOSE, "PARENTHESIS_CLOSE"},     // ) X
+      {TokenType::SQUARE_BRACKET_OPEN, "SQUARE_BRACKET_OPEN"}, // [ X
+      {TokenType::SQUARE_BRACKET_CLOSE, "SQUARE_BRACKET_CLOSE"}, // ] X
+      {TokenType::CURLY_BRACKET_OPEN, "CURLY_OPEN"},             // {        X
+      {TokenType::CURLY_BRACKET_CLOSE, "CURLY_CLOSE"},           // }        X
+      {TokenType::DOLLAR, "DOLLAR"},                             // $
+      {TokenType::SEMICOLON, "SEMICOLON"},                       // ;        X
+      {TokenType::TWO_POINTS, "TWO_POINTS"},                     // :        X
+      {TokenType::ARROW_RIGHT, "ARROW_RIGHT"},                   // ->
+      {TokenType::IF, "IF"},                                     // if        X
+      {TokenType::ELSE, "ELSE"},                                 // else      X
+      {TokenType::WHILE, "WHILE"},                               // while     X
+      {TokenType::RETURN, "RETURN"},                             // return    X
+      {TokenType::BREAK, "BREAK"},                               // stop      X
+      {TokenType::CONTINUE, "CONTINUE"},                         // skip      X
+      {TokenType::FOR, "FOR"},
+      {TokenType::LITERAL, "LITERAL"},           // 3        X
+      {TokenType::FUNCTION_DECLARATION, "FUNC"}, // func     X
+      {TokenType::MODULE_DECLARATION, "USE"},    // use      X
+      {TokenType::IMPORT_DECLARATION, "IMPORT"}, // import   X
+      {TokenType::IDENTIFIER, "ID"}              //  algo     X
+  };
 
-enum TokenType {
-  ADD,               // +
-  SUBTRACT,          // -
-  MULTIPLY,          // *
-  DIVIDE,            // /
-  MODULO,            // %
-  AMPERSAND,         // &
-  PIPE,              // |
-  QUESTION_MARK,     // ?
-  INV_QUESTION_MARK, // ¿
-  UP_ARROW,          // ^
-  AT_SYMBOL,         // @
-  LEFT_SHIFT,        // <<
-  RIGHT_SHIFT,       // >>
-
-  AND, // &&
-  OR,  // ||
-  NOT, // !
-
-  EQUAL, // ==
-  MORE_EQUAL,
-  NOT_EQUAL,
-  NOT_MORE_EQUAL,     // !=
-  GREATER_THAN,       // >
-  LESSER_THAN,        // <
-  GREATER_EQUAL_THAN, // >=
-  LESSER_EQUAL_THAN,  // <=
-
-  INCREMENT, // ++
-  DECREMENT, // --
-
-  ASSIGMENT,          // =
-  ASSIGMENT_ADD,      // +=
-  ASSIGMENT_SUBTRACT, // -=
-  ASSIGMENT_MULTIPLY, // *=
-  ASSIGMENT_DIVIDE,   // /=
-  ASSIGMENT_MODULO,   // %=
-
-  COMMA,                // ,
-  POINT,                // .
-  PARENTHESIS_OPEN,     // (
-  PARENTHESIS_CLOSE,    // )
-  SQUARE_BRACKET_OPEN,  // [
-  SQUARE_BRACKET_CLOSE, // ]
-  CURLY_BRACKET_OPEN,   // {
-  CURLY_BRACKET_CLOSE,  // }
-  DOLLAR,               // $
-  SEMICOLON,            // ;
-
-  TWO_POINTS, // :
-  ARROW_RIGHT,
-  ARROW_LEFT,
-  LONG_ARROW_RIGHT,
-  LONG_ARROW_LEFT,
-  WIDE_ARROW_RIGHT,
-  WIDE_ARROW_LEFT,
-  LONG_WIDE_ARROW_RIGHT,
-  LONG_WIDE_ARROW_LEFT, // ->
-  QUOT,                 // '
-  DOUBLE_QUOT,          // "
-
-  IF,       // if
-  ELSE,     // else
-  WHILE,    // while
-  FOR,      // for
-  RETURN,   // return
-  BREAK,    // stop
-  CONTINUE, // skip
-
-  LITERAL, // 3
-  TYPE,    // int
-
-  FUNCTION_DECLARATION, // func
-  MODULE_DECLARATION,   // use
-  IMPORT_DECLARATION,   // import
-
-  IDENTIFIER, // algo
-  SEPARATOR,
-
-  ERROR
-};
+  for (int i = 0; i < tokens.size(); i++) {
+    std::cout << "[";
+    std::cout << "type: " << mapo[tokens[i].type];
+    if (tokens[i].value.size() > 0) {
+      std::cout << ", value: " << tokens[i].value << "]";
+    } else {
+      std::cout << "]";
+    }
+    if (i < tokens.size() - 1)
+      std::cout << ", ";
+  }
+  std::cout << std::endl;
+}
 
 struct LexerInfo {
   std::string value;

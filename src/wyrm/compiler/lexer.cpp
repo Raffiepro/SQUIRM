@@ -9,32 +9,7 @@
 #define TAB '\t'
 
 using namespace Wyrm;
-
-Token::Token(WyrmAPI::TokenType type, std::string value, int data) {
-  this->type = type;
-  this->value = value;
-  this->data = data;
-}
-
-Token::Token(WyrmAPI::TokenType type, std::string value) {
-  this->value = value;
-  this->type = type;
-}
-
-Token::Token(WyrmAPI::TokenType type) { this->type = type; }
-
-Token::Token(WyrmAPI::TokenType type, int data) {
-  this->type = type;
-  this->data = data;
-}
-
-Token::Token() { this->type = WyrmAPI::TokenType::ERROR; }
-
-Token::~Token() {}
-
-bool Token::IsLiteral() { return this->type == WyrmAPI::LITERAL; }
-
-bool Token::IsIdentifier() { return this->type == WyrmAPI::IDENTIFIER; }
+using namespace WyrmAPI;
 
 Lexer::Lexer(char *code, int codeSize, Book *book) {
   this->code = code;

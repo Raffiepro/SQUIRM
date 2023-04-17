@@ -14,7 +14,7 @@ public:
   Node *GetAST();
 
 private:
-  std::vector<Wyrm::Token> tokens;
+  std::vector<WyrmAPI::Token> tokens;
   Book *book;
 
   std::vector<std::vector<TokenType>> opOrder = {

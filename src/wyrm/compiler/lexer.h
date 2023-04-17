@@ -7,25 +7,9 @@
 #include "../_base.h"
 #include "../kernel/library.h"
 
+using namespace WyrmAPI;
+
 namespace Wyrm {
-
-class Token {
-public:
-  Token(WyrmAPI::TokenType type, int data);
-  Token(WyrmAPI::TokenType type, std::string value, int data);
-  Token(WyrmAPI::TokenType type, std::string value);
-  Token(WyrmAPI::TokenType type);
-
-  Token();
-  ~Token();
-
-  bool IsLiteral();
-  bool IsIdentifier();
-
-  std::string value;
-  WyrmAPI::TokenType type;
-  int data;
-};
 
 class Lexer {
 public:
