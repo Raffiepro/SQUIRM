@@ -37,16 +37,21 @@ WyrmAPI::LexerInfo *Base::PString(char *c, int end) {
 }
 
 WyrmAPI::Data *Base::DInt(std::string s) {
-  WyrmAPI::Data *res = new WyrmAPI::Data();
-  res->num = std::stoi(s);
+
+  int *num = new int;
+  *num = std::stoi(s);
+
+  WyrmAPI::Data *res = new WyrmAPI::Data(sizeof(int), num);
   return res;
 }
 
 WyrmAPI::Data *Base::DString(std::string s) {
-  WyrmAPI::Data *res = new WyrmAPI::Data();
-  res->num = s.size();
-  char *c = (char *)s.c_str();
-  res->data = (void *)c;
+  char *c = new char[s.size()];
+
+  for (int i = 0; i < s.size(); i++)
+    c[i] = s[i];
+
+  WyrmAPI::Data *res = new WyrmAPI::Data(s.size(), (void *)c);
   return res;
 }
 

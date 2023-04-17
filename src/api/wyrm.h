@@ -11,7 +11,6 @@
 
 namespace WyrmAPI {
 
-
 enum OpType {
   OP_UNARY,
   OP_BINARY,
@@ -47,7 +46,6 @@ enum OpSymbol {
   OP_ARROW_RIGHT,
   OP_ARROW_LEFT
 };
-
 
 enum NodeType {
   NODE,
@@ -154,14 +152,19 @@ enum TokenType {
   ERROR
 };
 
-
 struct Data {
   int num;
   void *data;
 
-  Data(int num) { this->num = num; }
+  Data(int num, void *data) {
+    this->num = num;
+    this->data = data;
+  }
 
-  Data() {}
+  Data() {
+    this->num = 0;
+    this->data = NULL;
+  }
 };
 
 namespace Debug {
@@ -200,12 +203,10 @@ public:
   Node(NodeType type) {
     this->type = type;
     this->children.reserve(1);
-    this->allocable = false;
   };
   Node() {
     this->type = NodeType::NODE;
     this->children.reserve(1);
-    this->allocable = false;
   }
   ~Node() {
     for (int i = 0; i < children.size(); i++) {
@@ -216,10 +217,12 @@ public:
   std::vector<Node *> children;
   NodeType type;
 
-  bool allocable = false;
-  int nd;
-  std::string sData;
+  // bool allocable = false;
+  // int nd;
+  std::string sData = "";
   Atom *atom = NULL; // CUIDADO CON ESTO! PUEDE SER NULL
+
+  int nd = -1;
 
   void Debug() {
     std::map<NodeType, std::string> trans = {{NODE, "NODE"},
@@ -276,107 +279,88 @@ public:
 
 class Token {
 public:
-  Token(TokenType type, int data){
+  Token(TokenType type, int data) {
     this->type = type;
     this->data = data;
   }
-  Token(TokenType type, std::string value, int data){
+  Token(TokenType type, std::string value, int data) {
     this->type = type;
     this->value = value;
     this->data = data;
   }
-  Token(TokenType type, std::string value){
+  Token(TokenType type, std::string value) {
     this->value = value;
     this->type = type;
   }
-  Token(TokenType type){
-    this->type = type;
-  }
+  Token(TokenType type) { this->type = type; }
 
   Token() { this->type = WyrmAPI::TokenType::ERROR; }
   ~Token() {}
 
-  bool IsLiteral(){
-    return this->type == WyrmAPI::TokenType::LITERAL;
-  }
+  bool IsLiteral() { return this->type == WyrmAPI::TokenType::LITERAL; }
 
-  bool IsIdentifier(){
-    return this->type == WyrmAPI::TokenType::IDENTIFIER;
+  bool IsIdentifier() { return this->type == WyrmAPI::TokenType::IDENTIFIER; }
+
+  void Debug() {
+    std::map<TokenType, std::string> mapo = {
+        {TokenType::ERROR, "ERROR"},
+        {TokenType::SEPARATOR, "SEPARATOR"},
+        {TokenType::TYPE, "TYPE"},
+        {TokenType::ADD, "ADD"},             // +            X
+        {TokenType::SUBTRACT, "SUBTRACT"},   // -            X
+        {TokenType::MULTIPLY, "MULTIPLY"},   // *            X
+        {TokenType::DIVIDE, "DIVIDE"},       // /            X
+        {TokenType::MODULO, "MODULO"},       // %            X
+        {TokenType::INCREMENT, "INCREMENT"}, // ++           X
+        {TokenType::DECREMENT, "DECREMENT"}, // --           X
+        {TokenType::NOT, "NOT"},             // !
+        {TokenType::AND, "AND"},
+        {TokenType::OR, "OR"},
+        {TokenType::EQUAL, "EQUAL"},                           // ==           X
+        {TokenType::GREATER_THAN, "GREATER_THAN"},             // >            X
+        {TokenType::LESSER_THAN, "LESSER_THAN"},               // <            X
+        {TokenType::GREATER_EQUAL_THAN, "GREATER_EQUAL_THAN"}, // >= X
+        {TokenType::LESSER_EQUAL_THAN, "LESSER_EQUAL_THAN"},   // <= X
+        {TokenType::NOT_EQUAL, "NOT_EQUAL"},                   // !=           X
+        {TokenType::ASSIGMENT, "ASSIGMENT"},                   // =            X
+        {TokenType::ASSIGMENT_ADD, "ASSIGMENT_ADD"},           // +=           X
+        {TokenType::ASSIGMENT_SUBTRACT, "ASSIGMENT_SUBTRACT"}, // -= X
+        {TokenType::ASSIGMENT_MULTIPLY, "ASSIGMENT_MULTIPLY"}, // *= X
+        {TokenType::ASSIGMENT_DIVIDE, "ASSIGMENT_DIVIDE"},     // /= X
+        {TokenType::ASSIGMENT_MODULO, "ASSIGMENT_MODULO"},     // %= X
+        {TokenType::COMMA, "COMMA"},                           // ,        X
+        {TokenType::POINT, "POINT"},                           // .        X
+        {TokenType::PARENTHESIS_OPEN, "PARENTHESIS_OPEN"},     // (        X
+        {TokenType::PARENTHESIS_CLOSE, "PARENTHESIS_CLOSE"},   // ) X
+        {TokenType::SQUARE_BRACKET_OPEN, "SQUARE_BRACKET_OPEN"},   // [ X
+        {TokenType::SQUARE_BRACKET_CLOSE, "SQUARE_BRACKET_CLOSE"}, // ] X
+        {TokenType::CURLY_BRACKET_OPEN, "CURLY_OPEN"},             // {        X
+        {TokenType::CURLY_BRACKET_CLOSE, "CURLY_CLOSE"},           // }        X
+        {TokenType::DOLLAR, "DOLLAR"},                             // $
+        {TokenType::SEMICOLON, "SEMICOLON"},                       // ;        X
+        {TokenType::TWO_POINTS, "TWO_POINTS"},                     // :        X
+        {TokenType::ARROW_RIGHT, "ARROW_RIGHT"},                   // ->
+        {TokenType::IF, "IF"},             // if        X
+        {TokenType::ELSE, "ELSE"},         // else      X
+        {TokenType::WHILE, "WHILE"},       // while     X
+        {TokenType::RETURN, "RETURN"},     // return    X
+        {TokenType::BREAK, "BREAK"},       // stop      X
+        {TokenType::CONTINUE, "CONTINUE"}, // skip      X
+        {TokenType::FOR, "FOR"},
+        {TokenType::LITERAL, "LITERAL"},           // 3        X
+        {TokenType::FUNCTION_DECLARATION, "FUNC"}, // func     X
+        {TokenType::MODULE_DECLARATION, "USE"},    // use      X
+        {TokenType::IMPORT_DECLARATION, "IMPORT"}, // import   X
+        {TokenType::IDENTIFIER, "ID"}              //  algo     X
+    };
+
+    std::cout << mapo[this->type];
   }
 
   std::string value;
   WyrmAPI::TokenType type;
   int data;
 };
-
-void DebugTokens(std::vector<WyrmAPI::Token> tokens) {
-  // std::cout << termcolor::red << termcolor::bold
-  //          << "Tokens:" << termcolor::reset << std::endl;
-  std::map<TokenType, std::string> mapo = {
-      {TokenType::ERROR, "ERROR"},
-      {TokenType::SEPARATOR, "SEPARATOR"},
-      {TokenType::TYPE, "TYPE"},
-      {TokenType::ADD, "ADD"},             // +            X
-      {TokenType::SUBTRACT, "SUBTRACT"},   // -            X
-      {TokenType::MULTIPLY, "MULTIPLY"},   // *            X
-      {TokenType::DIVIDE, "DIVIDE"},       // /            X
-      {TokenType::MODULO, "MODULO"},       // %            X
-      {TokenType::INCREMENT, "INCREMENT"}, // ++           X
-      {TokenType::DECREMENT, "DECREMENT"}, // --           X
-      {TokenType::NOT, "NOT"},             // !
-      {TokenType::AND, "AND"},
-      {TokenType::OR, "OR"},
-      {TokenType::EQUAL, "EQUAL"},                             // ==           X
-      {TokenType::GREATER_THAN, "GREATER_THAN"},               // >            X
-      {TokenType::LESSER_THAN, "LESSER_THAN"},                 // <            X
-      {TokenType::GREATER_EQUAL_THAN, "GREATER_EQUAL_THAN"},   // >= X
-      {TokenType::LESSER_EQUAL_THAN, "LESSER_EQUAL_THAN"},     // <= X
-      {TokenType::NOT_EQUAL, "NOT_EQUAL"},                     // !=           X
-      {TokenType::ASSIGMENT, "ASSIGMENT"},                     // =            X
-      {TokenType::ASSIGMENT_ADD, "ASSIGMENT_ADD"},             // +=           X
-      {TokenType::ASSIGMENT_SUBTRACT, "ASSIGMENT_SUBTRACT"},   // -= X
-      {TokenType::ASSIGMENT_MULTIPLY, "ASSIGMENT_MULTIPLY"},   // *= X
-      {TokenType::ASSIGMENT_DIVIDE, "ASSIGMENT_DIVIDE"},       // /= X
-      {TokenType::ASSIGMENT_MODULO, "ASSIGMENT_MODULO"},       // %= X
-      {TokenType::COMMA, "COMMA"},                             // ,        X
-      {TokenType::POINT, "POINT"},                             // .        X
-      {TokenType::PARENTHESIS_OPEN, "PARENTHESIS_OPEN"},       // (        X
-      {TokenType::PARENTHESIS_CLOSE, "PARENTHESIS_CLOSE"},     // ) X
-      {TokenType::SQUARE_BRACKET_OPEN, "SQUARE_BRACKET_OPEN"}, // [ X
-      {TokenType::SQUARE_BRACKET_CLOSE, "SQUARE_BRACKET_CLOSE"}, // ] X
-      {TokenType::CURLY_BRACKET_OPEN, "CURLY_OPEN"},             // {        X
-      {TokenType::CURLY_BRACKET_CLOSE, "CURLY_CLOSE"},           // }        X
-      {TokenType::DOLLAR, "DOLLAR"},                             // $
-      {TokenType::SEMICOLON, "SEMICOLON"},                       // ;        X
-      {TokenType::TWO_POINTS, "TWO_POINTS"},                     // :        X
-      {TokenType::ARROW_RIGHT, "ARROW_RIGHT"},                   // ->
-      {TokenType::IF, "IF"},                                     // if        X
-      {TokenType::ELSE, "ELSE"},                                 // else      X
-      {TokenType::WHILE, "WHILE"},                               // while     X
-      {TokenType::RETURN, "RETURN"},                             // return    X
-      {TokenType::BREAK, "BREAK"},                               // stop      X
-      {TokenType::CONTINUE, "CONTINUE"},                         // skip      X
-      {TokenType::FOR, "FOR"},
-      {TokenType::LITERAL, "LITERAL"},           // 3        X
-      {TokenType::FUNCTION_DECLARATION, "FUNC"}, // func     X
-      {TokenType::MODULE_DECLARATION, "USE"},    // use      X
-      {TokenType::IMPORT_DECLARATION, "IMPORT"}, // import   X
-      {TokenType::IDENTIFIER, "ID"}              //  algo     X
-  };
-
-  for (int i = 0; i < tokens.size(); i++) {
-    std::cout << "[";
-    std::cout << "type: " << mapo[tokens[i].type];
-    if (tokens[i].value.size() > 0) {
-      std::cout << ", value: " << tokens[i].value << "]";
-    } else {
-      std::cout << "]";
-    }
-    if (i < tokens.size() - 1)
-      std::cout << ", ";
-  }
-  std::cout << std::endl;
-}
 
 struct LexerInfo {
   std::string value;
@@ -407,7 +391,6 @@ struct RunnerInfo {
 class TreeCode {
 
 public:
-
   TreeCode() {}
 
   TreeCode(Node *root) { this->root = root; }

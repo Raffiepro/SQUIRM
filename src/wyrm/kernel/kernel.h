@@ -21,6 +21,6 @@ public:
   void PrintVersion();
 
 private:
-  void DebugTokens(std::vector<Wyrm::Token> tokens);
+  void DebugTokens(std::vector<WyrmAPI::Token> tokens);
 };
 } // namespace Wyrm

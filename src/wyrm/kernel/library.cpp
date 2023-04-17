@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <iostream>
 
-Wyrm::Book::Book() {}
+Wyrm::Book::Book(Flag::Flags flags) { this->flags = flags; }
 
 void Wyrm::Book::RegisterLibraries() {
   // Carreguem les llibreries
@@ -31,8 +31,9 @@ void Wyrm::Book::RegisterLibraries() {
 
     WyrmAPI::LoadInfo info = l->PreLoad();
 
-    std::cout << info.name << " - " << info.desc << std::endl;
-
+    if (CHECK_BIT(this->flags, 1)) {
+      std::cout << info.name << " - " << info.desc << std::endl;
+    }
     l->Load();
 
     std::vector<
@@ -100,6 +101,17 @@ void Wyrm::Book::RegisterLibraries() {
       }
 
       this->operations.push_back(op);
+    }
+
+    std::vector<std::tuple<std::string, WyrmAPI::RunnerInfo>> runnerInfos =
+        l->_GetRunners();
+    for (int i = 0; i < runnerInfos.size(); i++) {
+
+      InternalRunner runner((int (*)(WyrmAPI::TreeCode *))dlsym(
+                                handle, std::get<0>(runnerInfos[i]).c_str()),
+                            std::get<1>(runnerInfos[i]));
+
+      this->runners.push_back(runner);
     }
 
     DestroyLibFunc(l);

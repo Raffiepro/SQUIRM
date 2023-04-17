@@ -34,18 +34,25 @@ void Serializer::SerializeToFile(WyrmAPI::TreeCode codeInfo,
 void Serializer::SerializeString(FILE *f, std::string s) {
   unsigned int size = s.size();
   fwrite(&size, sizeof(unsigned int), 1, f);
-  fwrite(&s, sizeof(char), size, f);
+  for (int i = 0; i < size; i++) {
+    char c = s[i];
+    fwrite(&c, sizeof(char), 1, f);
+  }
 }
 
 void Serializer::SerializeAtom(FILE *f, WyrmAPI::Atom *atom) {
-  if(atom == NULL){
+  if (atom == NULL) {
     int m1 = -1;
     fwrite(&m1, sizeof(int), 1, f);
   } else {
     int typeId = atom->typeId;
+    // std::cout << "typeID: " << typeId << std::endl;
     fwrite(&typeId, sizeof(int), 1, f);
     fwrite(&(atom->data->num), sizeof(int), 1, f);
-    fwrite(&(atom->data->data), 1, atom->data->num, f); // Va en bytes i tal
+    for (int i = 0; i < atom->data->num; i++) {
+      fwrite((char *)atom->data->data + i, sizeof(char), 1,
+             f); // Va en bytes i tal
+    }
   }
 }
 
@@ -53,7 +60,7 @@ void Serializer::SerializeNode(FILE *f, WyrmAPI::Node *n,
                                std::vector<std::string> &libs) {
   SerializeAtom(f, n->atom);
 
-  fwrite(&(n->allocable), sizeof(bool), 1, f);
+  //  fwrite(&(n->allocable), sizeof(bool), 1, f);
   fwrite(&(n->nd), sizeof(int), 1, f);
 
   int type = (int)n->type;
@@ -69,19 +76,20 @@ void Serializer::SerializeNode(FILE *f, WyrmAPI::Node *n,
   }
 }
 
-WyrmAPI::TreeCode Serializer::LoadFromFile(std::string fileName){
+WyrmAPI::TreeCode Serializer::LoadFromFile(std::string fileName) {
+
   FILE *f = fopen(fileName.c_str(), "rb");
+  WyrmAPI::TreeCode result;
+
   if (!f) {
     WyrmAPI::Debug::LogError("Error reading file " + fileName + "!");
-    return;
+    return result;
   }
-
-  WyrmAPI::TreeCode result;
 
   // Carreguem deps
   unsigned int depCount;
   fread(&depCount, sizeof(unsigned int), 1, f);
-  for(unsigned int i = 0; i < depCount; i++){
+  for (unsigned int i = 0; i < depCount; i++) {
     std::string lib = ReadString(f);
     result.AddDependency(lib);
   }
@@ -91,13 +99,13 @@ WyrmAPI::TreeCode Serializer::LoadFromFile(std::string fileName){
   return result;
 }
 
-std::string Serializer::ReadString(FILE *f){
+std::string Serializer::ReadString(FILE *f) {
   unsigned int size;
   fread(&size, sizeof(unsigned int), 1, f);
 
   std::string read = "";
   char c;
-  for(unsigned int i = 0; i < size; i++){
+  for (unsigned int i = 0; i < size; i++) {
     fread(&c, sizeof(char), 1, f);
     read += c;
   }
@@ -105,9 +113,7 @@ std::string Serializer::ReadString(FILE *f){
   return read;
 }
 
-WyrmAPI::Node* Serializer::ReadNode(FILE *f){
-
-}
+WyrmAPI::Node *Serializer::ReadNode(FILE *f) {}
 
 /*
 void Serializer::SerializeFromFile(std::string fileName, MachineCode *code) {

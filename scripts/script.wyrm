@@ -1,4 +1,5 @@
 a = 2 + 2 - 9
 a;
-b = "Hola que tal esto no esta dentro del codigo!!!";
-if a == (5 - 10): 9;
+b = "Hola esto no esta dentro del codigo hola jashdjsahdjashahdkjashdkjashd"
+if a == (5 - 10): 9222;
+patata = "Hola aixo es una patata y tal"

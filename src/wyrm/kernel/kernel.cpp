@@ -24,7 +24,7 @@ Kernel::~Kernel() { /* Destructor */
 void Kernel::RunScript(std::string name, Flag::Flags flags) {
   std::fstream file(name);
 
-  Book book;
+  Book book(flags);
   book.RegisterLibraries();
 
   std::string code = "", line;
@@ -36,13 +36,29 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
               << std::endl;
   }
 
-  Wyrm::Lexer lexer((char *) code.data(), code.size(), &book);
+  Wyrm::Lexer lexer((char *)code.data(), code.size(), &book);
 
   lexer.GenerateTokens();
   std::vector<Token> tokens = *(lexer.GetTokens());
 
   if (CHECK_BIT(flags, 1)) {
-    WyrmAPI::DebugTokens(tokens);
+    std::cout << termcolor::red << termcolor::bold
+              << "TOKENS:" << termcolor::reset << std::endl;
+    for (int i = 0; i < tokens.size(); i++) {
+      std::cout << "[";
+      std::cout << "type: " << termcolor::green;
+      tokens[i].Debug();
+      std::cout << termcolor::reset;
+      if (tokens[i].value.size() > 0) {
+        std::cout << ", value: " << termcolor::yellow << tokens[i].value
+                  << termcolor::reset << "]";
+      } else {
+        std::cout << "]";
+      }
+      if (i < tokens.size() - 1)
+        std::cout << ", ";
+    }
+    std::cout << std::endl;
   }
 
   Parser parser(&book, tokens);
@@ -59,65 +75,16 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
   // I ara aqui hem de carregar un assembler
   // Pero si no n'hi ha doncs serialitzem i tal
 
-  Serializer ser(&book);
-
   WyrmAPI::TreeCode codeInfo(ast);
+  if (book.runners.size() == 0) {
+    // Default runner
+    Serializer ser(&book);
 
-  std::cout << "hola" << std::endl;
-  ser.SerializeToFile(codeInfo, "a.wy");
-  
-  /*
-  Assembler assembler(&book, ast);
-
-  if (CHECK_BIT(flags, 2)) {
-    // Compilem a C++
-    // std::cout << termcolor::color<255,122,0> << "Compiling..." << std::endl;
-    Reinterpreter reinterpreter;
-    Builder::BuildCode(reinterpreter.GetCode(ast), Builder::GetExeName(name));
-
+    ser.SerializeToFile(codeInfo, "a.wy");
   } else {
-    // Interpretem
-    MachineCode machineCode = assembler.GetAssembly();
-
-    if (CHECK_BIT(flags, 1)) {
-      std::cout << termcolor::red << termcolor::bold
-                << "ASM:" << termcolor::reset << std::endl;
-      // Ara doncs fem debug de les instruccions
-      std::map<InstructionID, std::string> ins = {
-          {LOADC, "LOADC"},   {MOVE, "MOVE"},   {CALL, "CALL"},
-          {DEF, "DEF"},       {ICL, "ICL"},     {RET, "RET"},
-          {BINARY, "BINARY"}, {UNARY, "UNARY"}, {ASSIGNARY, "ASSIGNARY"},
-          {TO, "TO"},         {END, "END"},     {JUMP, "JUMP"},
-          {TEST, "TEST"},     {HALT, "HALT"},
-      };
-
-      for (int i = 0; i < machineCode.instructions.size(); i++) {
-        std::cout << termcolor::color<255, 125, 0> << "(" << i << ") "
-                  << termcolor::reset;
-        std::cout << ins[machineCode.instructions[i].type] << " ";
-        // std::cout << "= " << machineCode.instructions[i].type << " ";
-        if (machineCode.instructions[i].GetA() != INT32_MIN)
-          std::cout << machineCode.instructions[i].GetA() << " ";
-        if (machineCode.instructions[i].GetB() != INT32_MIN)
-          std::cout << machineCode.instructions[i].GetB() << " ";
-        if (machineCode.instructions[i].GetC() != INT32_MIN)
-          std::cout << machineCode.instructions[i].GetC() << " ";
-        std::cout << std::endl;
-      }
-      std::cout << std::endl;
-    }
-    // exit(1);
-    VM machine(&book, flags);
-    // TODO: Hacer esto
-    if (CHECK_BIT(flags, 1)) {
-      std::cout << termcolor::red << termcolor::bold
-                << "EXEC:" << termcolor::reset << std::endl;
-    }
-    machine.Run(machineCode);
+    // Pillem el primer (falta mirar les flags)
+    book.runners[0].Run(&codeInfo);
   }
-
-  delete ast;
-  */
 }
 
 void Kernel::PrintVersion() { printVersion(); }

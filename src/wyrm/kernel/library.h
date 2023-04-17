@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../_base.h"
+#include "../flags/flags.h"
 #include <dlfcn.h>
 
 #include <filesystem>
@@ -68,7 +69,21 @@ private:
 };
 
 class InternalRunner {
-  
+public:
+  InternalRunner() {}
+  InternalRunner(int (*compFunc)(WyrmAPI::TreeCode *),
+                 WyrmAPI::RunnerInfo info) {
+    this->compFunc = compFunc;
+    this->info = info;
+  };
+
+  int Run(WyrmAPI::TreeCode *n) { return this->compFunc(n); }
+
+  WyrmAPI::RunnerInfo GetInfo() { return info; }
+
+private:
+  int (*compFunc)(WyrmAPI::TreeCode *);
+  WyrmAPI::RunnerInfo info;
 };
 
 class Book {
@@ -80,9 +95,13 @@ public:
 
   std::vector<InternalRunner> runners;
 
+  Book(Flag::Flags flags);
   Book();
 
   void RegisterLibraries();
   int GetTypeFromName(std::string name);
+
+private:
+  Flag::Flags flags;
 };
 } // namespace Wyrm
