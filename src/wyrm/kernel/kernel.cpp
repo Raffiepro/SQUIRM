@@ -15,33 +15,35 @@
 
 using namespace Wyrm;
 
-Kernel::Kernel() { /* Constructor */
+Kernel::Kernel(RunInfo flags) { /* Constructor */
+  this->flags = flags;
+
+  this->book = new Book(flags);
+  book->RegisterLibraries();
 }
 
 Kernel::~Kernel() { /* Destructor */
 }
 
-void Kernel::RunScript(std::string name, Flag::Flags flags) {
+void Kernel::RunScript(std::string name) {
   std::fstream file(name);
-
-  Book book(flags);
-  book.RegisterLibraries();
 
   std::string code = "", line;
   while (std::getline(file, line)) {
     code += line + "\n";
   }
-  if (CHECK_BIT(flags, 1)) {
+
+  if (flags.debug) {
     std::cout << termcolor::color<0, 150, 255> << code << termcolor::reset
               << std::endl;
   }
 
-  Wyrm::Lexer lexer((char *)code.data(), code.size(), &book);
+  Wyrm::Lexer lexer((char *)code.data(), code.size(), book);
 
   lexer.GenerateTokens();
   std::vector<Token> tokens = *(lexer.GetTokens());
 
-  if (CHECK_BIT(flags, 1)) {
+  if (flags.debug) {
     std::cout << termcolor::red << termcolor::bold
               << "TOKENS:" << termcolor::reset << std::endl;
     for (int i = 0; i < tokens.size(); i++) {
@@ -61,11 +63,11 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
     std::cout << std::endl;
   }
 
-  Parser parser(&book, tokens);
+  Parser parser(book, tokens);
 
   Node *ast = parser.GetAST();
 
-  if (CHECK_BIT(flags, 1)) {
+  if (flags.debug) {
     std::cout << termcolor::red << termcolor::bold << "AST:" << termcolor::reset
               << std::endl;
     ast->Debug();
@@ -76,15 +78,41 @@ void Kernel::RunScript(std::string name, Flag::Flags flags) {
   // Pero si no n'hi ha doncs serialitzem i tal
 
   WyrmAPI::TreeCode codeInfo(ast);
-  if (book.runners.size() == 0) {
+  if (flags.runnerName == "") {
     // Default runner
-    Serializer ser(&book);
+    Serializer ser(book);
 
     ser.SerializeToFile(codeInfo, "a.wy");
   } else {
     // Pillem el primer (falta mirar les flags)
-    book.runners[0].Run(&codeInfo);
+    for (int i = 0; i < book->runners.size(); i++) {
+      if (book->runners[i].GetInfo().name == flags.runnerName) {
+        book->runners[i].Run(&codeInfo);
+        break;
+      }
+    }
+
+    std::cerr << "Error: No runner with name " << flags.runnerName << std::endl;
   }
 }
 
-void Kernel::PrintVersion() { printVersion(); }
+void Kernel::PrintVersion() {
+  printVersion();
+
+  std::cout << termcolor::bold << "Loaded "
+            << termcolor::color<83, 224, 81> << book->runners.size()
+            << termcolor::reset << termcolor::bold << " runners" << std::endl;
+
+  std::cout << termcolor::bold << "Loaded "
+            << termcolor::color<83, 224, 81> << book->libraries.size()
+            << termcolor::reset << termcolor::bold << " extension";
+  if (book->libraries.size() != 1)
+    std::cout << "s";
+  std::cout << ":" << termcolor::reset << std::endl;
+
+  for (int i = 0; i < book->libraries.size(); i++) {
+    std::cout << "- " << termcolor::color<81, 143, 224> << termcolor::bold
+              << book->libraries[i].name << termcolor::reset << ": "
+              << book->libraries[i].desc << std::endl;
+  }
+}

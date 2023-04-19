@@ -5,9 +5,8 @@
 #include <iostream>
 
 int printVersion() {
-  std::cout << termcolor::color<255, 168, 46> << termcolor::bold << "Wyrm"
-            << termcolor::reset << " interpreter version "
-            << termcolor::color<255, 255, 0> << VERSION << termcolor::reset
-            << " --- (c) Aran Roig " << termcolor::reset << std::endl;
+  std::cout << termcolor::color<227, 93, 86> << termcolor::bold << "Wyrm"
+            << termcolor::color<83, 224, 81> << " " << VERSION
+            << termcolor::reset << std::endl;
   return 0;
 }

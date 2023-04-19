@@ -12,15 +12,17 @@ suposo
 namespace Wyrm {
 class Kernel {
 public:
-  Kernel();
+  Kernel(RunInfo flags);
   ~Kernel();
 
-  void RunScript(std::string file, Flag::Flags flags);
+  void RunScript(std::string file);
   void SendByteScript(char name[]);
 
   void PrintVersion();
 
 private:
+  Book *book;
+  RunInfo flags;
   void DebugTokens(std::vector<WyrmAPI::Token> tokens);
 };
 } // namespace Wyrm

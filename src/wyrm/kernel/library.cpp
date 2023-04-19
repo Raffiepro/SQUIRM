@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <iostream>
 
-Wyrm::Book::Book(Flag::Flags flags) { this->flags = flags; }
+Wyrm::Book::Book(Wyrm::RunInfo flags) { this->flags = flags; }
 
 void Wyrm::Book::RegisterLibraries() {
   // Carreguem les llibreries
@@ -30,10 +30,8 @@ void Wyrm::Book::RegisterLibraries() {
     WyrmAPI::Library *l = CreateLibFunc();
 
     WyrmAPI::LoadInfo info = l->PreLoad();
+    this->libraries.push_back(info);
 
-    if (CHECK_BIT(this->flags, 1)) {
-      std::cout << info.name << " - " << info.desc << std::endl;
-    }
     l->Load();
 
     std::vector<

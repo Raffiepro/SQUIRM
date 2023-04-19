@@ -92,16 +92,17 @@ public:
   std::vector<Type> types;
   std::vector<Operation> operations;
   std::vector<Literal> literals;
+  std::vector<WyrmAPI::LoadInfo> libraries;
 
   std::vector<InternalRunner> runners;
 
-  Book(Flag::Flags flags);
+  Book(RunInfo flags);
   Book();
 
   void RegisterLibraries();
   int GetTypeFromName(std::string name);
 
 private:
-  Flag::Flags flags;
+  RunInfo flags;
 };
 } // namespace Wyrm

@@ -384,7 +384,8 @@ struct LoadInfo {
 };
 
 struct RunnerInfo {
-  std::string runFunction;
+  std::string name;
+  std::string displayName;
   bool live;
 };
 

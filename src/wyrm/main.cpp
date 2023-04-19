@@ -6,30 +6,24 @@
 
 using namespace Wyrm;
 
-int Run(Flag::RunInfo runInfo);
+int Run(RunInfo runInfo);
 
 int main(int argc, char *argv[]) {
-
-  // Crear vector de args
-  std::vector<std::string> args;
-  for (int i = 1; i < argc; i++) {
-    args.push_back(std::string(argv[i]));
-  }
-
-  Flag::RunInfo runInfo = Flag::GetRunInfo(args);
+  RunInfo runInfo = GetRunInfo(argc, argv);
 
   return Run(runInfo);
 }
 
-int Run(Flag::RunInfo runInfo) {
-  Wyrm::Kernel kernel;
+int Run(RunInfo runInfo) {
+  Wyrm::Kernel kernel(runInfo);
 
   if (runInfo.files.size() == 0) {
     kernel.PrintVersion();
     // kernel.Cli();
+    return 0;
   }
 
-  kernel.RunScript(runInfo.files[0], runInfo.flags);
+  kernel.RunScript(runInfo.files[0]);
 
   return 0;
 }
