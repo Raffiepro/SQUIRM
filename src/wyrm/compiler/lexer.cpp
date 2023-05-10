@@ -216,7 +216,7 @@ int Lexer::CheckKeywords(int *next) {
 
   auto ort = GetOrtography();
 
-  WyrmAPI::TokenType bestType = WyrmAPI::TokenType::ERROR;
+  WyrmAPI::TokenType bestType = WyrmAPI::TokenType::TOKEN_ERROR;
   int bestTypeLength = 0;
 
   for (int i = 0; i < maxSearchLength; i++) {
@@ -229,7 +229,7 @@ int Lexer::CheckKeywords(int *next) {
     }
   }
 
-  if (bestType == WyrmAPI::TokenType::ERROR || bestTypeLength == 0)
+  if (bestType == WyrmAPI::TokenType::TOKEN_ERROR || bestTypeLength == 0)
     return 0;
 
   // Si se puede pues añadimos el token

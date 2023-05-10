@@ -149,7 +149,7 @@ enum TokenType {
   IDENTIFIER, // algo
   SEPARATOR,
 
-  ERROR
+  TOKEN_ERROR
 };
 
 struct Data {
@@ -294,7 +294,7 @@ public:
   }
   Token(TokenType type) { this->type = type; }
 
-  Token() { this->type = WyrmAPI::TokenType::ERROR; }
+  Token() { this->type = WyrmAPI::TokenType::TOKEN_ERROR; }
   ~Token() {}
 
   bool IsLiteral() { return this->type == WyrmAPI::TokenType::LITERAL; }
@@ -303,7 +303,7 @@ public:
 
   void Debug() {
     std::map<TokenType, std::string> mapo = {
-        {TokenType::ERROR, "ERROR"},
+        {TokenType::TOKEN_ERROR, "ERROR"},
         {TokenType::SEPARATOR, "SEPARATOR"},
         {TokenType::TYPE, "TYPE"},
         {TokenType::ADD, "ADD"},             // +            X

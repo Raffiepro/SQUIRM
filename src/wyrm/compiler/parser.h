@@ -17,7 +17,7 @@ private:
   std::vector<WyrmAPI::Token> tokens;
   Book *book;
 
-  std::vector<std::vector<TokenType>> opOrder = {
+  std::vector<std::vector<WyrmAPI::TokenType>> opOrder = {
       {TokenType::MODULO},
       {TokenType::MULTIPLY, TokenType::DIVIDE},
       {TokenType::ADD, TokenType::SUBTRACT},
@@ -25,19 +25,19 @@ private:
       {TokenType::NOT_EQUAL, TokenType::EQUAL, TokenType::GREATER_EQUAL_THAN,
        TokenType::LESSER_EQUAL_THAN, TokenType::AND, TokenType::OR}};
 
-  std::vector<TokenType> assignations = {
+  std::vector<WyrmAPI::TokenType> assignations = {
       TokenType::ASSIGMENT,          TokenType::ASSIGMENT_ADD,
       TokenType::ASSIGMENT_SUBTRACT, TokenType::ASSIGMENT_MULTIPLY,
       TokenType::ASSIGMENT_DIVIDE,   TokenType::ASSIGMENT_MODULO};
 
-  std::map<TokenType, TokenType> opMap = {
+  std::map<WyrmAPI::TokenType, WyrmAPI::TokenType> opMap = {
       {TokenType::ADD, TokenType::ASSIGMENT_ADD},
       {TokenType::SUBTRACT, TokenType::ASSIGMENT_SUBTRACT},
       {TokenType::DIVIDE, TokenType::ASSIGMENT_DIVIDE},
       {TokenType::MULTIPLY, TokenType::ASSIGMENT_MULTIPLY},
       {TokenType::MODULO, TokenType::ASSIGMENT_MODULO}};
 
-  std::map<TokenType, OpSymbol> tokenToSymbol = {
+  std::map<WyrmAPI::TokenType, OpSymbol> tokenToSymbol = {
       {ADD, OpSymbol::OP_ADD},
       {SUBTRACT, OpSymbol::OP_SUBTRACT}, // -
       {MULTIPLY, OpSymbol::OP_MUL},      // *
@@ -81,9 +81,9 @@ private:
   void GetCodeBreak(Node **root, int from, int *end);
   void GetCodeSkip(Node **root, int from, int *end);
 
-  bool Eat(int pos, TokenType comp, int *from);
+  bool Eat(int pos, WyrmAPI::TokenType comp, int *from);
 
-  int GetNext(int from, int lim, TokenType type);
+  int GetNext(int from, int lim, WyrmAPI::TokenType type);
   int GetNextCodeSep(int from, int lim);
 
   void GetArguments(int from, int to, std::vector<Node *> *parent);
@@ -101,6 +101,6 @@ private:
 
   bool ContainsAssignation(int from, int to);
 
-  bool IsOf(std::vector<TokenType> list, TokenType type);
+  bool IsOf(std::vector<WyrmAPI::TokenType> list, WyrmAPI::TokenType type);
 };
 } // namespace Wyrm

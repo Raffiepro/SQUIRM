@@ -2,7 +2,12 @@
 
 #include "../_base.h"
 #include "../flags/flags.h"
+
+#if defined _WIN32 || defined __MINGW32__
+#include "../dlfcn-win32/dlfcn.h"
+#else
 #include <dlfcn.h>
+#endif
 
 #include <filesystem>
 #include <vector>

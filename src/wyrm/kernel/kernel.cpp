@@ -3,8 +3,6 @@
 #include <iostream>
 #include <limits>
 
-#include <gmp.h>
-
 #include "../compiler/lexer.h"
 #include "../compiler/parser.h"
 #include "../compiler/serializer.h"

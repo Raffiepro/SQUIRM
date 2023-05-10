@@ -1,11 +1,5 @@
 #include "library.h"
 
-#ifdef _WIN32
-#include "../dlfcn-win32/dlfcn.h"
-#else
-#include <dlfcn.h>
-#endif
-
 #include <filesystem>
 #include <iostream>
 
@@ -20,7 +14,7 @@ void Wyrm::Book::RegisterLibraries() {
   for (const auto &dirEntry :
        std::filesystem::recursive_directory_iterator(p)) {
 
-    void *handle = dlopen(dirEntry.path().c_str(), RTLD_LAZY);
+    void *handle = dlopen(dirEntry.path().string().c_str(), RTLD_LAZY);
     if (!handle) {
       std::cerr << "Error obrint llibreria " << dirEntry.path().c_str()
                 << std::endl;
