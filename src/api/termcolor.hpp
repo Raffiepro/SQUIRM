@@ -16,7 +16,7 @@
 
 // Detect target's platform and set some macros in order to wrap platform
 // specific code this library depends on.
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64) || defined(__MINGW32__)
 #   define TERMCOLOR_TARGET_WINDOWS
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 #   define TERMCOLOR_TARGET_POSIX

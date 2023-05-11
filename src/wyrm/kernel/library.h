@@ -3,7 +3,7 @@
 #include "../_base.h"
 #include "../flags/flags.h"
 
-#if defined _WIN32 || defined __MINGW32__
+#ifdef WINDOWS
 #include "../dlfcn-win32/dlfcn.h"
 #else
 #include <dlfcn.h>

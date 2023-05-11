@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
 }
 
 int Run(RunInfo runInfo) {
+  
   Wyrm::Kernel kernel(runInfo);
 
   if (runInfo.files.size() == 0) {

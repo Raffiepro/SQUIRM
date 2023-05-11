@@ -16,8 +16,12 @@ mkdir libs
 cd ..
 
 cp src/base/libbase.dll Wyrm/libs
-cp src/amph/libamph.dll Wyrm/libs
+rem cp src/amph/libamph.dll Wyrm/libs
 rem cp src/test/libtest.so Wyrm/libs
+
+cd Wyrm
+Wyrm.exe
+cd ..
 
 cd ..
 cd scripts

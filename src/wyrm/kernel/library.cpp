@@ -3,13 +3,24 @@
 #include <filesystem>
 #include <iostream>
 
+#ifdef WINDOWS
+#include <libloaderapi.h>
+#endif
+
 Wyrm::Book::Book(Wyrm::RunInfo flags) { this->flags = flags; }
 
 void Wyrm::Book::RegisterLibraries() {
   // Carreguem les llibreries
+  #ifndef WINDOWS
   std::filesystem::path p =
       std::filesystem::canonical("/proc/self/exe").parent_path() /
       std::filesystem::path("libs/");
+  #else
+  WCHAR path[MAX_PATH];
+  GetModuleFileNameW(NULL, path, MAX_PATH);
+  std::filesystem::path p = std::filesystem::path(path).parent_path() / std::filesystem::path("libs\\");
+  #endif
+
 
   for (const auto &dirEntry :
        std::filesystem::recursive_directory_iterator(p)) {
@@ -20,18 +31,22 @@ void Wyrm::Book::RegisterLibraries() {
                 << std::endl;
       exit(1);
     }
+     
 
     WyrmAPI::Library *(*CreateLibFunc)(void) =
         (WyrmAPI::Library * (*)(void)) dlsym(handle, "CreateLib");
     void (*DestroyLibFunc)(WyrmAPI::Library *) =
         (void (*)(WyrmAPI::Library *))dlsym(handle, "DestroyLib");
-
+ 
     WyrmAPI::Library *l = CreateLibFunc();
-
+    
+    
     WyrmAPI::LoadInfo info = l->PreLoad();
     this->libraries.push_back(info);
 
     l->Load();
+
+  
 
     std::vector<
         std::tuple<std::string, std::string, bool, WyrmAPI::Data, std::string>>
