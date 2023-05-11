@@ -83,12 +83,14 @@ void Kernel::RunScript(std::string name) {
     ser.SerializeToFile(codeInfo, "a.wy");
   } else {
     // Pillem el primer (falta mirar les flags)
+    /*
     for (int i = 0; i < book->runners.size(); i++) {
       if (book->runners[i].GetInfo().name == flags.runnerName) {
         book->runners[i].Run(&codeInfo);
         break;
       }
     }
+    */
 
     std::cerr << "Error: No runner with name " << flags.runnerName << std::endl;
   }
@@ -97,10 +99,11 @@ void Kernel::RunScript(std::string name) {
 void Kernel::PrintVersion() {
   printVersion();
 
+/*
   std::cout << termcolor::bold << "Loaded "
             << termcolor::color<83, 224, 81> << book->runners.size()
             << termcolor::reset << termcolor::bold << " runners" << std::endl;
-
+*/
   std::cout << termcolor::bold << "Loaded "
             << termcolor::color<83, 224, 81> << book->libraries.size()
             << termcolor::reset << termcolor::bold << " extension";

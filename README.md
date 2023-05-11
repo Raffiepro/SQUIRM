@@ -39,6 +39,12 @@ Aquesta llista pot canviar en un futur. La idea es com més o menys seràn les v
 - [ ] Completar les llibreries estandard per Wyrm (v3.0)
 - [ ] Multithreading i altres coses molt a futur (v4.0)
 
+## Motivació
+
+Volia fer un llenguatge de programació molt lleuger i també molt potent per tal de poder
+computar mètodes numèrics de forma fàcil i ràpida. Principalment Wyrm està actualitzat i desenvolupat
+per a funcionar com a motor base per les computacions que fa [Calcatrum](https://git.aranroig.com/BinarySandia04/Calcutrum), una calculadora gràfica programada amb [Godot](https://github.com/godotengine/godot) altament modificable (gràcies a Wyrm) i feta exclusivament per poder ensenyar millor conceptes matemàtics avançats
+
 ## Raons per las quals Wyrm hauria d'existir
 
 En un futur m'agradaria que Wyrm tingui les següents "features" (molt guais):

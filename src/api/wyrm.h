@@ -381,6 +381,7 @@ struct LexerInfo {
 struct LoadInfo {
   std::string name;
   std::string desc;
+  bool isRunner;
 };
 
 struct RunnerInfo {
@@ -408,8 +409,11 @@ private:
 
 class Library {
 public:
+
   virtual LoadInfo PreLoad() { return LoadInfo(); }
   virtual void Load() {}
+
+  void AddDependency(std::string dependencyName){}
 
   void RegisterType(std::string name, std::string wname, bool extended,
                     Data neutral, std::string defFunction) {
@@ -429,10 +433,6 @@ public:
     litPreloadData.push_back({name, policyFunc, dataFunc, compFunc});
   }
 
-  void RegisterRunner(std::string name, RunnerInfo runnerInfo) {
-    runnerPreloadData.push_back({name, runnerInfo});
-  }
-
   std::vector<
       std::tuple<std::string, std::string, bool, WyrmAPI::Data, std::string>>
   _GetTypeList() {
@@ -449,10 +449,6 @@ public:
     return litPreloadData;
   }
 
-  std::vector<std::tuple<std::string, RunnerInfo>> _GetRunners() {
-    return runnerPreloadData;
-  }
-
 private:
   std::vector<
       std::tuple<std::string, std::string, bool, WyrmAPI::Data, std::string>>
@@ -462,7 +458,6 @@ private:
       opPreloadData;
   std::vector<std::tuple<std::string, std::string, std::string, std::string>>
       litPreloadData;
-  std::vector<std::tuple<std::string, RunnerInfo>> runnerPreloadData;
 };
 
 } // namespace WyrmAPI

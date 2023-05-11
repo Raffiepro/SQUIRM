@@ -73,6 +73,7 @@ private:
   int elementTypeId;
 };
 
+/*
 class InternalRunner {
 public:
   InternalRunner() {}
@@ -90,6 +91,8 @@ private:
   int (*compFunc)(WyrmAPI::TreeCode *);
   WyrmAPI::RunnerInfo info;
 };
+*/
+
 
 class Book {
   // std::vector<WyrmAPI::Library> libs;
@@ -98,8 +101,6 @@ public:
   std::vector<Operation> operations;
   std::vector<Literal> literals;
   std::vector<WyrmAPI::LoadInfo> libraries;
-
-  std::vector<InternalRunner> runners;
 
   Book(RunInfo flags);
   Book();

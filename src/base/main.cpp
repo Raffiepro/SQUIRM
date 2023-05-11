@@ -13,6 +13,9 @@ WyrmAPI::LoadInfo Library::PreLoad() {
   info.name = "Base";
   info.desc = "Base library for Wyrm";
   // Aquí s'haurien de posar dependencies suposo
+
+  AddDependency("Test");
+
   return info;
 }
 

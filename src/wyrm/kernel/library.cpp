@@ -114,9 +114,7 @@ void Wyrm::Book::RegisterLibraries() {
 
       this->operations.push_back(op);
     }
-
-    std::vector<std::tuple<std::string, WyrmAPI::RunnerInfo>> runnerInfos =
-        l->_GetRunners();
+    /*
     for (int i = 0; i < runnerInfos.size(); i++) {
 
       InternalRunner runner((int (*)(WyrmAPI::TreeCode *))dlsym(
@@ -125,6 +123,7 @@ void Wyrm::Book::RegisterLibraries() {
 
       this->runners.push_back(runner);
     }
+    */
 
     DestroyLibFunc(l);
   }
