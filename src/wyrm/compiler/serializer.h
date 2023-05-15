@@ -3,6 +3,7 @@
 #include "../_base.h"
 #include "../kernel/library.h"
 
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -11,6 +12,7 @@ class Serializer {
 public:
   Serializer(Book *book);
 
+  std::filesystem::path GetExecPath();
   void SerializeToFile(WyrmAPI::TreeCode codeInfo, std::string fileName);
   std::string SerialzeToString(WyrmAPI::TreeCode codeInfo);
   void SerializeString(FILE *f, std::string s);

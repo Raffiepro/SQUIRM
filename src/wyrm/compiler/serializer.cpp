@@ -10,13 +10,26 @@ using namespace Wyrm;
 
 Serializer::Serializer(Book *book) { this->book = book; }
 
+// Carreguem les llibreries
+std::filesystem::path Serializer::GetExecPath() {
+#ifndef WINDOWS
+  std::filesystem::path p =
+      std::filesystem::canonical("/proc/self/exe").parent_path();
+#else
+  WCHAR path[MAX_PATH];
+  GetModuleFileNameW(NULL, path, MAX_PATH);
+  std::filesystem::path p = std::filesystem::path(path).parent_path();
+#endif
+  return p;
+}
 void Serializer::SerializeToFile(WyrmAPI::TreeCode codeInfo,
                                  std::string fileName) {
-  FILE *f = fopen(fileName.c_str(), "wb");
+  FILE *f = fopen((GetExecPath().string() + fileName).c_str(), "wb");
   if (!f) {
     WyrmAPI::Debug::LogError("Error writing to file!");
     return;
   }
+  std::cout << fileName.c_str() << std::endl;
 
   std::vector<std::string> deps = codeInfo.GetDependencies();
   unsigned int libCount = deps.size();

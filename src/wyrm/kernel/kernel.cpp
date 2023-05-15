@@ -99,11 +99,11 @@ void Kernel::RunScript(std::string name) {
 void Kernel::PrintVersion() {
   printVersion();
 
-/*
-  std::cout << termcolor::bold << "Loaded "
-            << termcolor::color<83, 224, 81> << book->runners.size()
-            << termcolor::reset << termcolor::bold << " runners" << std::endl;
-*/
+  /*
+    std::cout << termcolor::bold << "Loaded "
+              << termcolor::color<83, 224, 81> << book->runners.size()
+              << termcolor::reset << termcolor::bold << " runners" << std::endl;
+  */
   std::cout << termcolor::bold << "Loaded "
             << termcolor::color<83, 224, 81> << book->libraries.size()
             << termcolor::reset << termcolor::bold << " extension";

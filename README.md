@@ -68,6 +68,21 @@ El llenguatge de programació Wyrm per defecte genera una "representació interm
 - **Drac**: Compilador de Wyrm
 - **Zmey**: Gestor de paquets i llibreries de Wyrm
 
+## Com està estructuras Wyrm
+
+Wyrm es molt extensible, la manera la qual es fa aquesta extensió és amb mòduls, que són llibreries dinàmiques amb funcions exposades.
+Aquestes llibreries dinàmiques han d'importar el fitxer `wyrm.h` per tal de poder definir una llibreria correctament.
+
+Hi ha dos tipus de llibreries a Wyrm:
+
+- Mòduls: Afegeixen funcionalitat extra al llenguatge
+- Runners: Executen el llenguatge de forma diferent. Poden ser tant interprets, compiladors o JITs, qualsevol cosa que executi codi
+
+Els mòduls defineixen gran part del comportament del llengatge. Els runners, per tal de executar el codi per tant, han de fer
+referència als moduls. Per poder solucionar aquest problema, aquests carreguen les llibreries del directori on s'instala Wyrm,
+anteriorment i la qual també a l'hora de compilar el runner, aquest gràcies a `wyrm.h` tindrà mètodes per tal de trobar definicions
+d'aquestes funcions de forma automàtica dins de la llibreria compartida.
+
 ## Dependències
 
 Les marcades amb un (*) necessiten ser instalades manualment per l'usuari final. (Podria fer un instalador potser).

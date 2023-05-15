@@ -6,12 +6,13 @@ cd build
 cmake ../
 cmake --build .
 cd ..
-cd build
 
+cd scripts
+rm -R Wyrm
 mkdir Wyrm 2> /dev/null
-cp src/wyrm/Wyrm Wyrm/
+cp ../build/src/wyrm/Wyrm Wyrm/
 
 mkdir Wyrm/libs 2> /dev/null
-cp src/base/libbase.so Wyrm/libs
+cp ../build/src/base/libbase.so Wyrm/libs
 # cp src/base/libamph.so Wyrm/libs
 # cp src/test/libtest.so Wyrm/libs

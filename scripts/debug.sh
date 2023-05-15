@@ -1,3 +1,7 @@
 #!/bin/bash
 ./build.sh
-./Wyrm -a -d test.wyrm
+
+cp script.wyrm Wyrm/
+cd Wyrm
+./Wyrm -a -d script.wyrm
+cd ..
