@@ -3,5 +3,6 @@
 
 cp script.wyrm Wyrm/
 cd Wyrm
-./Wyrm -a -d script.wyrm
+./Wyrm
+./Wyrm -d -r amph script.wyrm
 cd ..

@@ -11,6 +11,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_LIBS "-O3 -fPIC -shared") # Perque corri això
 
-add_library(drac SHARED ${SOURCES})
+add_library(drac SHARED ${SOURCES} ${PROJECT_SOURCE_DIR}/src/wyrm.h)
 
 install( TARGETS base DESTINATION lib )

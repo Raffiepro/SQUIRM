@@ -1,6 +1,6 @@
 #pragma once
 
-#include "termcolor.hpp"
+#include "api/termcolor.hpp"
 
 #define N_SYMBOLS 27
 
@@ -381,7 +381,8 @@ struct LexerInfo {
 struct LoadInfo {
   std::string name;
   std::string desc;
-  bool isRunner;
+  bool isRunner = false;
+  std::string runnerName;
 };
 
 struct RunnerInfo {
@@ -412,8 +413,6 @@ public:
 
   virtual LoadInfo PreLoad() { return LoadInfo(); }
   virtual void Load() {}
-
-  void AddDependency(std::string dependencyName){}
 
   void RegisterType(std::string name, std::string wname, bool extended,
                     Data neutral, std::string defFunction) {
@@ -458,6 +457,13 @@ private:
       opPreloadData;
   std::vector<std::tuple<std::string, std::string, std::string, std::string>>
       litPreloadData;
+};
+
+class WyrmWrapper {
+  public:
+  
+  private:
+  
 };
 
 } // namespace WyrmAPI

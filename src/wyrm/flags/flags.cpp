@@ -17,17 +17,20 @@ Wyrm::RunInfo Wyrm::GetRunInfo(int argc, char *argv[]) {
   std::vector<std::string> files;
 
   for (int i = 0; i < args.size(); i++) {
-    switch (str2int(args[i].c_str())) {
-    case str2int("-r"):
-      i += 1;
-      info.runnerName = args[i];
-      break;
-    case str2int("-d"):
-      info.debug = true;
-      break;
-    default:
+    if(args[i][0] == '-'){
+      switch (str2int(args[i].c_str())) {
+      case str2int("-r"):
+        i += 1;
+        info.runnerName = args[i];
+        break;
+      case str2int("-d"):
+        info.debug = true;
+        break;
+      default:
+        break;
+      }
+    } else {
       info.files.push_back(args[i]);
-      break;
     }
   }
 

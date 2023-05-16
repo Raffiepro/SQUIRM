@@ -14,5 +14,5 @@ cp ../build/src/wyrm/Wyrm Wyrm/
 
 mkdir Wyrm/libs 2> /dev/null
 cp ../build/src/base/libbase.so Wyrm/libs
-# cp src/base/libamph.so Wyrm/libs
-# cp src/test/libtest.so Wyrm/libs
+cp ../build/src/amph/libamph.so Wyrm/libs
+cp ../build/src/test-lib/libtest-lib.so Wyrm/libs

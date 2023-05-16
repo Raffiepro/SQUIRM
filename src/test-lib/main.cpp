@@ -5,17 +5,13 @@
 
 WyrmAPI::LoadInfo Library::PreLoad() {
   WyrmAPI::LoadInfo info;
-  info.name = "Drac";
-  info.desc = "Wyrm C/C++ Transcompiler";
-  
-  info.isRunner = true;
-  info.runnerName = "drac";
-
+  info.name = "Test-lib";
+  info.desc = "Example library";
   return info;
 }
 
 void Library::Load() {
-  
+
 }
 
 extern "C" Library *CreateLib() { return new Library; }

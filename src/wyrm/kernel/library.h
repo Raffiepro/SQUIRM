@@ -73,26 +73,11 @@ private:
   int elementTypeId;
 };
 
-/*
-class InternalRunner {
-public:
-  InternalRunner() {}
-  InternalRunner(int (*compFunc)(WyrmAPI::TreeCode *),
-                 WyrmAPI::RunnerInfo info) {
-    this->compFunc = compFunc;
-    this->info = info;
-  };
 
-  int Run(WyrmAPI::TreeCode *n) { return this->compFunc(n); }
-
-  WyrmAPI::RunnerInfo GetInfo() { return info; }
-
-private:
-  int (*compFunc)(WyrmAPI::TreeCode *);
-  WyrmAPI::RunnerInfo info;
+struct Runner {
+  void (*run)(WyrmAPI::Node*);
+  std::string name;
 };
-*/
-
 
 class Book {
   // std::vector<WyrmAPI::Library> libs;
@@ -101,6 +86,8 @@ public:
   std::vector<Operation> operations;
   std::vector<Literal> literals;
   std::vector<WyrmAPI::LoadInfo> libraries;
+
+  std::vector<Runner> runners;
 
   Book(RunInfo flags);
   Book();

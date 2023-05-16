@@ -29,6 +29,7 @@ void Kernel::RunScript(std::string name) {
   std::string code = "", line;
   while (std::getline(file, line)) {
     code += line + "\n";
+    std::cout << code;
   }
 
   if (flags.debug) {
@@ -82,15 +83,15 @@ void Kernel::RunScript(std::string name) {
 
     ser.SerializeToFile(codeInfo, "a.wy");
   } else {
-    // Pillem el primer (falta mirar les flags)
-    /*
+    
     for (int i = 0; i < book->runners.size(); i++) {
-      if (book->runners[i].GetInfo().name == flags.runnerName) {
-        book->runners[i].Run(&codeInfo);
-        break;
+      if(book->runners[i].name == flags.runnerName){
+        std::cout << "Miau " << book->runners[i].name << std::endl;
+        book->runners[i].run(ast);
+        return;
       }
+      
     }
-    */
 
     std::cerr << "Error: No runner with name " << flags.runnerName << std::endl;
   }
@@ -112,7 +113,9 @@ void Kernel::PrintVersion() {
   std::cout << ":" << termcolor::reset << std::endl;
 
   for (int i = 0; i < book->libraries.size(); i++) {
-    std::cout << "- " << termcolor::color<81, 143, 224> << termcolor::bold
+    if(book->libraries[i].isRunner) std::cout << "- " << termcolor::color<245, 66, 69>;
+    else std::cout << "- " << termcolor::color<81, 143, 224>;
+    std::cout << termcolor::bold
               << book->libraries[i].name << termcolor::reset << ": "
               << book->libraries[i].desc << std::endl;
   }
